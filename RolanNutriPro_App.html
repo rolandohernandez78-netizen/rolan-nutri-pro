@@ -1257,13 +1257,20 @@ let currentViewMode = "technical"; // "technical" or "practical"
 let activeSelectedMineral = "Ca"; // Default mineral selection
 
 document.addEventListener("DOMContentLoaded", async () => {
-    // 1. Fetch nutrient database JSON
-    try {
-        const response = await fetch("ruminant_nutrient_database.json");
-        nutrientDB = await response.json();
-    } catch (err) {
-        console.error("Error loading nutrient database:", err);
+    // 1. Synchronous database initialization (Guarantees zero file:// CORS errors)
+    nutrientDB = window.NUTRIENT_DB || nutrientDB || null;
+
+    if (!nutrientDB && window.location.protocol.startsWith("http")) {
+        try {
+            const response = await fetch("ruminant_nutrient_database.json");
+            nutrientDB = await response.json();
+        } catch (err) {
+            console.warn("Using fallback window.NUTRIENT_DB:", err);
+        }
     }
+    if (!nutrientDB) {
+        nutrientDB = window.NUTRIENT_DB || null;
+    }    }
 
     // DOM Element References
     const speciesSelect = document.getElementById("species-select");
@@ -1941,6 +1948,7 @@ function renderCornellModule() {
 
     populateCategories();
     calculateRequirements();
+    updateMineralTablesAndHighlight();
     renderCornellModule();
     renderPresetsTable();
 });
