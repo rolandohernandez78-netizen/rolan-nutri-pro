@@ -1256,6 +1256,15 @@ let nutrientDB = window.NUTRIENT_DB || null;
 let currentViewMode = "technical"; // "technical" or "practical"
 let activeSelectedMineral = "Ca"; // Default mineral selection
 
+// Global DOM Element References
+let speciesSelect, categorySelect, bwInput, milkInput, fatInput, proteinInput, dimInput, adgInput;
+let groupMilk, groupFat, groupProtein, groupDim, groupAdg;
+let btnCalculate, btnTechView, btnPracticalView, resultsContainer;
+let mineralTypeSelect, btnCalcMineral, mineralDetailsContainer, macroMineralTableBody, microMineralTableBody, mineralAnimalBadge;
+let cornellModuleContainer, presetTableHead, presetTableBody;
+let mascotWrapper, speechBubble, cowIcon, avatar;
+let qaInput, qaBtn, qaAnswerContainer, chipBtns;
+
 document.addEventListener("DOMContentLoaded", async () => {
     // 1. Synchronous database initialization (Guarantees zero file:// CORS errors)
     nutrientDB = window.NUTRIENT_DB || nutrientDB || null;
@@ -1273,34 +1282,34 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     // DOM Element References
-    const speciesSelect = document.getElementById("species-select");
-    const categorySelect = document.getElementById("category-select");
-    const bwInput = document.getElementById("bw-input");
-    const milkInput = document.getElementById("milk-input");
-    const fatInput = document.getElementById("fat-input");
-    const proteinInput = document.getElementById("protein-input");
-    const dimInput = document.getElementById("dim-input");
-    const adgInput = document.getElementById("adg-input");
+    speciesSelect = document.getElementById("species-select");
+    categorySelect = document.getElementById("category-select");
+    bwInput = document.getElementById("bw-input");
+    milkInput = document.getElementById("milk-input");
+    fatInput = document.getElementById("fat-input");
+    proteinInput = document.getElementById("protein-input");
+    dimInput = document.getElementById("dim-input");
+    adgInput = document.getElementById("adg-input");
 
-    const groupMilk = document.getElementById("group-milk");
-    const groupFat = document.getElementById("group-fat");
-    const groupProtein = document.getElementById("group-protein");
-    const groupDim = document.getElementById("group-dim");
-    const groupAdg = document.getElementById("group-adg");
+    groupMilk = document.getElementById("group-milk");
+    groupFat = document.getElementById("group-fat");
+    groupProtein = document.getElementById("group-protein");
+    groupDim = document.getElementById("group-dim");
+    groupAdg = document.getElementById("group-adg");
 
-    const btnCalculate = document.getElementById("btn-calculate");
-    const btnTechView = document.getElementById("btn-tech-view");
-    const btnPracticalView = document.getElementById("btn-practical-view");
-    const resultsContainer = document.getElementById("results-container");
+    btnCalculate = document.getElementById("btn-calculate");
+    btnTechView = document.getElementById("btn-tech-view");
+    btnPracticalView = document.getElementById("btn-practical-view");
+    resultsContainer = document.getElementById("results-container");
 
-    const mineralTypeSelect = document.getElementById("mineral-type-select");
-    const btnCalcMineral = document.getElementById("btn-calc-mineral");
-    const mineralDetailsContainer = document.getElementById("mineral-details-container");
+    mineralTypeSelect = document.getElementById("mineral-type-select");
+    btnCalcMineral = document.getElementById("btn-calc-mineral");
+    mineralDetailsContainer = document.getElementById("mineral-details-container");
     const macroMineralTableBody = document.querySelector("#macro-mineral-table tbody");
     const microMineralTableBody = document.querySelector("#micro-mineral-table tbody");
-    const mineralAnimalBadge = document.getElementById("mineral-animal-badge");
+    mineralAnimalBadge = document.getElementById("mineral-animal-badge");
 
-    const cornellModuleContainer = document.getElementById("cornell-module-container");
+    cornellModuleContainer = document.getElementById("cornell-module-container");
     const presetTableHead = document.querySelector("#preset-table thead");
     const presetTableBody = document.querySelector("#preset-table tbody");
 
@@ -1311,9 +1320,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     const cowIcon = document.getElementById("cow-brand-icon");
 
     // Q&A Assistant References
-    const qaInput = document.getElementById("qa-input-text");
-    const qaBtn = document.getElementById("btn-submit-qa");
-    const qaAnswerContainer = document.getElementById("qa-answer-container");
+    qaInput = document.getElementById("qa-input-text");
+    qaBtn = document.getElementById("btn-submit-qa");
+    qaAnswerContainer = document.getElementById("qa-answer-container");
     const chipBtns = document.querySelectorAll(".chip-btn");
 
     // Authentic Epidemic Sound Audio Player ("Bull, Scottish Highland, Moo" ca21b786-aa5b-450d-acc8-88d68ba5d135)
@@ -1382,6 +1391,8 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // Populate Categories Dropdown dynamically
     function populateCategories() {
+    speciesSelect = speciesSelect || document.getElementById("species-select");
+    categorySelect = categorySelect || document.getElementById("category-select");
         if (!nutrientDB || !speciesSelect || !categorySelect) return;
         const speciesKey = speciesSelect.value;
         const speciesData = nutrientDB.species_profiles[speciesKey];
@@ -1446,6 +1457,15 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // Main Nutrition Calculation Function
     function calculateRequirements() {
+    speciesSelect = speciesSelect || document.getElementById("species-select");
+    categorySelect = categorySelect || document.getElementById("category-select");
+    bwInput = bwInput || document.getElementById("bw-input");
+    milkInput = milkInput || document.getElementById("milk-input");
+    fatInput = fatInput || document.getElementById("fat-input");
+    proteinInput = proteinInput || document.getElementById("protein-input");
+    dimInput = dimInput || document.getElementById("dim-input");
+    adgInput = adgInput || document.getElementById("adg-input");
+    resultsContainer = resultsContainer || document.getElementById("results-container");
     if (!speciesSelect || !categorySelect || !nutrientDB || !nutrientDB.species) return;
 
     const speciesKey = speciesSelect.value;
@@ -1638,6 +1658,13 @@ document.addEventListener("DOMContentLoaded", async () => {
     updateMineralTablesAndHighlight();
 }
 function updateMineralTablesAndHighlight() {
+    speciesSelect = speciesSelect || document.getElementById("species-select");
+    categorySelect = categorySelect || document.getElementById("category-select");
+    mineralTypeSelect = mineralTypeSelect || document.getElementById("mineral-type-select");
+    mineralDetailsContainer = mineralDetailsContainer || document.getElementById("mineral-details-container");
+    macroMineralTableBody = macroMineralTableBody || document.querySelector("#macro-mineral-table tbody");
+    microMineralTableBody = microMineralTableBody || document.querySelector("#micro-mineral-table tbody");
+    mineralAnimalBadge = mineralAnimalBadge || document.getElementById("mineral-animal-badge");
     if (!nutrientDB || !nutrientDB.mineral_catalog) return;
     const catalog = nutrientDB.mineral_catalog;
 
