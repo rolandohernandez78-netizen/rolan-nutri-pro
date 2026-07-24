@@ -481,15 +481,17 @@ document.addEventListener("DOMContentLoaded", async () => {
     const adg = parseFloat(adgInput.value) || 1.20;
 
     let dmi = 0, nel = 0, mp = 0, ca = 0, p = 0;
+    let dmiNote = "";
 
     if (speciesKey === "dairy_nasem") {
         if (catIndex === 0) {
-            // Lactating Dairy Cow - NASEM 2021 Official Eq. 2-1 (Chapter 2, Page 24)
+            // Lactating Dairy Cow - NASEM 2021 Official Eq. 2-1 (de Souza et al., 2019)
             const fcm4 = milk * (0.4 + 0.15 * fat);
-            const dmiBase = (0.022 * bw) + (0.305 * fcm4);
+            const dmiBase = 3.75 + (0.022 * bw) + (0.305 * fcm4);
             const wol = dim / 7.0;
             const lag = 1.0 - Math.exp(-0.192 * (wol + 3.67));
-            dmi = Math.max(12.0, dmiBase * lag);
+            dmi = Math.max(14.0, dmiBase * lag);
+            dmiNote = "Estimado por Ecuación NASEM 2021 Eq. 2-1 (de Souza et al., 2019).";
 
             // Energy: NEm + NE_milk (NASEM 2021 Cap. 3 & 4)
             const nem = 0.080 * Math.pow(bw, 0.75);
@@ -512,6 +514,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         } else if (catIndex === 1) {
             // Far-off Dry Cow (NASEM 2021)
             dmi = bw * 0.0197;
+            dmiNote = "Vaca Seca Lejana (NASEM 2021: 1.97% del Peso Vivo).";
             nel = 0.080 * Math.pow(bw, 0.75) * 1.25;
             mp = (3.8 * Math.pow(bw, 0.75) * 1.2) / 1000.0;
             ca = (0.031 * bw + 12.0) / 0.60;
@@ -519,6 +522,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         } else if (catIndex === 2) {
             // Close-up Dry Cow (NASEM 2021 Preparto)
             dmi = bw * 0.0170;
+            dmiNote = "Vaca Preparto Close-Up (NASEM 2021 Cap. 12: 1.70% Peso Vivo).";
             nel = 0.080 * Math.pow(bw, 0.75) * 1.40;
             mp = (3.8 * Math.pow(bw, 0.75) * 1.4) / 1000.0;
             ca = (0.031 * bw + 18.0) / 0.60;
@@ -526,6 +530,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         } else {
             // Growing Heifer
             dmi = bw * 0.0245;
+            dmiNote = "Novilla en Crecimiento (NASEM 2021 Cap. 14: 2.45% Peso Vivo).";
             nel = 0.080 * Math.pow(bw, 0.75) + adg * 3.5;
             mp = (3.8 * Math.pow(bw, 0.75) + adg * 220) / 1000.0;
             ca = (0.031 * bw + adg * 15) / 0.60;
@@ -534,6 +539,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     } else {
         // Beef Cattle (Oklahoma / NASEM Beef)
         dmi = bw * 0.023 + (catIndex === 0 ? milk * 0.10 : adg * 0.5);
+        dmiNote = catIndex === 0 ? "Vaca de Carne en Lactancia (Oklahoma / NASEM Beef)." : "Novillo de Engorde (Oklahoma / NASEM Beef: 2.65% Peso Vivo).";
         nel = 0.077 * Math.pow(bw, 0.75) + (catIndex === 0 ? milk * 0.70 : adg * 3.8);
         mp = (3.4 * Math.pow(bw, 0.75) + (catIndex === 0 ? milk * 30 : adg * 200)) / 1000.0;
         ca = (0.025 * bw + (catIndex === 0 ? milk * 1.2 : adg * 14)) / 0.50;
@@ -543,45 +549,69 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (resultsContainer) {
         if (currentViewMode === "technical") {
             resultsContainer.innerHTML = `
-                <div class="results-container">
-                    <div class="result-box box-dmi" style="background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%); border-left: 5px solid #059669; padding: 14px; border-radius: 10px; border: 1px solid #a7f3d0;">
-                        <div class="box-label" style="font-size:0.82rem; font-weight:700; color:#047857;">🌾 Consumo Materia Seca (DMI)</div>
-                        <div class="box-value" style="font-size:1.45rem; font-weight:800; color:#065f46;">${dmi.toFixed(2)} <span style="font-size:0.85rem;">kg MS/día</span></div>
-                        <div class="box-sub" style="font-size:0.78rem; color:#047857; margin-top:4px;">${((dmi / bw) * 100).toFixed(2)}% Peso Vivo (${bw} kg)</div>
+                <div class="results-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px;">
+                    <!-- CARD 1: CONSUMO DE MATERIA SECA (DMI) -->
+                    <div class="result-box" style="background: linear-gradient(135deg, #059669 0%, #047857 100%); border-left: 6px solid #10b981; padding: 18px; border-radius: 16px; box-shadow: 0 4px 14px rgba(5, 150, 105, 0.25); color: #ffffff;">
+                        <div style="font-size: 0.82rem; font-weight: 700; color: #ecfdf5; letter-spacing: 0.5px; text-transform: uppercase;">CONSUMO DE MATERIA SECA (DMI)</div>
+                        <div style="font-size: 1.65rem; font-weight: 800; color: #ffffff; margin-top: 6px; line-height: 1.2;">
+                            ${dmi.toFixed(2)} kg MS/día <span style="font-size: 1.15rem; font-weight: 700;">(${((dmi / bw) * 100).toFixed(2)}% BW)</span>
+                        </div>
+                        <hr style="border: 0; border-top: 1px solid rgba(255, 255, 255, 0.25); margin: 12px 0 10px 0;">
+                        <div style="font-size: 0.82rem; color: #d1fae5; line-height: 1.4;">${dmiNote}</div>
                     </div>
-                    <div class="result-box box-energy" style="background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%); border-left: 5px solid #2563eb; padding: 14px; border-radius: 10px; border: 1px solid #bfdbfe;">
-                        <div class="box-label" style="font-size:0.82rem; font-weight:700; color:#1d4ed8;">⚡ Energía Neta Lactancia (NEL)</div>
-                        <div class="box-value" style="font-size:1.45rem; font-weight:800; color:#1e40af;">${nel.toFixed(2)} <span style="font-size:0.85rem;">Mcal/día</span></div>
-                        <div class="box-sub" style="font-size:0.78rem; color:#1d4ed8; margin-top:4px;">${(nel / dmi).toFixed(2)} Mcal NEL / kg MS</div>
+
+                    <!-- CARD 2: ENERGÍA NETA DE LACTANCIA (NEL) -->
+                    <div class="result-box" style="background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%); border-left: 6px solid #3b82f6; padding: 18px; border-radius: 16px; box-shadow: 0 4px 14px rgba(37, 99, 235, 0.25); color: #ffffff;">
+                        <div style="font-size: 0.82rem; font-weight: 700; color: #eff6ff; letter-spacing: 0.5px; text-transform: uppercase;">ENERGÍA NETA DE LACTANCIA (NEL)</div>
+                        <div style="font-size: 1.65rem; font-weight: 800; color: #ffffff; margin-top: 6px; line-height: 1.2;">
+                            ${nel.toFixed(2)} Mcal/día <span style="font-size: 1.15rem; font-weight: 700;">(${(nel / dmi).toFixed(2)} Mcal/kg MS)</span>
+                        </div>
+                        <hr style="border: 0; border-top: 1px solid rgba(255, 255, 255, 0.25); margin: 12px 0 10px 0;">
+                        <div style="font-size: 0.82rem; color: #dbeafe; line-height: 1.4;">Energía Neta NASEM 2021 para mantenimiento y producción.</div>
                     </div>
-                    <div class="result-box box-protein" style="background: linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%); border-left: 5px solid #7c3aed; padding: 14px; border-radius: 10px; border: 1px solid #ddd6fe;">
-                        <div class="box-label" style="font-size:0.82rem; font-weight:700; color:#6d28d9;">🥩 Proteína Metabolizable (MP)</div>
-                        <div class="box-value" style="font-size:1.45rem; font-weight:800; color:#5b21b6;">${(mp * 1000).toFixed(0)} <span style="font-size:0.85rem;">g MP/día</span></div>
-                        <div class="box-sub" style="font-size:0.78rem; color:#6d28d9; margin-top:4px;">${((mp / dmi) * 100).toFixed(2)}% MP de la MS</div>
+
+                    <!-- CARD 3: PROTEÍNA METABOLIZABLE (MP) -->
+                    <div class="result-box" style="background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%); border-left: 6px solid #8b5cf6; padding: 18px; border-radius: 16px; box-shadow: 0 4px 14px rgba(124, 58, 237, 0.25); color: #ffffff;">
+                        <div style="font-size: 0.82rem; font-weight: 700; color: #f5f3ff; letter-spacing: 0.5px; text-transform: uppercase;">PROTEÍNA METABOLIZABLE (MP)</div>
+                        <div style="font-size: 1.65rem; font-weight: 800; color: #ffffff; margin-top: 6px; line-height: 1.2;">
+                            ${(mp * 1000).toFixed(0)} g MP/día <span style="font-size: 1.15rem; font-weight: 700;">(${((mp / dmi) * 100).toFixed(2)}% MP en MS)</span>
+                        </div>
+                        <hr style="border: 0; border-top: 1px solid rgba(255, 255, 255, 0.25); margin: 12px 0 10px 0;">
+                        <div style="font-size: 0.82rem; color: #ede9fe; line-height: 1.4;">Requerimiento de aminoácidos absorbidos en intestino delgado.</div>
                     </div>
-                    <div class="result-box box-ca" style="background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%); border-left: 5px solid #d97706; padding: 14px; border-radius: 10px; border: 1px solid #fde68a;">
-                        <div class="box-label" style="font-size:0.82rem; font-weight:700; color:#b45309;">🧪 Calcio (Ca) Total</div>
-                        <div class="box-value" style="font-size:1.45rem; font-weight:800; color:#92400e;">${ca.toFixed(1)} <span style="font-size:0.85rem;">g/día</span></div>
-                        <div class="box-sub" style="font-size:0.78rem; color:#b45309; margin-top:4px;">${(ca / (dmi * 10)).toFixed(2)}% Ca de la MS</div>
+
+                    <!-- CARD 4: CALCIO (CA) -->
+                    <div class="result-box" style="background: linear-gradient(135deg, #d97706 0%, #b45309 100%); border-left: 6px solid #f59e0b; padding: 18px; border-radius: 16px; box-shadow: 0 4px 14px rgba(217, 119, 6, 0.25); color: #ffffff;">
+                        <div style="font-size: 0.82rem; font-weight: 700; color: #fffbeb; letter-spacing: 0.5px; text-transform: uppercase;">CALCIO (CA)</div>
+                        <div style="font-size: 1.65rem; font-weight: 800; color: #ffffff; margin-top: 6px; line-height: 1.2;">
+                            ${ca.toFixed(1)} g Ca/día <span style="font-size: 1.15rem; font-weight: 700;">(${(ca / dmi).toFixed(1)} g/kg MS)</span>
+                        </div>
+                        <hr style="border: 0; border-top: 1px solid rgba(255, 255, 255, 0.25); margin: 12px 0 10px 0;">
+                        <div style="font-size: 0.82rem; color: #fef3c7; line-height: 1.4;">NASEM 2021 Cap. 7. Coeficiente de absorción ruminal/intestinal.</div>
                     </div>
-                    <div class="result-box box-p" style="background: linear-gradient(135deg, #ecfeff 0%, #cffafe 100%); border-left: 5px solid #0891b2; padding: 14px; border-radius: 10px; border: 1px solid #a5f3fc;">
-                        <div class="box-label" style="font-size:0.82rem; font-weight:700; color:#0e7490;">🔬 Fósforo (P) Total</div>
-                        <div class="box-value" style="font-size:1.45rem; font-weight:800; color:#155e75;">${p.toFixed(1)} <span style="font-size:0.85rem;">g/día</span></div>
-                        <div class="box-sub" style="font-size:0.78rem; color:#0e7490; margin-top:4px;">${(p / (dmi * 10)).toFixed(2)}% P de la MS</div>
+
+                    <!-- CARD 5: FÓSFORO (P) -->
+                    <div class="result-box" style="background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%); border-left: 6px solid #0ea5e9; padding: 18px; border-radius: 16px; box-shadow: 0 4px 14px rgba(2, 132, 199, 0.25); color: #ffffff;">
+                        <div style="font-size: 0.82rem; font-weight: 700; color: #f0f9ff; letter-spacing: 0.5px; text-transform: uppercase;">FÓSFORO (P)</div>
+                        <div style="font-size: 1.65rem; font-weight: 800; color: #ffffff; margin-top: 6px; line-height: 1.2;">
+                            ${p.toFixed(1)} g P/día <span style="font-size: 1.15rem; font-weight: 700;">(${(p / dmi).toFixed(1)} g/kg MS)</span>
+                        </div>
+                        <hr style="border: 0; border-top: 1px solid rgba(255, 255, 255, 0.25); margin: 12px 0 10px 0;">
+                        <div style="font-size: 0.82rem; color: #e0f2fe; line-height: 1.4;">Requerimiento esencial para metabolismo energético y mineral.</div>
                     </div>
                 </div>
             `;
         } else {
             resultsContainer.innerHTML = `
-                <div class="practical-card" style="border-left-color: var(--primary-emerald);">
-                    <div class="practical-title">🌾 Resumen Práctico de Alimentación Recomendado</div>
-                    <div class="practical-stats">
-                        <div class="practical-stat-item">Consumo de Alimento Seco (MS): <strong>${dmi.toFixed(1)} kg MS/día</strong></div>
-                        <div class="practical-stat-item">Densidad de Energía: <strong>${(nel / dmi).toFixed(2)} Mcal/kg MS</strong></div>
-                        <div class="practical-stat-item">Proteína Metabolizable Total: <strong>${(mp * 1000).toFixed(0)} g MP/día</strong></div>
-                        <div class="practical-stat-item">Minerales Principales: <strong>${ca.toFixed(1)}g Ca | ${p.toFixed(1)}g P por día</strong></div>
+                <div class="practical-card" style="border-left-color: var(--primary-emerald); background: #f0fdf4; border: 1.5px solid #a7f3d0; border-radius: 16px; padding: 20px;">
+                    <div class="practical-title" style="font-size: 1.15rem; font-weight: 700; color: #065f46;">🌾 Resumen Práctico de Alimentación Recomendado</div>
+                    <div class="practical-stats" style="margin-top: 12px; display: grid; gap: 10px;">
+                        <div class="practical-stat-item" style="background: #ffffff; border: 1px solid #cbd5e1; padding: 10px 14px; border-radius: 8px;">Consumo de Alimento Seco (MS): <strong style="color: #047857;">${dmi.toFixed(1)} kg MS/día</strong></div>
+                        <div class="practical-stat-item" style="background: #ffffff; border: 1px solid #cbd5e1; padding: 10px 14px; border-radius: 8px;">Densidad de Energía: <strong style="color: #1d4ed8;">${(nel / dmi).toFixed(2)} Mcal/kg MS</strong></div>
+                        <div class="practical-stat-item" style="background: #ffffff; border: 1px solid #cbd5e1; padding: 10px 14px; border-radius: 8px;">Proteína Metabolizable Total: <strong style="color: #6d28d9;">${(mp * 1000).toFixed(0)} g MP/día</strong></div>
+                        <div class="practical-stat-item" style="background: #ffffff; border: 1px solid #cbd5e1; padding: 10px 14px; border-radius: 8px;">Minerales Principales: <strong style="color: #b45309;">${ca.toFixed(1)}g Ca | ${p.toFixed(1)}g P por día</strong></div>
                     </div>
-                    <p style="margin-top:10px; font-size:0.9rem; color:#475569;">Valores ajustados según modelo científico NASEM 2021 (8ª Edición). Formular ración TMR para cubrir ${dmi.toFixed(1)} kg MS.</p>
+                    <p style="margin-top: 12px; font-size: 0.9rem; color: #475569; line-height: 1.4;">Valores ajustados según modelo científico NASEM 2021 (8ª Edición). Formular ración TMR para cubrir ${dmi.toFixed(1)} kg MS.</p>
                 </div>
             `;
         }
@@ -590,7 +620,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     renderCornellModule(dmi, bw, milk, fat, protein);
     updateMineralTablesAndHighlight();
 }
-
 function updateMineralTablesAndHighlight() {
     if (!nutrientDB || !nutrientDB.mineral_catalog) return;
     const catalog = nutrientDB.mineral_catalog;
