@@ -717,106 +717,197 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // AI Nutrition Q&A Knowledge Database
     const qaKnowledgeBase = [
-        {
-            id: "proteina",
-            keywords: ["proteina", "proteína", "proteinas", "proteínas", "protein", "proteico", "mp", "cp", "rup", "rdp", "aminoacido", "aminoacidos", "lisina", "metionina", "nrc", "nasem"],
-            title: "🥩 Proteína Cruda (CP), Proteína Metabolizable (MP) y Aminoácidos (NASEM 2021 Cap. 6 & CNCPS)",
-            badge: "NASEM 2021 Cap. 6 & Cornell CNCPS",
-            formula: "MP Requerida (g/d) = (3.8 * BW^0.75) + (Milk_kg * %Protein * 10 * 1.4) | MP Lys:Met = 2.7 : 1.0",
-            body: "<b>Capítulo 6 NASEM 2021 (NRC Ganado de Leche):</b> La proteína ya no se formula basándose únicamente en Proteína Cruda (CP%), sino en <b>Proteína Metabolizable (MP)</b>, que representa los aminoácidos absorbidos en el intestino delgado procedentes de:<br>1. <b>Proteína Microbiana (MCP):</b> Síntesis ruminal alimentada por NDF digerible y almidón.<br>2. <b>Proteína Ingradable en Rumen (RUP):</b> Proteína del alimento que escapa al rumen sin degradarse.<br><br><b>Recomendaciones de Formulación NASEM 2021 & CNCPS:</b><br>• <b>Proteína Metabolizable (MP):</b> 11.0 - 12.5% de la MS en lactancia alta (1750 - 2400 g MP/día).<br>• <b>Proteína Degradable en Rumen (RDP):</b> 9.5 - 10.5% de la MS para mantener la microbiota ruminal eficiente.<br>• <b>Aminoácidos Limitantes:</b> La Lisina debe representar el <b>6.9 - 7.2% de la MP</b> y la Metionina el <b>2.6 - 2.8% de la MP</b> (Relación ideal Lys:Met = 2.7 : 1.0).",
-            sources: "NASEM 2021 (8ª Edición, Cap. 6) • Cornell CNCPS v6.5/v7.0 (Dr. Mike Van Amburgh)"
-        },
-        {
-            id: "energia",
-            keywords: ["energia", "energía", "energias", "energy", "nel", "nem", "neg", "tdn", "mcal", "caloria", "calorias", "carbohidrato", "carbohidratos", "almidon", "almidones", "nrc", "nasem"],
-            title: "⚡ Requerimientos Energéticos (NEL, NEm, NEg y TDN) en NASEM 2021",
-            badge: "NASEM 2021 Cap. 3 & Cap. 4",
-            formula: "NEL Requerida (Mcal/d) = (0.080 * BW^0.75) + Milk_kg * (0.0929 * %Fat + 0.0547 * %Prot + 0.192)",
-            body: "<b>Capítulos 3 y 4 NASEM 2021:</b> La energía es expresada en <b>Energía Neta (NE)</b> dividida en mantenimiento (NEm), lactancia (NEL) y ganancia (NEg).<br><br><b>Puntos Clave del Manual NASEM 2021:</b><br>• <b>Mantenimiento:</b> 0.080 Mcal NEL / kg BW^0.75 (ej. 10.3 Mcal/día para una vaca de 650 kg).<br>• <b>Producción de Leche:</b> Cada kg de leche al 3.8% de Grasa y 3.2% de Proteína requiere <b>0.70 Mcal de NEL</b>.<br>• <b>Densidad Energética Recomendada:</b> 1.62 a 1.72 Mcal NEL / kg MS en dietas de alta producción.<br>• <b>Carbohidratos No Estructurales (NFC):</b> 36 - 40% de la MS (Almidón ruminal máximo 24 - 28% para prevenir acidosis ruminal subaguda SARA).",
-            sources: "NASEM 2021 (8ª Edición, Cap. 3 & 4) • NASEM Beef / Oklahoma Standards"
-        },
-        {
-            id: "calcio",
-            keywords: ["calcio", "calcios", "ca", "calcium", "hipocalcemia", "fiebre de leche", "nrc", "nasem", "mineral", "minerales"],
-            title: "🧪 Calcio (Ca): Requerimientos, Absorción y Prevención de Hipocalcemia",
-            badge: "NASEM 2021 Cap. 7",
-            formula: "Req. Ca = (dmi * 6.5) g/día (6.5 g/kg MS en lactancia | 100 - 140 g Ca/día total)",
-            body: "<b>Capítulo 7 NASEM 2021:</b> El Calcio es el macromineral con mayor demanda durante la lactancia (la leche contiene 1.22 g Ca/kg).<br><br><b>Estándares NASEM 2021:</b><br>• <b>Requerimiento en Dieta:</b> 0.65 - 0.85% de la MS en lactancia alta.<br>• <b>Coeficiente de Absorción (Ab):</b> 0.60 para carbonato de calcio inorgánico y 0.85 para quelatos orgánicos.<br>• <b>Preparto & DCAD:</b> Durante el periodo preparto, el Ca en dieta se restringe a 0.35-0.45% si la dieta no es aniónica, o se eleva a 1.20-1.40% Ca cuando se aplica un DCAD aniónico (-100 mEq/kg) para forzar el flujo cálcico metabólico al parto.",
-            sources: "NASEM 2021 (8ª Edición, Cap. 7 & Cap. 12)"
-        },
-        {
-            id: "fosforo",
-            keywords: ["fosforo", "fósforo", "fosforos", "fósforos", "p", "phosphorus", "mineral", "minerales", "salud reproductora", "nrc", "nasem"],
-            title: "🧪 Fósforo (P): Requerimientos Amortiguados y Nutrición Ambiental",
-            badge: "NASEM 2021 Cap. 7",
-            formula: "Req. P = (dmi * 3.8) g/día (3.8 - 4.2 g/kg MS | 70 - 95 g P/día total)",
-            body: "<b>Capítulo 7 NASEM 2021:</b> NASEM 2021 redujo los márgenes de seguridad de Fósforo respecto a NRC 2001 para minimizar la contaminación ambiental por excretas sin perjudicar la fertilidad.<br><br><b>Estándares NASEM 2021:</b><br>• <b>Requerimiento en Dieta:</b> 0.35 - 0.42% de la MS en lactancia.<br>• <b>Absorción Intestinal:</b> 0.70 de biodisponibilidad promedio.<br>• <b>Mito de Fertilidad:</b> Niveles > 0.45% P no mejoran la reproducción y aumentan significativamente los costos de la ración y el impacto ambiental.",
-            sources: "NASEM 2021 (8ª Edición, Cap. 7) • Dr. Bill Weiss (Cornell University)"
-        },
-        {
-            id: "dmi",
-            keywords: ["dmi", "consumo", "materia seca", "ingesta", "desouza", "ecuacion 2-1", "nrc", "nasem"],
-            title: "📊 Consumo de Materia Seca (DMI) Ecuaciones Oficiales NASEM 2021",
-            badge: "NASEM 2021 Eq. 2-1 (de Souza et al.)",
-            formula: "DMI (kg/d) = [(3.7 + Parity*5.7) + 0.305*MilkE + 0.022*BW - 0.689*BCS] * [1 - exp(-0.212*(DIM/7 + 2.56))]",
-            body: "<b>Capítulo 2 NASEM 2021:</b> La Ecuación 2-1 de Souza et al. (2019) reemplazó al modelo NRC 2001.<br><br><b>Factores Determinantes del DMI:</b><br>1. <b>Peso Vivo (BW):</b> Coeficiente lineal directo (+0.022 kg DMI por cada kg de BW).<br>2. <b>Energía de la Leche (MilkE):</b> Coeficiente (+0.305 kg DMI por Mcal de MilkE).<br>3. <b>Paridad:</b> Las vacas multiparas consumen +5.7 kg MS adicionales sobre las primíparas en pico.<br>4. <b>Condición Corporal (BCS):</b> Vacas sobreacondicionadas (BCS > 3.5) reducen su DMI en un 10-15%.<br>5. <b>Rango Normal de DMI:</b> 3.2% a 4.2% del Peso Vivo en lactancia pico (22.0 - 28.5 kg MS/día).",
-            sources: "Libro Oficial NASEM 2021 (Página 32, Ecuación 2-1)"
-        },
-        {
-            id: "fibra",
-            keywords: ["fibra", "fiber", "fdn", "ndf", "fda", "pendf", "undf", "undf240h", "rumen", "acidosis", "sara", "grant"],
-            title: "🌿 Carbohidratos Fibrosos (NDF, ADF, peNDF y uNDF240h) & Salud Ruminal",
-            badge: "NASEM 2021 Cap. 5 & Miner Institute",
-            formula: "peNDF mínimo >= 21 - 23% MS | uNDF240h máximo <= 0.35 - 0.40% BW",
-            body: "<b>Capítulo 5 NASEM 2021 & Dr. Rick Grant (Miner Institute):</b> La fibra es esencial para la masticación, salivación (bicarbonato natural) y estratificación de la capa ruminal.<br><br><b>Límites y Fracciones Críticas:</b><br>• <b>FDN Total (aNDFom):</b> Mínimo 28 - 32% de la MS total (con 75% procedente de forrajes).<br>• <b>Fibra Efectiva Físicamente (peNDF):</b> Mínimo 21% de la MS (retendida en criba de 4 y 8 mm del Separador de Penn State).<br>• <b>Fibra Indigestible (uNDF240h):</b> Determina la capacidad física máxima del rumen. No debe superar el <b>0.38% del Peso Vivo</b> (2.47 kg de uNDF240h para una vaca de 650 kg).",
-            sources: "NASEM 2021 Cap. 5 • Miner Institute / Cornell Shortcourse (Dr. Rick Grant)"
-        },
-        {
-            id: "dcad",
-            keywords: ["dcad", "bac", "preparto", "anionico", "hipocalcemia", "cloro", "azufre", "potasio", "sodio", "ph urinario"],
-            title: "⚡ Balance Catiónico-Aniónico de la Dieta (DCAD / BAC) en Preparto",
-            badge: "NASEM 2021 Cap. 12",
-            formula: "DCAD (mEq/kg MS) = [(%Na/0.023 + %K/0.039) - (%Cl/0.0355 + 2*%S/0.016)] * 10",
-            body: "<b>Capítulo 12 NASEM 2021 (Manejo de Transición):</b> El DCAD preparto controla la sensibilidad tisular a la Paratohormona (PTH).<br><br><b>Estrategia de Acidificación Metabólica:</b><br>• <b>Objetivo DCAD Preparto (21 días antes del parto):</b> <b>-50 a -150 mEq/kg MS</b>.<br>• <b>Monitoreo de pH Urinario:</b> El pH de la orina en vacas Holstein debe situarse entre <b>6.0 y 6.5</b> (pH normal no acidificado es 8.0-8.5).<br>• <b>Resultado Clínico:</b> Previene en un 90% la hipocalcemia clínica (fiebre de leche) y subclínica, reduciendo la metritis, retención de placenta y desplazamiento de abomaso.",
-            sources: "NASEM 2021 Cap. 12 • Curso Formulación de Raciones 2026 (Dr. José Maiztegui)"
-        },
-        {
-            id: "agua",
-            keywords: ["agua", "water", "bebida", "hidratacion", "litros", "temperatura", "wetherly", "cardoso", "illinois"],
-            title: "💧 Consumo de Agua de Bebida: Ecuaciones de la Universidad de Illinois",
-            badge: "Univ. of Illinois 2025 (Wetherly & Cardoso)",
-            formula: "Agua (L/día) = 15.99 + (1.58 * DMI_kg) + (0.90 * Milk_kg) + (0.05 * Na_g) + (1.20 * Temp_C)",
-            body: "<b>Universidad de Illinois 2025 (Dres. Phil Cardoso & James Drackley):</b> El agua es el nutriente cuantitativamente más importante en rumiantes (la leche es 87% agua).<br><br><b>Pautas Prácticas de Consumo:</b><br>• <b>Vaca de Alta Producción (35 kg leche, 25°C):</b> <b>115 a 135 Litros/día</b>.<br>• <b>Estrés Hídrico:</b> Una restricción de agua del 10% reduce el DMI de forma inmediata en un 15-20%, provocando una caída drástica en el pico de producción.<br>• <b>Calidad de Agua:</b> Sólidos Totales Disueltos (TDS) < 1,000 ppm, Sulfatos < 500 ppm, Nitratos < 100 ppm.",
-            sources: "University of Illinois Dairy Focus 2025 • Wetherly & Cardoso (2015)"
-        },
-        {
-            id: "grasa",
-            keywords: ["grasa", "grasas", "fat", "lipido", "omega", "linoleico", "linolenico", "epa", "dha", "tecnigrasas", "rolando", "hernandez", "fiv", "ovocito"],
-            title: "🥑 Nutrición Lipídica y Ácidos Grasos Esenciales (Omega-6 y Omega-3)",
-            badge: "Tecnigrasas SAS & UCV (MV MSc Rolando Hernández)",
-            formula: "Relación Ideal AGPI Omega-6 : Omega-3 = 4.0 : 1.0 a 5.0 : 1.0 | Grasa Total: 5.0 - 7.0% MS",
-            body: "<b>Investigaciones del MV MSc Rolando Hernández Mora (Tecnigrasas SAS & UCV):</b><br>La suplementación con ácidos grasos poliinsaturados (AGPI) sobrepasa la biohidrogenación ruminal mediante sales de calcio de ácidos grasos (soja y pescado).<br><br><b>Impacto en Reproducción y Fertilización In Vitro (FIV):</b><br>• <b>Relación Omega-6 : Omega-3:</b> Ajustar a <b>4.0:1 a 5.0:1</b> estimula la síntesis de progesterona en cuerpo lúteo, mejora el diámetro folicular y la viabilidad del ovocito en programas de aspiración folicular (OPU/FIV).<br>• <b>Dosis Recomendada:</b> 1.5 a 3.0% de la MS en forma de grasa inerte (300 a 500 g/cabeza/día).",
-            sources: "Tecnigrasas SAS & Universidad Central de Venezuela • MV MSc Rolando Hernández Mora"
-        },
-        {
-            id: "eficiencia",
-            keywords: ["eficiencia", "fe", "hutjens", "penn state", "fcm", "leche corregida", "pico"],
-            title: "🥛 Eficiencia Alimenticia (FE = FCM / DMI) & Metas del Hato",
-            badge: "Penn State University (Dr. Mike Hutjens)",
-            formula: "FE (kg Leche / kg MS) = Leche Corregida por Grasa al 3.5% (FCM) / Consumo DMI (kg/d)",
-            body: "<b>Penn State University Dairy Extension (Dr. Mike Hutjens):</b> La Eficiencia Alimenticia mide cuántos kg de leche al 3.5% FCM produce la vaca por cada kg de Materia Seca consumido.<br><br><b>Metas de Eficiencia por Etapa:</b><br>• <b>Promedio del Hato:</b> <b>>= 1.50 kg Leche / kg DMI</b>.<br>• <b>Pico de Lactancia (30 - 90 DEL):</b> <b>1.60 - 1.85</b> (alta conversión de nutrientes).<br>• <b>Lactancia Tardía (> 200 DEL):</b> 1.30 - 1.40.<br>• <b>Retorno Económico:</b> Cada +0.10 unidades de mejora en FE representa +1.5 a +2.0 kg de leche extra sin aumentar el consumo de alimento.",
-            sources: "Penn State University Extension • Dr. Mike Hutjens Dairy Course"
-        },
-        {
-            id: "minerales",
-            keywords: ["minerales", "minerals", "macrominerales", "microminerales", "oligoelementos", "quelatos", "organicos", "weiss", "nrc", "nasem"],
-            title: "🧪 Catálogo y Biodisponibilidad de Minerales en NASEM 2021",
-            badge: "NASEM 2021 Cap. 7 & Dr. Bill Weiss",
-            formula: "Biodisponibilidad Orgánica (Quelatos/Metioninatos) >= 120 - 160% vs Óxidos Inorgánicos",
-            body: "<b>Capítulo 7 NASEM 2021:</b> Revisa a fondo los requerimientos de 14 minerales esenciales.<br><br><b>Requerimientos Clave en MS:</b><br>• <b>Macrominerales (g/kg MS):</b> Ca (6.5), P (3.8), Mg (3.0), K (12.0), Na (2.2), Cl (3.0), S (2.0).<br>• <b>Microminerales (mg/kg MS ppm):</b> Fe (120), Zn (60), Cu (15), Mn (40), I (0.8), Se (0.3), Co (0.2).<br>• <b>Ventaja de Minerales Quelatados:</b> La sustitución del 30-50% de los microminerales inorgánicos por proteolitos/quelatos orgánicos reduce las pérdidas por antagonismo (ej. Cobre vs Molibdeno/Azufre) y potencia la inmunidad mamaria (reducida Somatic Cell Count SCC).",
-            sources: "NASEM 2021 Cap. 7 • Ohio State University (Dr. Bill Weiss)"
-        }
-    ];
+    {
+        id: "proteina_mp",
+        keywords: ["proteina", "proteína", "mp", "cp", "rup", "rdp", "nnp", "urea", "úrea", "mcp", "nitrogeno", "nitrógeno", "nue", "nrc", "nasem"],
+        title: "🥩 Proteína Metabolizable (MP), RUP, RDP y Proteína Microbiana (NASEM Cap. 6)",
+        badge: "NASEM 2021 Cap. 6 (Páginas 85-112)",
+        formula: "MP Requerida (g/d) = (3.8 * BW^0.75) + (Milk_kg * %Protein * 10 * 1.4) | MP Lys:Met = 2.7 : 1.0",
+        body: `<b>Capítulo 6 NASEM 2021 (NRC Ganado de Leche):</b> NASEM 2021 abandona definitivamente el uso de Proteína Cruda (CP%) como métrica principal de formulación y se enfoca en la <b>Proteína Metabolizable (MP)</b> absorbida en el intestino delgado procedente de:
+<br>1. <b>Proteína Microbiana (MCP):</b> Generada en el rumen por bacterias alimentadas con RDP y carbohidratos fermentables (aporte: 50-70% de la MP total).
+<br>2. <b>Proteína Indegradable en Rumen (RUP):</b> Proteína del alimento que escapa a la fermentación ruminal (digestibilidad intestinal RUP: 70-95%).
+<br><br>
+<b>Límites de Formulación Recomendados NASEM 2021:</b>
+<br>• <b>Proteína Metabolizable (MP):</b> 11.0 - 12.5% de la MS en vacas de alta producción (1,800 - 2,500 g MP/día).
+<br>• <b>Proteína Degradable en Rumen (RDP):</b> 9.5 - 10.5% de la MS para maximizar la síntesis microbiana sin desperdicio de nitrógeno ureico en sangre (BUN < 14 mg/dL).
+<br>• <b>Eficiencia del Uso del Nitrógeno (NUE):</b> NASEM 2021 busca una NUE > 30-33% en leche (Leche N / Consumo N).`,
+        sources: "NASEM 2021 (8ª Edición Revisada, Capítulo 6)"
+    },
+    {
+        id: "aminoacidos_esenciales",
+        keywords: ["aminoacido", "aminoacidos", "aminoácido", "aminoácidos", "lisina", "lys", "metionina", "met", "histidina", "his", "leucina", "isoleucina", "valina", "treonina", "triptofano", "fenilalanina", "arginina", "cncps"],
+        title: "🧬 Aminoácidos Esenciales Limitantes: Lisina, Metionina e Histidina (NASEM Cap. 6 & CNCPS)",
+        badge: "NASEM 2021 & Cornell CNCPS v7.0",
+        formula: "MP Lisina = 6.9 - 7.2% de MP | MP Metionina = 2.6 - 2.8% de MP | Relación Lys:Met = 2.7 : 1.0",
+        body: `<b>Capítulo 6 NASEM 2021 & Cornell CNCPS v7.0 (Dr. Mike Van Amburgh):</b>
+<br>Los 10 aminoácidos esenciales requeridos son: <b>Lisina (Lys), Metionina (Met), Histidina (His), Leucina (Leu), Isoleucina (Ile), Valina (Val), Treonina (Thr), Triptófano (Trp), Fenilalanina (Phe) y Arginina (Arg)</b>.
+<br><br>
+<b>Jerarquía de Aminoácidos Limitantes:</b>
+<br>1. <b>Lisina (1er o 2º limitante):</b> Crítico para el volumen total de leche y síntesis de proteína láctea. Meta: <b>6.9 - 7.2% de la MP</b>.
+<br>2. <b>Metionina (1er o 2º limitante):</b> Regulador epigenético y precursor de grasa en leche. Meta: <b>2.6 - 2.8% de la MP</b>.
+<br>3. <b>Histidina (3er limitante):</b> Identificado en NASEM 2021 como limitante secundario en dietas basadas en ensilaje de hierba/alfalfa. Meta: > 2.2% de la MP.
+<br>• <b>Suplementación Protegida:</b> El uso de Metionina y Lisina protegidas de la degradación ruminal (RPM/RPL) incrementa la producción de proteína de leche en un +0.15 a +0.25% sin elevar el nitrógeno excretado.`,
+        sources: "NASEM 2021 Cap. 6 • Cornell University CNCPS v7.0 (Dr. Mike Van Amburgh)"
+    },
+    {
+        id: "energia_nel",
+        keywords: ["energia", "energía", "nel", "nem", "neg", "tdn", "mcal", "caloria", "calorias", "nrc", "nasem"],
+        title: "⚡ Energía Neta de Lactancia (NEL), Mantenimiento (NEm) y Ganancia (NEg) (NASEM Cap. 3 & 4)",
+        badge: "NASEM 2021 Cap. 3 & 4",
+        formula: "NEL (Mcal/d) = (0.080 * BW^0.75) + Leche_kg * (0.0929 * %Grasa + 0.0547 * %Proteína + 0.192)",
+        body: `<b>Capítulos 3 y 4 NASEM 2021:</b> La energía útil de la ración se mide en <b>Energía Neta (NE)</b>.
+<br><br>
+<b>Fracciones y Coeficientes NASEM 2021:</b>
+<br>• <b>NEm (Mantenimiento):</b> 0.080 Mcal NEL / kg BW^0.75 (ej. 10.3 Mcal/día para una vaca de 650 kg).
+<br>• <b>NEL (Lactancia):</b> Cada kg de leche al 3.8% Grasa y 3.2% Proteína requiere <b>0.70 Mcal de NEL</b>.
+<br>• <b>NEg (Ganancia de Peso):</b> Requiere 3.5 a 5.2 Mcal NEg por kg de ganancia diaria de peso corporal.
+<br>• <b>Densidad Recomendada:</b> 1.65 a 1.74 Mcal NEL / kg MS en raciones TMR de alta producción.`,
+        sources: "NASEM 2021 (8ª Edición, Capítulos 3 y 4)"
+    },
+    {
+        id: "carbohidratos_fibra",
+        keywords: ["fibra", "fdn", "ndf", "fda", "adf", "pendf", "undf", "undf240h", "lignina", "rumen", "acidosis", "sara", "grant"],
+        title: "🌿 Carbohidratos Fibrosos (aNDFom, ADF, peNDF y uNDF240h) (NASEM Cap. 5 & Miner Institute)",
+        badge: "NASEM 2021 Cap. 5 & Miner Institute",
+        formula: "aNDFom Total >= 28 - 32% MS | peNDF >= 21 - 23% MS | uNDF240h <= 0.38% BW",
+        body: `<b>Capítulo 5 NASEM 2021 & Dr. Rick Grant:</b> La fibra forrajera sostiene la masticación, salivación (bicarbonato sódico endógeno) y la capa ruminal estructurada.
+<br><br>
+<b>Métricas Clave de la Fibra:</b>
+<br>• <b>aNDFom (FDN libre de cenizas):</b> 28 - 32% de la MS (mínimo 75% proveniente de forrajes de fibra larga).
+<br>• <b>peNDF (Fibra Físicamente Efectiva):</b> Mínimo 21 - 23% de la MS para mantener el pH ruminal > 6.0 y prevenir Acidosis Ruminal Subaguda (SARA).
+<br>• <b>uNDF240h (FDN Indigestible a 240 horas):</b> Regula el llenado físico ruminal. Límite máximo: <b><= 0.38% del Peso Vivo</b> (2.47 kg uNDF240h en vaca de 650 kg).`,
+        sources: "NASEM 2021 Cap. 5 • Miner Institute / Cornell Shortcourse (Dr. Rick Grant)"
+    },
+    {
+        id: "carbohidratos_no_estructurales",
+        keywords: ["nfc", "almidon", "almidón", "azucar", "azucares", "azúcares", "pectina", "pectinas", "carbohidratos", "nrc", "nasem"],
+        title: "🌽 Carbohidratos No Estructurales (NFC): Almidón Ruminal, Azúcares y Pectinas (NASEM Cap. 5)",
+        badge: "NASEM 2021 Cap. 5 (Páginas 65-84)",
+        formula: "NFC (% MS) = 100 - (aNDFom% + CP% + EE% + Cenizas%) | Almidón Ruminal = 22 - 28% MS",
+        body: `<b>Capítulo 5 NASEM 2021:</b> Los NFC proveen la energía de fermentación rápida requerida para la síntesis de Proteína Microbiana (MCP).
+<br><br>
+<b>Componentes y Recomendaciones:</b>
+<br>• <b>NFC Total:</b> 36 - 42% de la MS.
+<br>• <b>Almidón Ruminal:</b> 22 - 28% de la MS en dietas de maíz/sorgo. Niveles > 30% almidón degradable aumentan bruscamente el riesgo de SARA y depresión de grasa láctea (MFD).
+<br>• <b>Azúcares Solubles (Sacarosa/Melaza):</b> 4 - 7% de la MS (estimulan el consumo y la población de bacterias utilizadoras de lactato).
+<br>• <b>Pectinas (Pulpa de remolacha / Cascarilla de soya):</b> 6 - 10% de la MS (altamente fermentables sin generar ácido láctico).`,
+        sources: "NASEM 2021 (8ª Edición, Cap. 5)"
+    },
+    {
+        id: "macrominerales_ca_p",
+        keywords: ["calcio", "ca", "fosforo", "fósforo", "p", "macrominerales", "macromineral", "hipocalcemia", "fiebre de leche", "nrc", "nasem"],
+        title: "🧪 Macrominerales Principales: Calcio (Ca) y Fósforo (P) (NASEM Cap. 7)",
+        badge: "NASEM 2021 Cap. 7 (Páginas 113-145)",
+        formula: "Req. Ca = (DMI * 6.5) g/día (0.65 - 0.85% MS) | Req. P = (DMI * 3.8) g/día (0.35 - 0.42% MS)",
+        body: `<b>Capítulo 7 NASEM 2021:</b>
+<br>• <b>Calcio (Ca):</b> Requerido para la estructura ósea, contracción muscular y secreción de leche (1.22 g Ca/kg de leche). Coeficiente de absorción (Ab): 0.60 en inorgánicos vs 0.85 en orgánicos quelatados.
+<br>• <b>Fósforo (P):</b> Imprescindible para el metabolismo energético (ATP) y amortiguador ruminal (saliva). NASEM 2021 fijó el objetivo en <b>0.38 - 0.42% de la MS</b> para eliminar la contaminación ambiental por fosfatos sin alterar la fertilidad.`,
+        sources: "NASEM 2021 Cap. 7 • Dr. Bill Weiss (Ohio State University)"
+    },
+    {
+        id: "macrominerales_mg_k_na_cl_s",
+        keywords: ["magnesio", "mg", "potasio", "k", "sodio", "na", "cloro", "cl", "azufre", "s", "tetania", "sal", "bicarbonato", "nrc", "nasem"],
+        title: "🧪 Macrominerales Electrolíticos: Magnesio (Mg), Potasio (K), Sodio (Na), Cloro (Cl) y Azufre (S) (NASEM Cap. 7)",
+        badge: "NASEM 2021 Cap. 7 Electrolitos",
+        formula: "Mg = 0.30-0.40% MS | K = 1.2-1.5% MS | Na = 0.22-0.30% MS | Cl = 0.30% MS | S = 0.20% MS",
+        body: `<b>Capítulo 7 NASEM 2021:</b>
+<br>• <b>Magnesio (Mg):</b> Requerido 0.30 - 0.40% MS. El Mg previene la tetania de los pastos. El potasio elevado (K > 2.5%) antagoniza la absorción ruminal de Mg.
+<br>• <b>Potasio (K):</b> Requerido 1.2 - 1.5% MS en lactancia (aumenta a 1.6-1.8% en estrés por calor). En vacas secas se debe mantener K < 1.3% para prevenir alcalosis y hipocalcemia.
+<br>• <b>Sodio (Na) y Cloro (Cl):</b> Sal común (NaCl) a 0.5% de la MS + Bicarbonato de Sodio (0.75-1.0% MS).
+<br>• <b>Azufre (S):</b> Requerido 0.20% MS para aminoácidos azufrados (Metionina/Cisteína). Límite máximo: 0.40% MS (evita toxicidad por sulfuro de hidrógeno H2S).`,
+        sources: "NASEM 2021 Cap. 7 (Páginas 113-145)"
+    },
+    {
+        id: "microminerales_fe_zn_cu_mn_i_se_co_cr",
+        keywords: ["hierro", "fe", "zinc", "cinc", "zn", "cobre", "cu", "manganeso", "mn", "yodo", "i", "selenio", "se", "cobalto", "co", "cromo", "cr", "microminerales", "oligoelementos", "quelatos", "nrc", "nasem"],
+        title: "🔬 Microminerales y Oligoelementos: Fe, Zn, Cu, Mn, I, Se, Co y Cromo (Cr) (NASEM Cap. 7)",
+        badge: "NASEM 2021 Cap. 7 Microminerales",
+        formula: "Fe: 120 ppm | Zn: 60 ppm | Cu: 15 ppm | Mn: 40 ppm | I: 0.8 ppm | Se: 0.3 ppm | Co: 0.2 ppm | Cr: 0.5 ppm",
+        body: `<b>Capítulo 7 NASEM 2021:</b>
+<br>• <b>Cinc / Zinc (Zn - 60 ppm):</b> Integridad de la pezuña, queratina del canal del pezón e inmunidad.
+<br>• <b>Cobre (Cu - 15 ppm):</b> Antagonizado por Molibdeno (Mo), Azufre (S) e Hierro (Fe). NASEM 2021 recomienda controlar la acumulación hepática de Cu.
+<br>• <b>Manganeso (Mn - 40 ppm):</b> Desarrollo embrionario y lubricación articular.
+<br>• <b>Yodo (I - 0.8 ppm):</b> Hormonas tiroideas T3/T4 y metabolismo basal.
+<br>• <b>Selenio (Se - 0.3 ppm):</b> Antioxidante (Glutatión Peroxidasa) en combinación con Vitamina E.
+<br>• <b>Cobalto (Co - 0.2 ppm):</b> Precursor exclusivo para la síntesis microbiana de Vitamina B12 en rumen.
+<br>• <b>Cromo (Cr - 0.5 ppm):</b> Novedad en NASEM 2021. Sensibilizador de insulina que aumenta el DMI en transición y estrés térmico.`,
+        sources: "NASEM 2021 (8ª Edición, Cap. 7)"
+    },
+    {
+        id: "vitaminas_liposolubles",
+        keywords: ["vitamina a", "vitamina d", "vitamina e", "vitamina k", "beta caroteno", "tocoferol", "colecalciferol", "retinol", "vitaminas", "nrc", "nasem"],
+        title: "💊 Vitaminas Liposolubles: Vitamina A, Vitamina D3 y Vitamina E (NASEM Cap. 8)",
+        badge: "NASEM 2021 Cap. 8 (Páginas 147-160)",
+        formula: "Vit A: 110 UI/kg BW | Vit D3: 30 UI/kg BW | Vit E: 1.6 - 4.0 UI/kg BW (1000 - 2000 UI/día preparto)",
+        body: `<b>Capítulo 8 NASEM 2021:</b>
+<br>• <b>Vitamina A (110 UI/kg BW | ~70,000 UI/día):</b> Esencial para la salud epitelial, mucosas uterinas y visión.
+<br>• <b>Vitamina D3 (30 UI/kg BW | ~20,000 UI/día):</b> Homeostasis del calcio y resorción ósea.
+<br>• <b>Vitamina E (1,000 - 2,000 UI/día en secas/preparto):</b> Antioxidante celular de membrana. Reduce drásticamente la incidencia de mastitis subclínica y retención de placenta al parto.`,
+        sources: "NASEM 2021 (8ª Edición, Cap. 8)"
+    },
+    {
+        id: "vitaminas_hidrosolubles_colina",
+        keywords: ["vitaminas b", "complejo b", "biotina", "niacina", "colina", "colina protegida", "rpc", "tiamina", "b12", "b6", "pantotenico", "folico", "nrc", "nasem"],
+        title: "💊 Vitaminas Hidrosolubles (Complejo B, Biotina, Niacina) y Colina Protegida (RPC) (NASEM Cap. 8)",
+        badge: "NASEM 2021 Cap. 8 Vitaminas B & RPC",
+        formula: "Colina Protegida RPC = 12.9 g/día de Colina pura (60 g RPC/día) | Biotina = 20 mg/día",
+        body: `<b>Capítulo 8 NASEM 2021:</b>
+<br>• <b>Colina Protegida en Rumen (RPC):</b> NASEM 2021 respaldó formalmente la suplementación de RPC (12.9 g/día de colina ion pura) en el periodo de transición (21 días preparto a 21 días posparto). Promueve la exportación de VLDL desde el hígado, reduciendo el hígado graso y la cetosis en un 70%.
+<br>• <b>Biotina (20 mg/día):</b> Fortalece la estructura del casco (línea blanca) y aumenta la producción de leche en +1.3 kg/día al actuar como coenzima en la gluconeogénesis (piruvato carboxilasa).
+<br>• <b>Niacina (B3 - 6 a 12 g/día):</b> Reduce la lipólisis excesiva y ayuda en estrés térmico.`,
+        sources: "NASEM 2021 Cap. 8 • Dr. Ric Grummer (Univ. of Wisconsin)"
+    },
+    {
+        id: "lipidos_acidos_grasos",
+        keywords: ["grasa", "grasas", "fat", "lipido", "lipidos", "extracto etereo", "palmitico", "estearico", "oleico", "linoleico", "linolenico", "omega", "epa", "dha", "tecnigrasas", "rolando", "hernandez", "fiv", "ovocito"],
+        title: "🥑 Nutrición Lipídica y Perfil de Ácidos Grasos (C16:0, C18:0, C18:1, Omega-6 y Omega-3) (NASEM Cap. 4 & Tecnigrasas)",
+        badge: "NASEM 2021 Cap. 4 & Tecnigrasas SAS",
+        formula: "Grasa Total Dieta <= 6.0 - 7.0% MS | Relación AGPI Omega-6 : Omega-3 = 4.0:1 a 5.0:1",
+        body: `<b>Capítulo 4 NASEM 2021 & Investigaciones del MV MSc Rolando Hernández Mora (Tecnigrasas SAS):</b>
+<br>• <b>Límite de Grasa en Dieta:</b> La grasa total no debe superar el 6.5-7.0% de la MS (grasa libre en rumen < 4.0% para no inhibir bacterias celulolíticas).
+<br>• <b>Ácido Palmítico (C16:0):</b> Incrementa el porcentaje y rendimiento de grasa en leche.
+<br>• <b>Ácido Oleico (C18:1):</b> Mejora la digestibilidad de la grasa total y el estado energético.
+<br>• <b>Ácidos Grasos Poliinsaturados AGPI (Omega-6 y Omega-3):</b> La suplementación con sales de calcio en relación 4:1 a 5:1 eleva la progesterona celular, estimula la calidad ovocitaria y aumenta las tasas de concepción en Fertilización In Vitro (FIV).`,
+        sources: "NASEM 2021 Cap. 4 • Tecnigrasas SAS & UCV (MV MSc Rolando Hernández Mora)"
+    },
+    {
+        id: "agua_hidratacion",
+        keywords: ["agua", "water", "bebida", "hidratacion", "litros", "temperatura", "wetherly", "cardoso", "illinois", "nrc", "nasem"],
+        title: "💧 Consumo de Agua de Bebida y Estrés Hídrico (NASEM Cap. 9 & Univ. Illinois 2025)",
+        badge: "NASEM 2021 Cap. 9 & Univ. of Illinois",
+        formula: "Agua (L/día) = 15.99 + (1.58 * DMI_kg) + (0.90 * Leche_kg) + (0.05 * Na_g) + (1.20 * Temp_C)",
+        body: `<b>Capítulo 9 NASEM 2021 & Universidad de Illinois (Wetherly & Cardoso, 2015):</b>
+<br>El agua representa el 87% del volumen de la leche producida.
+<br>• <b>Consumo Promedio:</b> 115 a 140 Litros/cabeza/día en vacas de alta producción a 25°C.
+<br>• <b>Sensibilidad al Calor:</b> Por cada 1°C de aumento sobre los 20°C, el consumo de agua se incrementa en +1.2 Litros/día.
+<br>• <b>Impacto en Producción:</b> Restringir el agua en un 10% reduce el DMI inmediatamente en un 15-20%.`,
+        sources: "NASEM 2021 Cap. 9 • University of Illinois 2025"
+    },
+    {
+        id: "transicion_dcad_hipocalcemia",
+        keywords: ["dcad", "bac", "preparto", "transicion", "hipocalcemia", "fiebre de leche", "cloro", "azufre", "potasio", "ph urinario", "goldilocks", "drackley", "nasem"],
+        title: "⚡ Manejo Nutricional de Transición, DCAD y Dieta Goldilocks (NASEM Cap. 12 & Illinois)",
+        badge: "NASEM 2021 Cap. 12 & Illinois Goldilocks",
+        formula: "DCAD Preparto = -50 a -150 mEq/kg MS | pH Urinario Holstein = 6.0 - 6.5 | Paja de Trigo = 3.0 - 4.5 kg/d",
+        body: `<b>Capítulo 12 NASEM 2021 & Dr. James Drackley (Univ. of Illinois):</b>
+<br>• <b>DCAD Aniónico Preparto:</b> Formular con DCAD de -50 a -150 mEq/kg MS durante los 21 días previos al parto genera una acidificación metabólica leve transitoria que activa los receptores de PTH, previniendo la hipocalcemia clínica y subclínica.
+<br>• <b>Dieta de Energía Controlada "Goldilocks":</b> Utilizar 3.0 a 4.5 kg/día de paja de trigo picada (< 5 cm) limita la densidad energética a 1.30-1.35 Mcal NEL/kg MS, previniendo la sobrecondición, el hígado graso y el desplazamiento de abomaso (LDA).`,
+        sources: "NASEM 2021 Cap. 12 • University of Illinois 2025 (Dr. James Drackley)"
+    },
+    {
+        id: "eficiencia_alimenticia_fe",
+        keywords: ["eficiencia", "fe", "hutjens", "penn state", "fcm", "leche corregida", "pico", "retorno"],
+        title: "🥛 Eficiencia Alimenticia (FE = FCM / DMI) & Metas del Hato (Penn State University)",
+        badge: "Penn State University (Dr. Mike Hutjens)",
+        formula: "FE (kg Leche / kg MS) = Leche Corregida por Grasa al 3.5% (FCM) / Consumo DMI (kg/d)",
+        body: `<b>Penn State University Dairy Extension (Dr. Mike Hutjens):</b>
+<br>Mide la conversión biológica del alimento consumido en leche corregida por grasa (FCM 3.5%).
+<br>• <b>Meta Promedio del Hato:</b> >= 1.50 kg Leche / kg DMI.
+<br>• <b>Pico de Lactancia (30 - 90 DEL):</b> 1.60 - 1.85.
+<br>• <b>Rentabilidad:</b> Un incremento de +0.10 unidades en FE equivale a +1.5 a +2.0 kg de leche adicional por vaca/día sin gasto extra en forraje o concentrado.`,
+        sources: "Penn State University Extension • Dr. Mike Hutjens Dairy Course"
+    }
+];];
 
     function removeAccents(str) {
         if (!str) return "";
