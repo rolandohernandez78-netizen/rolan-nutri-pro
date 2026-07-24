@@ -1393,9 +1393,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     function populateCategories() {
     speciesSelect = speciesSelect || document.getElementById("species-select");
     categorySelect = categorySelect || document.getElementById("category-select");
-        if (!nutrientDB || !speciesSelect || !categorySelect) return;
-        const speciesKey = speciesSelect.value;
-        const speciesData = nutrientDB.species_profiles[speciesKey];
+    if (!nutrientDB || !speciesSelect || !categorySelect) return;
+    const profiles = nutrientDB.species_profiles || nutrientDB.species || {};
+    const speciesKey = speciesSelect.value;
+    const speciesData = profiles[speciesKey];
 
         categorySelect.innerHTML = "";
         if (speciesData && speciesData.categories) {
@@ -1670,7 +1671,8 @@ function updateMineralTablesAndHighlight() {
 
     const speciesKey = speciesSelect ? speciesSelect.value : "dairy_nasem";
     const catIndex = categorySelect ? (parseInt(categorySelect.value) || 0) : 0;
-    const speciesData = nutrientDB.species[speciesKey];
+    const profiles = nutrientDB.species_profiles || nutrientDB.species || {};
+    const speciesData = profiles[speciesKey];
     const cat = (speciesData && speciesData.categories) ? speciesData.categories[catIndex] : null;
     const catId = cat ? cat.id : "lactating_primiparous";
 
