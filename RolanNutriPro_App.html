@@ -1439,230 +1439,167 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // Main Nutrition Calculation Function
     function calculateRequirements() {
-        if (!nutrientDB || !speciesSelect || !categorySelect) return;
+    if (!speciesSelect || !categorySelect) return;
 
-        const speciesKey = speciesSelect.value;
-        const catIndex = parseInt(categorySelect.value) || 0;
-        const bw = parseFloat(bwInput.value) || 650;
+    const speciesKey = speciesSelect.value;
+    const catIndex = parseInt(categorySelect.value) || 0;
+    const bw = parseFloat(bwInput.value) || 650;
+    const milk = parseFloat(milkInput.value) || 35.0;
+    const fat = parseFloat(fatInput.value) || 3.80;
+    const protein = parseFloat(proteinInput.value) || 3.20;
+    const dim = parseFloat(dimInput.value) || 60;
+    const adg = parseFloat(adgInput.value) || 1.20;
 
-        let results = [];
+    let dmi = 0, nel = 0, mp = 0, ca = 0, p = 0;
 
-        if (speciesKey === "dairy_nasem") {
-            const cat = nutrientDB.species_profiles.dairy_nasem.categories[catIndex];
-            const categoryName = cat ? cat.name : "Vaca en Lactancia";
+    if (speciesKey === dairy_nasem) {
+        if (catIndex === 0) {
+            // Lactating Dairy Cow - NASEM 2021 Official Eq. 2-1 (Chapter 2, Page 24)
+            const fcm4 = milk * (0.4 + 0.15 * fat);
+            const dmiBase = (0.022 * bw) + (0.305 * fcm4);
+            const wol = dim / 7.0;
+            const lag = 1.0 - Math.exp(-0.192 * (wol + 3.67));
+            dmi = Math.max(12.0, dmiBase * lag);
 
-            const milk = parseFloat(milkInput.value) || 0;
-            const fat = parseFloat(fatInput.value) || 3.8;
-            const protein = parseFloat(proteinInput.value) || 3.2;
-            const dim = parseFloat(dimInput.value) || 60;
-            const adg = parseFloat(adgInput.value) || 0.85;
+            // Energy: NEm + NE_milk (NASEM 2021 Cap. 3 & 4)
+            const nem = 0.080 * Math.pow(bw, 0.75);
+            const neMilk = milk * (0.0929 * fat + 0.0547 * protein + 0.192);
+            nel = nem + neMilk;
 
-            let dmi = 0;
-            let nelReq = 0;
-            let mpReq = 0;
+            // Metabolizable Protein MP (NASEM 2021 Cap. 6)
+            const mpMaint = 3.8 * Math.pow(bw, 0.75);
+            const mpMilk = milk * (protein / 100.0) * 1000.0 * 1.4;
+            mp = (mpMaint + mpMilk) / 1000.0;
 
-            if (categoryName.includes("Lactancia")) {
-                const milkE = milk * (0.0929 * fat + 0.0547 * protein + 0.0395 * 4.8);
-                const parity = catIndex === 0 ? 0 : 1;
-                const bcs = 3.0;
-                const dmiBase = (3.7 + parity * 5.7) + (0.305 * milkE) + (0.022 * bw) + ((-0.689 - 1.87 * parity) * bcs);
-                const dimFactor = 1 - Math.exp(-0.212 * (dim / 7 + 2.56));
-                dmi = dmiBase * dimFactor;
+            // Calcium Ca & Phosphorus P (NASEM 2021 Cap. 7)
+            const caMaint = 0.031 * bw;
+            const caMilk = 1.22 * milk;
+            ca = (caMaint + caMilk) / 0.60;
 
-                nelReq = (0.08 * Math.pow(bw, 0.75)) + (milk * (0.0929 * fat + 0.0547 * protein + 0.192));
-                mpReq = (3.8 * Math.pow(bw, 0.75)) + (milk * (protein * 10 * 1.4));
-            } else if (categoryName.includes("Lejano")) {
-                dmi = bw * 0.0197;
-                nelReq = 0.08 * Math.pow(bw, 0.75) * 1.2;
-                mpReq = 3.8 * Math.pow(bw, 0.75) * 1.2;
-            } else if (categoryName.includes("Pre-parto")) {
-                dmi = bw * 0.0170;
-                nelReq = 0.08 * Math.pow(bw, 0.75) * 1.35;
-                mpReq = 3.8 * Math.pow(bw, 0.75) * 1.4;
-            } else {
-                dmi = bw * 0.0225;
-                nelReq = (0.08 * Math.pow(bw, 0.75)) + (adg * 3.5);
-                mpReq = (3.8 * Math.pow(bw, 0.75)) + (adg * 250);
-            }
-
-            results = [
-                {
-                    nutrient: "Consumo de Materia Seca (DMI)",
-                    valTech: `${dmi.toFixed(2)} kg MS/día (${(dmi / bw * 100).toFixed(2)}% BW)`,
-                    valPrac: `${dmi.toFixed(1)} kg de alimento seco al día`,
-                    desc: "Estimado por Ecuación NASEM 2021 Eq. 2-1 (de Souza et al., 2019)."
-                },
-                {
-                    nutrient: "Energía Neta de Lactancia (NEL)",
-                    valTech: `${nelReq.toFixed(2)} Mcal/día (${(nelReq / dmi).toFixed(2)} Mcal/kg MS)`,
-                    valPrac: `${nelReq.toFixed(1)} Mcal/día para leche y mantenimiento`,
-                    desc: "Energía Neta NASEM 2021 para mantenimiento y producción."
-                },
-                {
-                    nutrient: "Proteína Metabolizable (MP)",
-                    valTech: `${mpReq.toFixed(0)} g MP/día (${(mpReq / dmi / 10).toFixed(2)}% MP en MS)`,
-                    valPrac: `${(mpReq / 1000).toFixed(2)} kg de proteína verdaderamente absorbida al día`,
-                    desc: "Requerimiento de aminoácidos absorbidos en intestino delgado."
-                },
-                {
-                    nutrient: "Calcio (Ca)",
-                    valTech: `${(dmi * 6.5).toFixed(1)} g Ca/día (6.5 g/kg MS)`,
-                    valPrac: `${(dmi * 6.5).toFixed(0)} gramos de Calcio por día`,
-                    desc: "NASEM 2021 Cap. 7. Coeficiente de absorción ruminal/intestinal."
-                },
-                {
-                    nutrient: "Fósforo (P)",
-                    valTech: `${(dmi * 3.8).toFixed(1)} g P/día (3.8 g/kg MS)`,
-                    valPrac: `${(dmi * 3.8).toFixed(0)} gramos de Fósforo por día`,
-                    desc: "Requerimiento esencial para metabolismo energético y mineral."
-                }
-            ];
+            const pMaint = 0.018 * bw;
+            const pMilk = 0.90 * milk;
+            p = (pMaint + pMilk) / 0.70;
+        } else if (catIndex === 1) {
+            // Far-off Dry Cow (NASEM 2021)
+            dmi = bw * 0.0197;
+            nel = 0.080 * Math.pow(bw, 0.75) * 1.25;
+            mp = (3.8 * Math.pow(bw, 0.75) * 1.2) / 1000.0;
+            ca = (0.031 * bw + 12.0) / 0.60;
+            p = (0.018 * bw + 8.0) / 0.70;
+        } else if (catIndex === 2) {
+            // Close-up Dry Cow (NASEM 2021 Preparto)
+            dmi = bw * 0.0170;
+            nel = 0.080 * Math.pow(bw, 0.75) * 1.40;
+            mp = (3.8 * Math.pow(bw, 0.75) * 1.4) / 1000.0;
+            ca = (0.031 * bw + 18.0) / 0.60;
+            p = (0.018 * bw + 10.0) / 0.70;
         } else {
-            const cat = nutrientDB.species_profiles.beef_oklahoma.categories[catIndex];
-            const categoryName = cat ? cat.name : "Novillo en Ceba";
-            const adg = parseFloat(adgInput.value) || 1.2;
-
-            const dmi = bw * 0.0235;
-            const nemReq = 0.077 * Math.pow(bw, 0.75);
-            const negReq = 0.0557 * Math.pow(bw, 0.75) * adg;
-
-            results = [
-                {
-                    nutrient: "Consumo de Materia Seca (DMI)",
-                    valTech: `${dmi.toFixed(2)} kg MS/día (${(dmi / bw * 100).toFixed(2)}% BW)`,
-                    valPrac: `${dmi.toFixed(1)} kg de alimento seco al día`,
-                    desc: "Estándar Oklahoma E-974 en kg."
-                },
-                {
-                    nutrient: "Energía Neta de Mantenimiento (NEm)",
-                    valTech: `${nemReq.toFixed(2)} Mcal/día`,
-                    valPrac: `${nemReq.toFixed(1)} Mcal/día para mantenerse`,
-                    desc: "Energía de sostenimiento biológico."
-                },
-                {
-                    nutrient: "Energía Neta de Ganancia (NEg)",
-                    valTech: `${negReq.toFixed(2)} Mcal/día para ${adg} kg/día ADG`,
-                    valPrac: `${negReq.toFixed(1)} Mcal/día para engorde`,
-                    desc: "Energía retenida en tejido muscular y adiposo."
-                }
-            ];
+            // Growing Heifer
+            dmi = bw * 0.0245;
+            nel = 0.080 * Math.pow(bw, 0.75) + adg * 3.5;
+            mp = (3.8 * Math.pow(bw, 0.75) + adg * 220) / 1000.0;
+            ca = (0.031 * bw + adg * 15) / 0.60;
+            p = (0.018 * bw + adg * 8) / 0.70;
         }
-
-        renderResults(results);
-        updateMineralTablesAndHighlight();
+    } else {
+        // Beef Cattle (Oklahoma / NASEM Beef)
+        dmi = bw * 0.023 + (catIndex === 0 ? milk * 0.10 : adg * 0.5);
+        nel = 0.077 * Math.pow(bw, 0.75) + (catIndex === 0 ? milk * 0.70 : adg * 3.8);
+        mp = (3.4 * Math.pow(bw, 0.75) + (catIndex === 0 ? milk * 30 : adg * 200)) / 1000.0;
+        ca = (0.025 * bw + (catIndex === 0 ? milk * 1.2 : adg * 14)) / 0.50;
+        p = (0.016 * bw + (catIndex === 0 ? milk * 0.9 : adg * 7)) / 0.60;
     }
 
-    // Render Main Calculation Results Cards in Colored Grid Boxes
-    function renderResults(results) {
-        if (!resultsContainer) return;
-        resultsContainer.innerHTML = "";
+    renderRequirementBoxes(dmi, nel, mp, ca, p, bw);
+    renderCornellModule(dmi, bw, milk, fat, protein);
+    updateMineralTablesAndHighlight();
+}
 
-        const boxStyles = [
-            { bg: "linear-gradient(135deg, #065f46 0%, #047857 50%, #059669 100%)", border: "#10b981", class: "box-dmi" },
-            { bg: "linear-gradient(135deg, #1e3a8a 0%, #1d4ed8 50%, #2563eb 100%)", border: "#60a5fa", class: "box-energy" },
-            { bg: "linear-gradient(135deg, #4c1d95 0%, #6d28d9 50%, #7c3aed 100%)", border: "#a78bfa", class: "box-protein" },
-            { bg: "linear-gradient(135deg, #78350f 0%, #b45309 50%, #d97706 100%)", border: "#fbbf24", class: "box-ca" },
-            { bg: "linear-gradient(135deg, #164e63 0%, #0e7490 50%, #0284c7 100%)", border: "#38bdf8", class: "box-p" }
-        ];
+function updateMineralTablesAndHighlight() {
+    if (!nutrientDB || !nutrientDB.mineral_catalog) return;
+    const catalog = nutrientDB.mineral_catalog;
+    const bw = parseFloat(bwInput.value) || 650;
+    const milk = parseFloat(milkInput.value) || 35.0;
+    const fat = parseFloat(fatInput.value) || 3.80;
+    const dim = parseFloat(dimInput.value) || 60;
 
-        resultsContainer.style.display = "grid";
-        resultsContainer.style.gridTemplateColumns = "repeat(auto-fit, minmax(240px, 1fr))";
-        resultsContainer.style.gap = "16px";
-        resultsContainer.style.marginTop = "14px";
+    // NASEM 2021 Eq. 2-1 DMI for mineral intake calculation
+    const fcm4 = milk * (0.4 + 0.15 * fat);
+    const dmiBase = (0.022 * bw) + (0.305 * fcm4);
+    const wol = dim / 7.0;
+    const lag = 1.0 - Math.exp(-0.192 * (wol + 3.67));
+    const dmi = Math.max(12.0, dmiBase * lag);
 
-        results.forEach((res, index) => {
-            const card = document.createElement("div");
-            const style = boxStyles[index % boxStyles.length];
+    if (mineralAnimalBadge) mineralAnimalBadge.innerText = `Vaca ${bw} kg | DMI Est: ${dmi.toFixed(1)} kg MS/d`;
 
-            card.className = `result-item-card ${style.class}`;
-            card.style.background = style.bg;
-            card.style.borderLeft = `6px solid ${style.border}`;
-            card.style.borderRadius = "14px";
-            card.style.padding = "16px 20px";
-            card.style.boxShadow = "0 8px 24px rgba(0,0,0,0.3)";
-            card.style.border = "1px solid rgba(255,255,255,0.15)";
+    // Highlighted Mineral Card
+    const item = catalog[activeSelectedMineral];
+    if (item && mineralDetailsContainer) {
+        const isMacro = item.unit.includes("g");
+        const reqVal = isMacro ? `${item.req_per_kg_dm} g/kg MS` : `${item.req_per_kg_dm} mg/kg MS (ppm)`;
+        const totalVal = isMacro ? `${(dmi * item.req_per_kg_dm).toFixed(1)} g/día` : `${(dmi * item.req_per_kg_dm).toFixed(0)} mg/día`;
 
-            const valStr = currentViewMode === "technical" ? res.valTech : res.valPrac;
-
-            card.innerHTML = `
-                <div class="result-header" style="display:flex; flex-direction:column; gap:6px; margin-bottom:8px;">
-                    <span class="result-name" style="font-size:0.85rem; font-weight:700; color:#e2e8f0; text-transform:uppercase; letter-spacing:0.8px;">${res.nutrient}</span>
-                    <span class="result-value" style="font-size:1.45rem; font-weight:700; color:#ffffff; line-height:1.25; text-shadow:0 2px 6px rgba(0,0,0,0.6);">${valStr}</span>
+        mineralDetailsContainer.innerHTML = `
+            <div class="practical-card" style="border-left-color: var(--primary-emerald); background: #f0fdf4; border: 1.5px solid #a7f3d0;">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <h4 style="margin:0; font-size:1.25rem; font-weight:700; color:#0f172a;">🧪 Ficha Técnica: ${item.name} (${item.symbol})</h4>
+                    <span class="badge-source" style="background:#dcfce7; color:#047857; border-color:#86efac;">${item.category}</span>
                 </div>
-                <div class="result-desc" style="font-size:0.83rem; color:#f1f5f9; line-height:1.35; margin-top:8px; padding-top:8px; border-top:1px solid rgba(255,255,255,0.2);">${res.desc}</div>
-            `;
-            resultsContainer.appendChild(card);
+                <div class="practical-stats" style="margin-top:12px;">
+                    <div class="practical-stat-item" style="color:#0f172a; background:#ffffff; border:1px solid #cbd5e1;">Requerimiento por kg MS: <strong style="color:#047857;">${reqVal}</strong></div>
+                    <div class="practical-stat-item" style="color:#0f172a; background:#ffffff; border:1px solid #cbd5e1;">Consumo Total Estimado: <strong style="color:#047857;">${totalVal}</strong></div>
+                    <div class="practical-stat-item" style="color:#0f172a; background:#ffffff; border:1px solid #cbd5e1;">Límite Máximo Tolerable: <strong style="color:#b45309;">${item.unit.includes("g") ? item.max_tolerable + "% MS" : item.max_tolerable + " ppm"}</strong></div>
+                </div>
+                <p style="margin-top:12px; font-size:0.92rem; color:#1e293b; line-height:1.5;"><strong style="color:#047857;">Función Fisiológica:</strong> ${item.function}</p>
+                <p style="margin-top:6px; font-size:0.90rem; color:#334155; line-height:1.5;"><strong style="color:#0f172a;">Síntomas de Deficiencia:</strong> ${item.deficiency}</p>
+            </div>
+        `;
+    }
+
+    // Populate Macromineral Table
+    if (macroMineralTableBody) {
+        macroMineralTableBody.innerHTML = "";
+        ["Ca", "P", "Mg", "K", "Na", "Cl", "S"].forEach(sym => {
+            const min = catalog[sym];
+            if (min) {
+                const row = document.createElement("tr");
+                if (sym === activeSelectedMineral) row.classList.add("selected-row");
+                row.style.cursor = "pointer";
+                row.innerHTML = `<td><strong>${min.name} (${min.symbol})</strong></td><td>${min.req_per_kg_dm} g/kg MS</td><td><strong>${(dmi * min.req_per_kg_dm).toFixed(1)} g/día</strong></td>`;
+                row.addEventListener("click", () => {
+                    activeSelectedMineral = sym;
+                    if (mineralTypeSelect) mineralTypeSelect.value = sym;
+                    updateMineralTablesAndHighlight();
+                    triggerMooAudio();
+                });
+                macroMineralTableBody.appendChild(row);
+            }
         });
     }
 
-    // Render Mineral Highlight Ficha Técnica Card
-    function updateMineralTablesAndHighlight() {
-        if (!nutrientDB || !nutrientDB.mineral_catalog) return;
-        const catalog = nutrientDB.mineral_catalog;
-        const bw = parseFloat(bwInput.value) || 650;
-        const milk = parseFloat(milkInput.value) || 35;
-        const milkE = milk * (0.0929 * 3.8 + 0.0547 * 3.2 + 0.0395 * 4.8);
-        const dmiBase = 9.4 + 0.305 * milkE + 0.022 * bw - 0.689 * 3.0;
-        const dmi = Math.max(12, dmiBase);
-
-        if (mineralAnimalBadge) mineralAnimalBadge.innerText = `Vaca ${bw} kg | DMI Est: ${dmi.toFixed(1)} kg MS/d`;
-
-        const item = catalog[activeSelectedMineral];
-        if (item && mineralDetailsContainer) {
-            const isMacro = item.unit.includes("g");
-            const reqVal = isMacro ? `${item.req_per_kg_dm} g/kg MS` : `${item.req_per_kg_dm} mg/kg MS (ppm)`;
-            const totalVal = isMacro ? `${(dmi * item.req_per_kg_dm).toFixed(1)} g/día` : `${(dmi * item.req_per_kg_dm).toFixed(0)} mg/día`;
-
-            mineralDetailsContainer.innerHTML = `
-                <div class="practical-card" style="border-left-color: var(--primary-emerald); background: #f0fdf4; border: 1.5px solid #a7f3d0;">
-                    <div style="display:flex; justify-content:space-between; align-items:center;">
-                        <h4 style="margin:0; font-size:1.25rem; font-weight:700; color:#0f172a;">🧪 Ficha Técnica: ${item.name} (${item.symbol})</h4>
-                        <span class="badge-source" style="background:#dcfce7; color:#047857; border-color:#86efac;">${item.category}</span>
-                    </div>
-                    <div class="practical-stats" style="margin-top:12px;">
-                        <div class="practical-stat-item" style="color:#0f172a; background:#ffffff; border:1px solid #cbd5e1;">Requerimiento por kg MS: <strong style="color:#047857;">${reqVal}</strong></div>
-                        <div class="practical-stat-item" style="color:#0f172a; background:#ffffff; border:1px solid #cbd5e1;">Consumo Total Estimado: <strong style="color:#047857;">${totalVal}</strong></div>
-                        <div class="practical-stat-item" style="color:#0f172a; background:#ffffff; border:1px solid #cbd5e1;">Límite Máximo Tolerable: <strong style="color:#b45309;">${item.unit.includes("g") ? item.max_tolerable + "% MS" : item.max_tolerable + " ppm"}</strong></div>
-                    </div>
-                    <p style="margin-top:12px; font-size:0.92rem; color:#1e293b; line-height:1.5;"><strong style="color:#047857;">Función Fisiológica:</strong> ${item.function}</p>
-                    <p style="margin-top:6px; font-size:0.90rem; color:#334155; line-height:1.5;"><strong style="color:#0f172a;">Síntomas de Deficiencia:</strong> ${item.deficiency}</p>
-                </div>
-            `;
-        }
-
-        if (macroMineralTableBody) {
-            macroMineralTableBody.innerHTML = "";
-            ["Ca", "P", "Mg", "K", "Na", "Cl", "S"].forEach(sym => {
-                const min = catalog[sym];
-                if (min) {
-                    const row = document.createElement("tr");
-                    if (sym === activeSelectedMineral) row.classList.add("selected-row");
-                    row.style.cursor = "pointer";
-                    row.innerHTML = `<td><strong>${min.name} (${min.symbol})</strong></td><td>${min.req_per_kg_dm} g/kg MS</td><td><strong>${(dmi * min.req_per_kg_dm).toFixed(1)} g/día</strong></td>`;
-                    row.addEventListener("click", () => { activeSelectedMineral = sym; if (mineralTypeSelect) mineralTypeSelect.value = sym; updateMineralTablesAndHighlight(); triggerMooAudio(); });
-                    macroMineralTableBody.appendChild(row);
-                }
-            });
-        }
-
-        if (microMineralTableBody) {
-            microMineralTableBody.innerHTML = "";
-            ["Fe", "Zn", "Cu", "Mn", "I", "Se", "Co"].forEach(sym => {
-                const min = catalog[sym];
-                if (min) {
-                    const row = document.createElement("tr");
-                    if (sym === activeSelectedMineral) row.classList.add("selected-row");
-                    row.style.cursor = "pointer";
-                    row.innerHTML = `<td><strong>${min.name} (${min.symbol})</strong></td><td>${min.req_per_kg_dm} mg/kg MS (ppm)</td><td><strong>${(dmi * min.req_per_kg_dm).toFixed(0)} mg/día</strong></td>`;
-                    row.addEventListener("click", () => { activeSelectedMineral = sym; if (mineralTypeSelect) mineralTypeSelect.value = sym; updateMineralTablesAndHighlight(); triggerMooAudio(); });
-                    microMineralTableBody.appendChild(row);
-                }
-            });
-        }
+    // Populate Micromineral Table
+    if (microMineralTableBody) {
+        microMineralTableBody.innerHTML = "";
+        ["Fe", "Zn", "Cu", "Mn", "I", "Se", "Co"].forEach(sym => {
+            const min = catalog[sym];
+            if (min) {
+                const row = document.createElement("tr");
+                if (sym === activeSelectedMineral) row.classList.add("selected-row");
+                row.style.cursor = "pointer";
+                row.innerHTML = `<td><strong>${min.name} (${min.symbol})</strong></td><td>${min.req_per_kg_dm} mg/kg MS (ppm)</td><td><strong>${(dmi * min.req_per_kg_dm).toFixed(0)} mg/día</strong></td>`;
+                row.addEventListener("click", () => {
+                    activeSelectedMineral = sym;
+                    if (mineralTypeSelect) mineralTypeSelect.value = sym;
+                    updateMineralTablesAndHighlight();
+                    triggerMooAudio();
+                });
+                microMineralTableBody.appendChild(row);
+            }
+        });
     }
+}
 
-    // Render Cornell CNCPS Module Card
-    function renderCornellModule() {
+function renderCornellModule() {
         if (!cornellModuleContainer || !nutrientDB || !nutrientDB.cornell_cncps_2023) return;
         const cornell = nutrientDB.cornell_cncps_2023;
         cornellModuleContainer.innerHTML = `
