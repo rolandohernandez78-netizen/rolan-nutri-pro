@@ -1,0 +1,270 @@
+{
+  "metadata": {
+    "title": "Base de Datos Nutricional RolanNutriPro",
+    "author": "Rolando Hernández Mora, MV MSc Nutrición Animal",
+    "units": "Sistema Métrico (kg, Mcal/kg MS, g/día, mg/kg MS ppm)",
+    "standards": [
+      "NASEM 2021 8ª Ed.",
+      "Cornell CNCPS 2023",
+      "Univ. Illinois 2025",
+      "Penn State 2025",
+      "Tecnigrasas 2018"
+    ]
+  },
+  "species_profiles": {
+    "dairy_nasem": {
+      "name": "Ganado Lechero (NASEM 2021)",
+      "categories": [
+        {
+          "id": "lactating_primiparous",
+          "name": "Vaca Primípara en Lactancia (1er Parto)",
+          "bw_kg": 600,
+          "milk_kg": 30,
+          "fat_pct": 3.8,
+          "protein_pct": 3.2,
+          "dim": 60
+        },
+        {
+          "id": "lactating_multiparous",
+          "name": "Vaca Multípara en Lactancia (2+ Partos)",
+          "bw_kg": 650,
+          "milk_kg": 38,
+          "fat_pct": 3.7,
+          "protein_pct": 3.2,
+          "dim": 75
+        },
+        {
+          "id": "dry_far_off",
+          "name": "Vaca Seca Periodo Lejano (Far-Off Dry Cow)",
+          "bw_kg": 680,
+          "milk_kg": 0,
+          "fat_pct": 0,
+          "protein_pct": 0,
+          "dim": 0
+        },
+        {
+          "id": "dry_close_up",
+          "name": "Vaca Seca Periodo Pre-parto (Close-Up Dry Cow)",
+          "bw_kg": 680,
+          "milk_kg": 0,
+          "fat_pct": 0,
+          "protein_pct": 0,
+          "dim": 0
+        },
+        {
+          "id": "growing_heifer",
+          "name": "Vaquillona de Recría (Growth Heifer)",
+          "bw_kg": 350,
+          "adg_kg": 0.85,
+          "milk_kg": 0
+        }
+      ]
+    },
+    "beef_oklahoma": {
+      "name": "Ganado de Carne (Oklahoma / NASEM Beef)",
+      "categories": [
+        {
+          "id": "steer_finishing",
+          "name": "Novillo en Ceba / Finalización",
+          "bw_kg": 450,
+          "adg_kg": 1.2
+        },
+        {
+          "id": "cow_lactating_beef",
+          "name": "Vaca de Cría en Lactancia (Carne)",
+          "bw_kg": 500,
+          "milk_kg": 10
+        },
+        {
+          "id": "bull_breeding",
+          "name": "Toro Reproductor",
+          "bw_kg": 800,
+          "adg_kg": 0.2
+        }
+      ]
+    }
+  },
+  "mineral_catalog": {
+    "Ca": {
+      "symbol": "Ca",
+      "name": "Calcio",
+      "category": "Macromineral",
+      "unit": "g/kg MS",
+      "req_per_kg_dm": 6.5,
+      "max_tolerable": 1.5,
+      "function": "Estructura ósea, contracción muscular, secreción de leche y función neuromuscular.",
+      "deficiency": "Hipocalcemia (fiebre de leche), tetania, debilidad de extremidades y retención de placenta."
+    },
+    "P": {
+      "symbol": "P",
+      "name": "Fósforo",
+      "category": "Macromineral",
+      "unit": "g/kg MS",
+      "req_per_kg_dm": 3.8,
+      "max_tolerable": 0.7,
+      "function": "Metabolismo energético (ATP), matriz ósea, membranas celulares (fosfolípidos) y crecimiento ruminal.",
+      "deficiency": "Pica (depravación del apetito), baja fertilidad, fragilidad ósea y caída de producción de leche."
+    },
+    "Mg": {
+      "symbol": "Mg",
+      "name": "Magnesio",
+      "category": "Macromineral",
+      "unit": "g/kg MS",
+      "req_per_kg_dm": 2.2,
+      "max_tolerable": 0.6,
+      "function": "Cofactor enzimático, equilibrio neuromuscular y prevención de tetania de los pastos.",
+      "deficiency": "Tetania hipomagnesémica (tetania de hierba), hiperexcitabilidad y temblores musculares."
+    },
+    "K": {
+      "symbol": "K",
+      "name": "Potasio",
+      "category": "Macromineral",
+      "unit": "g/kg MS",
+      "req_per_kg_dm": 12.0,
+      "max_tolerable": 2.0,
+      "function": "Principal catión intracelular, presión osmótica, equilibrio ácido-base y amortiguación del estrés por calor.",
+      "deficiency": "Reducción del consumo de alimento, debilidad muscular y depresión de grasa en leche."
+    },
+    "Na": {
+      "symbol": "Na",
+      "name": "Sodio",
+      "category": "Macromineral",
+      "unit": "g/kg MS",
+      "req_per_kg_dm": 2.2,
+      "max_tolerable": 1.0,
+      "function": "Balance osmótico extracelular, transporte de aminoácidos y glucosa.",
+      "deficiency": "Ávidamente busca sal, deshidratación y severa caída en el consumo DMI."
+    },
+    "Cl": {
+      "symbol": "Cl",
+      "name": "Cloro",
+      "category": "Macromineral",
+      "unit": "g/kg MS",
+      "req_per_kg_dm": 2.8,
+      "max_tolerable": 1.0,
+      "function": "Secreción de ácido clorhídrico abomasal (HCl) y balance aniónico-catiónico.",
+      "deficiency": "Alcalosis metabólica e hipocloremia."
+    },
+    "S": {
+      "symbol": "S",
+      "name": "Azufre",
+      "category": "Macromineral",
+      "unit": "g/kg MS",
+      "req_per_kg_dm": 2.0,
+      "max_tolerable": 0.4,
+      "function": "Síntesis ruminal de aminoácidos azufrados (Metionina y Cisteína) y vitaminas (Tiamina, Biotina).",
+      "deficiency": "Caída en síntesis de proteína microbiana ruminal y pérdida de digestibilidad de la fibra."
+    },
+    "Fe": {
+      "symbol": "Fe",
+      "name": "Hierro",
+      "category": "Micromineral",
+      "unit": "mg/kg MS (ppm)",
+      "req_per_kg_dm": 25,
+      "max_tolerable": 500,
+      "function": "Transporte de oxígeno (hemoglobina y mioglobina) y citocromos respiratorios.",
+      "deficiency": "Anemia microcítica hipocrómica, palidez de mucosas y letargia."
+    },
+    "Zn": {
+      "symbol": "Zn",
+      "name": "Cinc",
+      "category": "Micromineral",
+      "unit": "mg/kg MS (ppm)",
+      "req_per_kg_dm": 55,
+      "max_tolerable": 500,
+      "function": "Integridad epitelial de pezuñas, queratinización del esfínter del pezón, inmunidad y división celular.",
+      "deficiency": "Paraqueratosis, lesiones podales (cojeras), alto recuento de células somáticas (RCS) y mala cicatrización."
+    },
+    "Cu": {
+      "symbol": "Cu",
+      "name": "Cobre",
+      "category": "Micromineral",
+      "unit": "mg/kg MS (ppm)",
+      "req_per_kg_dm": 15,
+      "max_tolerable": 40,
+      "function": "Síntesis de hemoglobina, queratina, elastina, pigmentación del pelo y respuesta inmune.",
+      "deficiency": "Despigmentación del pelo alrededor de ojos (gafas), anemia, diarreas y fracturas de huesos largos."
+    },
+    "Mn": {
+      "symbol": "Mn",
+      "name": "Manganeso",
+      "category": "Micromineral",
+      "unit": "mg/kg MS (ppm)",
+      "req_per_kg_dm": 40,
+      "max_tolerable": 1000,
+      "function": "Desarrollo de la matriz ósea y cartilaginosa, síntesis de condroitín sulfato y función ovárica.",
+      "deficiency": "Deformaciones esqueléticas en becerras (patas corvas), celos silenciosos y quistes ováricos."
+    },
+    "I": {
+      "symbol": "I",
+      "name": "Yodo",
+      "category": "Micromineral",
+      "unit": "mg/kg MS (ppm)",
+      "req_per_kg_dm": 0.6,
+      "max_tolerable": 5,
+      "function": "Síntesis de hormonas tiroideas (T3 y T4) y regulación del metabolismo basal.",
+      "deficiency": "Bocio (hipertrofia tiroidea), terneros débiles o sin pelo al nacimiento y reabsorciones embrionarias."
+    },
+    "Se": {
+      "symbol": "Se",
+      "name": "Selenio",
+      "category": "Micromineral",
+      "unit": "mg/kg MS (ppm)",
+      "req_per_kg_dm": 0.3,
+      "max_tolerable": 5,
+      "function": "Antioxidante celular (Glutatión Peroxidasa GSH-Px) en sinergia con Vitamina E, retención placentaria.",
+      "deficiency": "Enfermedad del músculo blanco (distrofia muscular nutricional), alta incidencia de retención de placenta y mastitis."
+    },
+    "Co": {
+      "symbol": "Co",
+      "name": "Cobalto",
+      "category": "Micromineral",
+      "unit": "mg/kg MS (ppm)",
+      "req_per_kg_dm": 0.2,
+      "max_tolerable": 25,
+      "function": "Precursor exclusivo para la síntesis ruminal de Vitamina B12 (Cobalamina) y gluconeogénesis a partir de propionato.",
+      "deficiency": "Inapetencia severa, anemia perniciosa, emaciación y falla en el metabolismo de glucosa."
+    }
+  },
+  "cornell_cncps_2023": {
+    "amino_acid_targets": {
+      "lysine_mp": "6.9 - 7.2% del MP Total",
+      "methionine_mp": "2.6 - 2.8% del MP Total",
+      "ideal_lys_met_ratio": "2.7 : 1.0"
+    },
+    "rumen_health_guidelines": {
+      "peNDF_min": ">= 21.0% de la MS (Caja Penn State)",
+      "starch_max": "24.0 - 28.0% de la MS"
+    }
+  },
+  "comparative_presets": [
+    {
+      "name": "Vaca Alta Producción (38 kg Leche)",
+      "bw_kg": 650,
+      "dmi_kg": 26.5,
+      "energy_mcal": 44.5,
+      "mp_g": 2850
+    },
+    {
+      "name": "Vaca Media Producción (25 kg Leche)",
+      "bw_kg": 600,
+      "dmi_kg": 21.0,
+      "energy_mcal": 33.0,
+      "mp_g": 2100
+    },
+    {
+      "name": "Vaca Seca Pre-parto (Close-Up)",
+      "bw_kg": 680,
+      "dmi_kg": 11.6,
+      "energy_mcal": 15.5,
+      "mp_g": 1200
+    },
+    {
+      "name": "Novillo en Ceba (1.2 kg/d ADG)",
+      "bw_kg": 450,
+      "dmi_kg": 10.6,
+      "energy_mcal": 18.2,
+      "mp_g": 950
+    }
+  ]
+}
