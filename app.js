@@ -328,13 +328,13 @@ document.addEventListener("DOMContentLoaded", async () => {
     mineralTypeSelect = document.getElementById("mineral-type-select");
     btnCalcMineral = document.getElementById("btn-calc-mineral");
     mineralDetailsContainer = document.getElementById("mineral-details-container");
-    const macroMineralTableBody = document.querySelector("#macro-mineral-table tbody");
-    const microMineralTableBody = document.querySelector("#micro-mineral-table tbody");
+    macroMineralTableBody = document.querySelector("#macro-mineral-table tbody");
+    microMineralTableBody = document.querySelector("#micro-mineral-table tbody");
     mineralAnimalBadge = document.getElementById("mineral-animal-badge");
 
     cornellModuleContainer = document.getElementById("cornell-module-container");
-    const presetTableHead = document.querySelector("#preset-table thead");
-    const presetTableBody = document.querySelector("#preset-table tbody");
+    presetTableHead = document.querySelector("#preset-table thead");
+    presetTableBody = document.querySelector("#preset-table tbody");
 
     // Mascot & Audio References
     const avatar = document.getElementById("holstein-cow-avatar");
@@ -490,11 +490,13 @@ document.addEventListener("DOMContentLoaded", async () => {
     dimInput = dimInput || document.getElementById("dim-input");
     adgInput = adgInput || document.getElementById("adg-input");
     resultsContainer = resultsContainer || document.getElementById("results-container");
-    if (!speciesSelect || !categorySelect || !nutrientDB || !nutrientDB.species) return;
+    if (!speciesSelect || !categorySelect || !nutrientDB) return;
+    const profiles = nutrientDB.species_profiles || nutrientDB.species;
+    if (!profiles) return;
 
     const speciesKey = speciesSelect.value;
     const catIndex = parseInt(categorySelect.value) || 0;
-    const speciesData = nutrientDB.species[speciesKey];
+    const speciesData = profiles[speciesKey];
     if (!speciesData || !speciesData.categories || !speciesData.categories[catIndex]) return;
 
     const cat = speciesData.categories[catIndex];
