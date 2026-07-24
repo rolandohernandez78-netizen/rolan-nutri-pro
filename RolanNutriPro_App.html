@@ -1256,46 +1256,62 @@ let nutrientDB = window.NUTRIENT_DB || null;
 let currentViewMode = "technical"; // "technical" or "practical"
 let activeSelectedMineral = "Ca"; // Default mineral selection
 
+// Global DOM Element References
+let speciesSelect, categorySelect, bwInput, milkInput, fatInput, proteinInput, dimInput, adgInput;
+let groupMilk, groupFat, groupProtein, groupDim, groupAdg;
+let btnCalculate, btnTechView, btnPracticalView, resultsContainer;
+let mineralTypeSelect, btnCalcMineral, mineralDetailsContainer, macroMineralTableBody, microMineralTableBody, mineralAnimalBadge;
+let cornellModuleContainer, presetTableHead, presetTableBody;
+let mascotWrapper, speechBubble, cowIcon, avatar;
+let qaInput, qaBtn, qaAnswerContainer, chipBtns;
+
 document.addEventListener("DOMContentLoaded", async () => {
-    // 1. Fetch nutrient database JSON
-    try {
-        const response = await fetch("ruminant_nutrient_database.json");
-        nutrientDB = await response.json();
-    } catch (err) {
-        console.error("Error loading nutrient database:", err);
+    // 1. Synchronous database initialization (Guarantees zero file:// CORS errors)
+    nutrientDB = window.NUTRIENT_DB || nutrientDB || null;
+
+    if (!nutrientDB && window.location.protocol.startsWith("http")) {
+        try {
+            const response = await fetch("ruminant_nutrient_database.json");
+            nutrientDB = await response.json();
+        } catch (err) {
+            console.warn("Using fallback window.NUTRIENT_DB:", err);
+        }
+    }
+    if (!nutrientDB) {
+        nutrientDB = window.NUTRIENT_DB || null;
     }
 
     // DOM Element References
-    const speciesSelect = document.getElementById("species-select");
-    const categorySelect = document.getElementById("category-select");
-    const bwInput = document.getElementById("bw-input");
-    const milkInput = document.getElementById("milk-input");
-    const fatInput = document.getElementById("fat-input");
-    const proteinInput = document.getElementById("protein-input");
-    const dimInput = document.getElementById("dim-input");
-    const adgInput = document.getElementById("adg-input");
+    speciesSelect = document.getElementById("species-select");
+    categorySelect = document.getElementById("category-select");
+    bwInput = document.getElementById("bw-input");
+    milkInput = document.getElementById("milk-input");
+    fatInput = document.getElementById("fat-input");
+    proteinInput = document.getElementById("protein-input");
+    dimInput = document.getElementById("dim-input");
+    adgInput = document.getElementById("adg-input");
 
-    const groupMilk = document.getElementById("group-milk");
-    const groupFat = document.getElementById("group-fat");
-    const groupProtein = document.getElementById("group-protein");
-    const groupDim = document.getElementById("group-dim");
-    const groupAdg = document.getElementById("group-adg");
+    groupMilk = document.getElementById("group-milk");
+    groupFat = document.getElementById("group-fat");
+    groupProtein = document.getElementById("group-protein");
+    groupDim = document.getElementById("group-dim");
+    groupAdg = document.getElementById("group-adg");
 
-    const btnCalculate = document.getElementById("btn-calculate");
-    const btnTechView = document.getElementById("btn-tech-view");
-    const btnPracticalView = document.getElementById("btn-practical-view");
-    const resultsContainer = document.getElementById("results-container");
+    btnCalculate = document.getElementById("btn-calculate");
+    btnTechView = document.getElementById("btn-tech-view");
+    btnPracticalView = document.getElementById("btn-practical-view");
+    resultsContainer = document.getElementById("results-container");
 
-    const mineralTypeSelect = document.getElementById("mineral-type-select");
-    const btnCalcMineral = document.getElementById("btn-calc-mineral");
-    const mineralDetailsContainer = document.getElementById("mineral-details-container");
-    const macroMineralTableBody = document.querySelector("#macro-mineral-table tbody");
-    const microMineralTableBody = document.querySelector("#micro-mineral-table tbody");
-    const mineralAnimalBadge = document.getElementById("mineral-animal-badge");
+    mineralTypeSelect = document.getElementById("mineral-type-select");
+    btnCalcMineral = document.getElementById("btn-calc-mineral");
+    mineralDetailsContainer = document.getElementById("mineral-details-container");
+    macroMineralTableBody = document.querySelector("#macro-mineral-table tbody");
+    microMineralTableBody = document.querySelector("#micro-mineral-table tbody");
+    mineralAnimalBadge = document.getElementById("mineral-animal-badge");
 
-    const cornellModuleContainer = document.getElementById("cornell-module-container");
-    const presetTableHead = document.querySelector("#preset-table thead");
-    const presetTableBody = document.querySelector("#preset-table tbody");
+    cornellModuleContainer = document.getElementById("cornell-module-container");
+    presetTableHead = document.querySelector("#preset-table thead");
+    presetTableBody = document.querySelector("#preset-table tbody");
 
     // Mascot & Audio References
     const avatar = document.getElementById("holstein-cow-avatar");
@@ -1304,9 +1320,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     const cowIcon = document.getElementById("cow-brand-icon");
 
     // Q&A Assistant References
-    const qaInput = document.getElementById("qa-input-text");
-    const qaBtn = document.getElementById("btn-submit-qa");
-    const qaAnswerContainer = document.getElementById("qa-answer-container");
+    qaInput = document.getElementById("qa-input-text");
+    qaBtn = document.getElementById("btn-submit-qa");
+    qaAnswerContainer = document.getElementById("qa-answer-container");
     const chipBtns = document.querySelectorAll(".chip-btn");
 
     // Authentic Epidemic Sound Audio Player ("Bull, Scottish Highland, Moo" ca21b786-aa5b-450d-acc8-88d68ba5d135)
@@ -1375,9 +1391,12 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // Populate Categories Dropdown dynamically
     function populateCategories() {
-        if (!nutrientDB || !speciesSelect || !categorySelect) return;
-        const speciesKey = speciesSelect.value;
-        const speciesData = nutrientDB.species_profiles[speciesKey];
+    speciesSelect = speciesSelect || document.getElementById("species-select");
+    categorySelect = categorySelect || document.getElementById("category-select");
+    if (!nutrientDB || !speciesSelect || !categorySelect) return;
+    const profiles = nutrientDB.species_profiles || nutrientDB.species || {};
+    const speciesKey = speciesSelect.value;
+    const speciesData = profiles[speciesKey];
 
         categorySelect.innerHTML = "";
         if (speciesData && speciesData.categories) {
@@ -1439,230 +1458,329 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // Main Nutrition Calculation Function
     function calculateRequirements() {
-        if (!nutrientDB || !speciesSelect || !categorySelect) return;
+    speciesSelect = speciesSelect || document.getElementById("species-select");
+    categorySelect = categorySelect || document.getElementById("category-select");
+    bwInput = bwInput || document.getElementById("bw-input");
+    milkInput = milkInput || document.getElementById("milk-input");
+    fatInput = fatInput || document.getElementById("fat-input");
+    proteinInput = proteinInput || document.getElementById("protein-input");
+    dimInput = dimInput || document.getElementById("dim-input");
+    adgInput = adgInput || document.getElementById("adg-input");
+    resultsContainer = resultsContainer || document.getElementById("results-container");
+    if (!speciesSelect || !categorySelect || !nutrientDB) return;
+    const profiles = nutrientDB.species_profiles || nutrientDB.species;
+    if (!profiles) return;
 
-        const speciesKey = speciesSelect.value;
-        const catIndex = parseInt(categorySelect.value) || 0;
-        const bw = parseFloat(bwInput.value) || 650;
+    const speciesKey = speciesSelect.value;
+    const catIndex = parseInt(categorySelect.value) || 0;
+    const speciesData = profiles[speciesKey];
+    if (!speciesData || !speciesData.categories || !speciesData.categories[catIndex]) return;
 
-        let results = [];
+    const cat = speciesData.categories[catIndex];
+    const catId = cat.id;
 
-        if (speciesKey === "dairy_nasem") {
-            const cat = nutrientDB.species_profiles.dairy_nasem.categories[catIndex];
-            const categoryName = cat ? cat.name : "Vaca en Lactancia";
+    const bw = parseFloat(bwInput.value) || cat.bw_kg || 650;
+    const milk = parseFloat(milkInput.value) || cat.milk_kg || 35.0;
+    const fat = parseFloat(fatInput.value) || cat.fat_pct || 3.80;
+    const protein = parseFloat(proteinInput.value) || cat.protein_pct || 3.20;
+    const dim = parseFloat(dimInput.value) || cat.dim || 60;
+    const adg = parseFloat(adgInput.value) || cat.adg_kg || 1.20;
 
-            const milk = parseFloat(milkInput.value) || 0;
-            const fat = parseFloat(fatInput.value) || 3.8;
-            const protein = parseFloat(proteinInput.value) || 3.2;
-            const dim = parseFloat(dimInput.value) || 60;
-            const adg = parseFloat(adgInput.value) || 0.85;
+    let dmi = 0, nel = 0, mp = 0, ca = 0, p = 0;
+    let dmiNote = "";
 
-            let dmi = 0;
-            let nelReq = 0;
-            let mpReq = 0;
+    if (catId === "lactating_primiparous") {
+        const fcm4 = milk * (0.4 + 0.15 * fat);
+        const dmiBase = (3.75 + (0.022 * bw) + (0.305 * fcm4)) * 0.88;
+        const wol = dim / 7.0;
+        const lag = 1.0 - Math.exp(-0.192 * (wol + 3.67));
+        dmi = Math.max(12.0, dmiBase * lag);
+        dmiNote = "Estimado por Ecuación NASEM 2021 Eq. 2-1 (Vaca Primípara 1er Parto).";
 
-            if (categoryName.includes("Lactancia")) {
-                const milkE = milk * (0.0929 * fat + 0.0547 * protein + 0.0395 * 4.8);
-                const parity = catIndex === 0 ? 0 : 1;
-                const bcs = 3.0;
-                const dmiBase = (3.7 + parity * 5.7) + (0.305 * milkE) + (0.022 * bw) + ((-0.689 - 1.87 * parity) * bcs);
-                const dimFactor = 1 - Math.exp(-0.212 * (dim / 7 + 2.56));
-                dmi = dmiBase * dimFactor;
+        const nem = 0.080 * Math.pow(bw, 0.75);
+        const neMilk = milk * (0.0929 * fat + 0.0547 * protein + 0.192);
+        nel = nem + neMilk;
 
-                nelReq = (0.08 * Math.pow(bw, 0.75)) + (milk * (0.0929 * fat + 0.0547 * protein + 0.192));
-                mpReq = (3.8 * Math.pow(bw, 0.75)) + (milk * (protein * 10 * 1.4));
-            } else if (categoryName.includes("Lejano")) {
-                dmi = bw * 0.0197;
-                nelReq = 0.08 * Math.pow(bw, 0.75) * 1.2;
-                mpReq = 3.8 * Math.pow(bw, 0.75) * 1.2;
-            } else if (categoryName.includes("Pre-parto")) {
-                dmi = bw * 0.0170;
-                nelReq = 0.08 * Math.pow(bw, 0.75) * 1.35;
-                mpReq = 3.8 * Math.pow(bw, 0.75) * 1.4;
-            } else {
-                dmi = bw * 0.0225;
-                nelReq = (0.08 * Math.pow(bw, 0.75)) + (adg * 3.5);
-                mpReq = (3.8 * Math.pow(bw, 0.75)) + (adg * 250);
-            }
+        const mpMaint = 3.8 * Math.pow(bw, 0.75);
+        const mpMilk = milk * (protein / 100.0) * 1000.0 * 1.4;
+        mp = (mpMaint + mpMilk) / 1000.0;
 
-            results = [
-                {
-                    nutrient: "Consumo de Materia Seca (DMI)",
-                    valTech: `${dmi.toFixed(2)} kg MS/día (${(dmi / bw * 100).toFixed(2)}% BW)`,
-                    valPrac: `${dmi.toFixed(1)} kg de alimento seco al día`,
-                    desc: "Estimado por Ecuación NASEM 2021 Eq. 2-1 (de Souza et al., 2019)."
-                },
-                {
-                    nutrient: "Energía Neta de Lactancia (NEL)",
-                    valTech: `${nelReq.toFixed(2)} Mcal/día (${(nelReq / dmi).toFixed(2)} Mcal/kg MS)`,
-                    valPrac: `${nelReq.toFixed(1)} Mcal/día para leche y mantenimiento`,
-                    desc: "Energía Neta NASEM 2021 para mantenimiento y producción."
-                },
-                {
-                    nutrient: "Proteína Metabolizable (MP)",
-                    valTech: `${mpReq.toFixed(0)} g MP/día (${(mpReq / dmi / 10).toFixed(2)}% MP en MS)`,
-                    valPrac: `${(mpReq / 1000).toFixed(2)} kg de proteína verdaderamente absorbida al día`,
-                    desc: "Requerimiento de aminoácidos absorbidos en intestino delgado."
-                },
-                {
-                    nutrient: "Calcio (Ca)",
-                    valTech: `${(dmi * 6.5).toFixed(1)} g Ca/día (6.5 g/kg MS)`,
-                    valPrac: `${(dmi * 6.5).toFixed(0)} gramos de Calcio por día`,
-                    desc: "NASEM 2021 Cap. 7. Coeficiente de absorción ruminal/intestinal."
-                },
-                {
-                    nutrient: "Fósforo (P)",
-                    valTech: `${(dmi * 3.8).toFixed(1)} g P/día (3.8 g/kg MS)`,
-                    valPrac: `${(dmi * 3.8).toFixed(0)} gramos de Fósforo por día`,
-                    desc: "Requerimiento esencial para metabolismo energético y mineral."
-                }
-            ];
-        } else {
-            const cat = nutrientDB.species_profiles.beef_oklahoma.categories[catIndex];
-            const categoryName = cat ? cat.name : "Novillo en Ceba";
-            const adg = parseFloat(adgInput.value) || 1.2;
+        const caMaint = 0.031 * bw;
+        const caMilk = 1.22 * milk;
+        ca = (caMaint + caMilk) / 0.60;
 
-            const dmi = bw * 0.0235;
-            const nemReq = 0.077 * Math.pow(bw, 0.75);
-            const negReq = 0.0557 * Math.pow(bw, 0.75) * adg;
+        const pMaint = 0.018 * bw;
+        const pMilk = 0.90 * milk;
+        p = (pMaint + pMilk) / 0.70;
+    } else if (catId === "lactating_multiparous") {
+        const fcm4 = milk * (0.4 + 0.15 * fat);
+        const dmiBase = 3.75 + (0.022 * bw) + (0.305 * fcm4);
+        const wol = dim / 7.0;
+        const lag = 1.0 - Math.exp(-0.192 * (wol + 3.67));
+        dmi = Math.max(14.0, dmiBase * lag);
+        dmiNote = "Estimado por Ecuación NASEM 2021 Eq. 2-1 (Vaca Multípara 2+ Partos).";
 
-            results = [
-                {
-                    nutrient: "Consumo de Materia Seca (DMI)",
-                    valTech: `${dmi.toFixed(2)} kg MS/día (${(dmi / bw * 100).toFixed(2)}% BW)`,
-                    valPrac: `${dmi.toFixed(1)} kg de alimento seco al día`,
-                    desc: "Estándar Oklahoma E-974 en kg."
-                },
-                {
-                    nutrient: "Energía Neta de Mantenimiento (NEm)",
-                    valTech: `${nemReq.toFixed(2)} Mcal/día`,
-                    valPrac: `${nemReq.toFixed(1)} Mcal/día para mantenerse`,
-                    desc: "Energía de sostenimiento biológico."
-                },
-                {
-                    nutrient: "Energía Neta de Ganancia (NEg)",
-                    valTech: `${negReq.toFixed(2)} Mcal/día para ${adg} kg/día ADG`,
-                    valPrac: `${negReq.toFixed(1)} Mcal/día para engorde`,
-                    desc: "Energía retenida en tejido muscular y adiposo."
-                }
-            ];
-        }
+        const nem = 0.080 * Math.pow(bw, 0.75);
+        const neMilk = milk * (0.0929 * fat + 0.0547 * protein + 0.192);
+        nel = nem + neMilk;
 
-        renderResults(results);
-        updateMineralTablesAndHighlight();
+        const mpMaint = 3.8 * Math.pow(bw, 0.75);
+        const mpMilk = milk * (protein / 100.0) * 1000.0 * 1.4;
+        mp = (mpMaint + mpMilk) / 1000.0;
+
+        const caMaint = 0.031 * bw;
+        const caMilk = 1.22 * milk;
+        ca = (caMaint + caMilk) / 0.60;
+
+        const pMaint = 0.018 * bw;
+        const pMilk = 0.90 * milk;
+        p = (pMaint + pMilk) / 0.70;
+    } else if (catId === "dry_far_off") {
+        dmi = bw * 0.0197;
+        dmiNote = "Vaca Seca Lejana (NASEM 2021: 1.97% del Peso Vivo).";
+        nel = 0.080 * Math.pow(bw, 0.75) * 1.25;
+        mp = (3.8 * Math.pow(bw, 0.75) * 1.2) / 1000.0;
+        ca = (0.031 * bw + 12.0) / 0.60;
+        p = (0.018 * bw + 8.0) / 0.70;
+    } else if (catId === "dry_close_up") {
+        dmi = bw * 0.0170;
+        dmiNote = "Vaca Preparto Close-Up (NASEM 2021 Cap. 12: 1.70% Peso Vivo).";
+        nel = 0.080 * Math.pow(bw, 0.75) * 1.40;
+        mp = (3.8 * Math.pow(bw, 0.75) * 1.4) / 1000.0;
+        ca = (0.031 * bw + 18.0) / 0.60;
+        p = (0.018 * bw + 10.0) / 0.70;
+    } else if (catId === "growing_heifer") {
+        dmi = bw * 0.0245;
+        dmiNote = "Novilla en Crecimiento (NASEM 2021 Cap. 14: 2.45% Peso Vivo).";
+        nel = 0.080 * Math.pow(bw, 0.75) + adg * 3.5;
+        mp = (3.8 * Math.pow(bw, 0.75) + adg * 220) / 1000.0;
+        ca = (0.031 * bw + adg * 15) / 0.60;
+        p = (0.018 * bw + adg * 8) / 0.70;
+    } else if (catId === "steer_finishing") {
+        dmi = bw * 0.0265;
+        dmiNote = "Novillo de Engorde / Ceba (Oklahoma / NASEM Beef: 2.65% Peso Vivo).";
+        nel = 0.077 * Math.pow(bw, 0.75) + adg * 3.8;
+        mp = (3.4 * Math.pow(bw, 0.75) + adg * 200) / 1000.0;
+        ca = (0.025 * bw + adg * 14) / 0.50;
+        p = (0.016 * bw + adg * 7) / 0.60;
+    } else if (catId === "cow_lactating_beef") {
+        dmi = bw * 0.023 + milk * 0.10;
+        dmiNote = "Vaca de Cría en Lactancia (Oklahoma / NASEM Beef).";
+        nel = 0.077 * Math.pow(bw, 0.75) + milk * 0.70;
+        mp = (3.4 * Math.pow(bw, 0.75) + milk * 30) / 1000.0;
+        ca = (0.025 * bw + milk * 1.2) / 0.50;
+        p = (0.016 * bw + milk * 0.9) / 0.60;
+    } else if (catId === "bull_breeding") {
+        dmi = bw * 0.0210;
+        dmiNote = "Toro Reproductor (Oklahoma / NASEM Beef: 2.10% Peso Vivo).";
+        nel = 0.077 * Math.pow(bw, 0.75) * 1.2;
+        mp = (3.4 * Math.pow(bw, 0.75) * 1.2) / 1000.0;
+        ca = (0.025 * bw + 10.0) / 0.50;
+        p = (0.016 * bw + 6.0) / 0.60;
+    } else {
+        dmi = bw * 0.023;
+        dmiNote = "Requerimiento Estándar Rumiante.";
+        nel = 0.080 * Math.pow(bw, 0.75);
+        mp = (3.8 * Math.pow(bw, 0.75)) / 1000.0;
+        ca = (0.031 * bw) / 0.60;
+        p = (0.018 * bw) / 0.70;
     }
 
-    // Render Main Calculation Results Cards in Colored Grid Boxes
-    function renderResults(results) {
-        if (!resultsContainer) return;
-        resultsContainer.innerHTML = "";
+    if (resultsContainer) {
+        if (currentViewMode === "technical") {
+            resultsContainer.innerHTML = `
+                <div class="results-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px;">
+                    <!-- CARD 1: CONSUMO DE MATERIA SECA (DMI) -->
+                    <div class="result-box" style="background: linear-gradient(135deg, #059669 0%, #047857 100%); border-left: 6px solid #10b981; padding: 18px; border-radius: 16px; box-shadow: 0 4px 14px rgba(5, 150, 105, 0.25); color: #ffffff;">
+                        <div style="font-size: 0.82rem; font-weight: 700; color: #ecfdf5; letter-spacing: 0.5px; text-transform: uppercase;">CONSUMO DE MATERIA SECA (DMI)</div>
+                        <div style="font-size: 1.65rem; font-weight: 800; color: #ffffff; margin-top: 6px; line-height: 1.2;">
+                            ${dmi.toFixed(2)} kg MS/día <span style="font-size: 1.15rem; font-weight: 700;">(${((dmi / bw) * 100).toFixed(2)}% BW)</span>
+                        </div>
+                        <hr style="border: 0; border-top: 1px solid rgba(255, 255, 255, 0.25); margin: 12px 0 10px 0;">
+                        <div style="font-size: 0.82rem; color: #d1fae5; line-height: 1.4;">${dmiNote}</div>
+                    </div>
 
-        const boxStyles = [
-            { bg: "linear-gradient(135deg, #065f46 0%, #047857 50%, #059669 100%)", border: "#10b981", class: "box-dmi" },
-            { bg: "linear-gradient(135deg, #1e3a8a 0%, #1d4ed8 50%, #2563eb 100%)", border: "#60a5fa", class: "box-energy" },
-            { bg: "linear-gradient(135deg, #4c1d95 0%, #6d28d9 50%, #7c3aed 100%)", border: "#a78bfa", class: "box-protein" },
-            { bg: "linear-gradient(135deg, #78350f 0%, #b45309 50%, #d97706 100%)", border: "#fbbf24", class: "box-ca" },
-            { bg: "linear-gradient(135deg, #164e63 0%, #0e7490 50%, #0284c7 100%)", border: "#38bdf8", class: "box-p" }
-        ];
+                    <!-- CARD 2: ENERGÍA NETA DE LACTANCIA (NEL) -->
+                    <div class="result-box" style="background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%); border-left: 6px solid #3b82f6; padding: 18px; border-radius: 16px; box-shadow: 0 4px 14px rgba(37, 99, 235, 0.25); color: #ffffff;">
+                        <div style="font-size: 0.82rem; font-weight: 700; color: #eff6ff; letter-spacing: 0.5px; text-transform: uppercase;">ENERGÍA NETA DE LACTANCIA (NEL)</div>
+                        <div style="font-size: 1.65rem; font-weight: 800; color: #ffffff; margin-top: 6px; line-height: 1.2;">
+                            ${nel.toFixed(2)} Mcal/día <span style="font-size: 1.15rem; font-weight: 700;">(${(nel / dmi).toFixed(2)} Mcal/kg MS)</span>
+                        </div>
+                        <hr style="border: 0; border-top: 1px solid rgba(255, 255, 255, 0.25); margin: 12px 0 10px 0;">
+                        <div style="font-size: 0.82rem; color: #dbeafe; line-height: 1.4;">Energía Neta NASEM 2021 para mantenimiento y producción.</div>
+                    </div>
 
-        resultsContainer.style.display = "grid";
-        resultsContainer.style.gridTemplateColumns = "repeat(auto-fit, minmax(240px, 1fr))";
-        resultsContainer.style.gap = "16px";
-        resultsContainer.style.marginTop = "14px";
+                    <!-- CARD 3: PROTEÍNA METABOLIZABLE (MP) -->
+                    <div class="result-box" style="background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%); border-left: 6px solid #8b5cf6; padding: 18px; border-radius: 16px; box-shadow: 0 4px 14px rgba(124, 58, 237, 0.25); color: #ffffff;">
+                        <div style="font-size: 0.82rem; font-weight: 700; color: #f5f3ff; letter-spacing: 0.5px; text-transform: uppercase;">PROTEÍNA METABOLIZABLE (MP)</div>
+                        <div style="font-size: 1.65rem; font-weight: 800; color: #ffffff; margin-top: 6px; line-height: 1.2;">
+                            ${(mp * 1000).toFixed(0)} g MP/día <span style="font-size: 1.15rem; font-weight: 700;">(${((mp / dmi) * 100).toFixed(2)}% MP en MS)</span>
+                        </div>
+                        <hr style="border: 0; border-top: 1px solid rgba(255, 255, 255, 0.25); margin: 12px 0 10px 0;">
+                        <div style="font-size: 0.82rem; color: #ede9fe; line-height: 1.4;">Requerimiento de aminoácidos absorbidos en intestino delgado.</div>
+                    </div>
 
-        results.forEach((res, index) => {
-            const card = document.createElement("div");
-            const style = boxStyles[index % boxStyles.length];
+                    <!-- CARD 4: CALCIO (CA) -->
+                    <div class="result-box" style="background: linear-gradient(135deg, #d97706 0%, #b45309 100%); border-left: 6px solid #f59e0b; padding: 18px; border-radius: 16px; box-shadow: 0 4px 14px rgba(217, 119, 6, 0.25); color: #ffffff;">
+                        <div style="font-size: 0.82rem; font-weight: 700; color: #fffbeb; letter-spacing: 0.5px; text-transform: uppercase;">CALCIO (CA)</div>
+                        <div style="font-size: 1.65rem; font-weight: 800; color: #ffffff; margin-top: 6px; line-height: 1.2;">
+                            ${ca.toFixed(1)} g Ca/día <span style="font-size: 1.15rem; font-weight: 700;">(${(ca / dmi).toFixed(1)} g/kg MS)</span>
+                        </div>
+                        <hr style="border: 0; border-top: 1px solid rgba(255, 255, 255, 0.25); margin: 12px 0 10px 0;">
+                        <div style="font-size: 0.82rem; color: #fef3c7; line-height: 1.4;">NASEM 2021 Cap. 7. Coeficiente de absorción ruminal/intestinal.</div>
+                    </div>
 
-            card.className = `result-item-card ${style.class}`;
-            card.style.background = style.bg;
-            card.style.borderLeft = `6px solid ${style.border}`;
-            card.style.borderRadius = "14px";
-            card.style.padding = "16px 20px";
-            card.style.boxShadow = "0 8px 24px rgba(0,0,0,0.3)";
-            card.style.border = "1px solid rgba(255,255,255,0.15)";
-
-            const valStr = currentViewMode === "technical" ? res.valTech : res.valPrac;
-
-            card.innerHTML = `
-                <div class="result-header" style="display:flex; flex-direction:column; gap:6px; margin-bottom:8px;">
-                    <span class="result-name" style="font-size:0.85rem; font-weight:700; color:#e2e8f0; text-transform:uppercase; letter-spacing:0.8px;">${res.nutrient}</span>
-                    <span class="result-value" style="font-size:1.45rem; font-weight:700; color:#ffffff; line-height:1.25; text-shadow:0 2px 6px rgba(0,0,0,0.6);">${valStr}</span>
+                    <!-- CARD 5: FÓSFORO (P) -->
+                    <div class="result-box" style="background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%); border-left: 6px solid #0ea5e9; padding: 18px; border-radius: 16px; box-shadow: 0 4px 14px rgba(2, 132, 199, 0.25); color: #ffffff;">
+                        <div style="font-size: 0.82rem; font-weight: 700; color: #f0f9ff; letter-spacing: 0.5px; text-transform: uppercase;">FÓSFORO (P)</div>
+                        <div style="font-size: 1.65rem; font-weight: 800; color: #ffffff; margin-top: 6px; line-height: 1.2;">
+                            ${p.toFixed(1)} g P/día <span style="font-size: 1.15rem; font-weight: 700;">(${(p / dmi).toFixed(1)} g/kg MS)</span>
+                        </div>
+                        <hr style="border: 0; border-top: 1px solid rgba(255, 255, 255, 0.25); margin: 12px 0 10px 0;">
+                        <div style="font-size: 0.82rem; color: #e0f2fe; line-height: 1.4;">Requerimiento esencial para metabolismo energético y mineral.</div>
+                    </div>
                 </div>
-                <div class="result-desc" style="font-size:0.83rem; color:#f1f5f9; line-height:1.35; margin-top:8px; padding-top:8px; border-top:1px solid rgba(255,255,255,0.2);">${res.desc}</div>
             `;
-            resultsContainer.appendChild(card);
+        } else {
+            resultsContainer.innerHTML = `
+                <div class="practical-card" style="border-left-color: var(--primary-emerald); background: #f0fdf4; border: 1.5px solid #a7f3d0; border-radius: 16px; padding: 20px;">
+                    <div class="practical-title" style="font-size: 1.15rem; font-weight: 700; color: #065f46;">🌾 Resumen Práctico de Alimentación Recomendado</div>
+                    <div class="practical-stats" style="margin-top: 12px; display: grid; gap: 10px;">
+                        <div class="practical-stat-item" style="background: #ffffff; border: 1px solid #cbd5e1; padding: 10px 14px; border-radius: 8px;">Consumo de Alimento Seco (MS): <strong style="color: #047857;">${dmi.toFixed(1)} kg MS/día</strong></div>
+                        <div class="practical-stat-item" style="background: #ffffff; border: 1px solid #cbd5e1; padding: 10px 14px; border-radius: 8px;">Densidad de Energía: <strong style="color: #1d4ed8;">${(nel / dmi).toFixed(2)} Mcal/kg MS</strong></div>
+                        <div class="practical-stat-item" style="background: #ffffff; border: 1px solid #cbd5e1; padding: 10px 14px; border-radius: 8px;">Proteína Metabolizable Total: <strong style="color: #6d28d9;">${(mp * 1000).toFixed(0)} g MP/día</strong></div>
+                        <div class="practical-stat-item" style="background: #ffffff; border: 1px solid #cbd5e1; padding: 10px 14px; border-radius: 8px;">Minerales Principales: <strong style="color: #b45309;">${ca.toFixed(1)}g Ca | ${p.toFixed(1)}g P por día</strong></div>
+                    </div>
+                    <p style="margin-top: 12px; font-size: 0.9rem; color: #475569; line-height: 1.4;">Valores ajustados según modelo científico NASEM 2021 (8ª Edición). Formular ración TMR para cubrir ${dmi.toFixed(1)} kg MS.</p>
+                </div>
+            `;
+        }
+    }
+
+    renderCornellModule(dmi, bw, milk, fat, protein);
+    updateMineralTablesAndHighlight();
+}
+function updateMineralTablesAndHighlight() {
+    speciesSelect = speciesSelect || document.getElementById("species-select");
+    categorySelect = categorySelect || document.getElementById("category-select");
+    mineralTypeSelect = mineralTypeSelect || document.getElementById("mineral-type-select");
+    mineralDetailsContainer = mineralDetailsContainer || document.getElementById("mineral-details-container");
+    macroMineralTableBody = macroMineralTableBody || document.querySelector("#macro-mineral-table tbody");
+    microMineralTableBody = microMineralTableBody || document.querySelector("#micro-mineral-table tbody");
+    mineralAnimalBadge = mineralAnimalBadge || document.getElementById("mineral-animal-badge");
+    if (!nutrientDB || !nutrientDB.mineral_catalog) return;
+    const catalog = nutrientDB.mineral_catalog;
+
+    const speciesKey = speciesSelect ? speciesSelect.value : "dairy_nasem";
+    const catIndex = categorySelect ? (parseInt(categorySelect.value) || 0) : 0;
+    const profiles = nutrientDB.species_profiles || nutrientDB.species || {};
+    const speciesData = profiles[speciesKey];
+    const cat = (speciesData && speciesData.categories) ? speciesData.categories[catIndex] : null;
+    const catId = cat ? cat.id : "lactating_primiparous";
+
+    const bw = parseFloat(bwInput.value) || (cat ? cat.bw_kg : 650);
+    const milk = parseFloat(milkInput.value) || (cat ? cat.milk_kg : 35.0);
+    const fat = parseFloat(fatInput.value) || (cat ? cat.fat_pct : 3.80);
+    const dim = parseFloat(dimInput.value) || (cat ? cat.dim : 60);
+
+    let dmi = 0;
+    if (catId === "lactating_primiparous") {
+        const fcm4 = milk * (0.4 + 0.15 * fat);
+        const dmiBase = (3.75 + (0.022 * bw) + (0.305 * fcm4)) * 0.88;
+        const wol = dim / 7.0;
+        const lag = 1.0 - Math.exp(-0.192 * (wol + 3.67));
+        dmi = Math.max(12.0, dmiBase * lag);
+    } else if (catId === "lactating_multiparous") {
+        const fcm4 = milk * (0.4 + 0.15 * fat);
+        const dmiBase = 3.75 + (0.022 * bw) + (0.305 * fcm4);
+        const wol = dim / 7.0;
+        const lag = 1.0 - Math.exp(-0.192 * (wol + 3.67));
+        dmi = Math.max(14.0, dmiBase * lag);
+    } else if (catId === "dry_far_off") {
+        dmi = bw * 0.0197;
+    } else if (catId === "dry_close_up") {
+        dmi = bw * 0.0170;
+    } else if (catId === "growing_heifer") {
+        dmi = bw * 0.0245;
+    } else if (catId === "steer_finishing") {
+        dmi = bw * 0.0265;
+    } else if (catId === "cow_lactating_beef") {
+        dmi = bw * 0.023 + milk * 0.10;
+    } else if (catId === "bull_breeding") {
+        dmi = bw * 0.0210;
+    } else {
+        dmi = bw * 0.023;
+    }
+
+    if (mineralAnimalBadge) mineralAnimalBadge.innerText = `Vaca ${bw} kg | DMI Est: ${dmi.toFixed(1)} kg MS/d`;
+
+    // Highlighted Mineral Card
+    const item = catalog[activeSelectedMineral];
+    if (item && mineralDetailsContainer) {
+        const isMacro = item.unit.includes("g");
+        const reqVal = isMacro ? `${item.req_per_kg_dm} g/kg MS` : `${item.req_per_kg_dm} mg/kg MS (ppm)`;
+        const totalVal = isMacro ? `${(dmi * item.req_per_kg_dm).toFixed(1)} g/día` : `${(dmi * item.req_per_kg_dm).toFixed(0)} mg/día`;
+
+        mineralDetailsContainer.innerHTML = `
+            <div class="practical-card" style="border-left-color: var(--primary-emerald); background: #f0fdf4; border: 1.5px solid #a7f3d0; border-radius: 16px; padding: 20px;">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <h4 style="margin:0; font-size:1.25rem; font-weight:700; color:#0f172a;">🧪 Ficha Técnica: ${item.name} (${item.symbol})</h4>
+                    <span class="badge-source" style="background:#dcfce7; color:#047857; border-color:#86efac; padding: 4px 10px; border-radius: 20px; font-weight: 700;">${item.category}</span>
+                </div>
+                <div class="practical-stats" style="margin-top:12px; display: grid; gap: 8px;">
+                    <div class="practical-stat-item" style="color:#0f172a; background:#ffffff; border:1px solid #cbd5e1; padding: 8px 12px; border-radius: 8px;">Requerimiento por kg MS: <strong style="color:#047857;">${reqVal}</strong></div>
+                    <div class="practical-stat-item" style="color:#0f172a; background:#ffffff; border:1px solid #cbd5e1; padding: 8px 12px; border-radius: 8px;">Consumo Total Estimado: <strong style="color:#047857;">${totalVal}</strong></div>
+                    <div class="practical-stat-item" style="color:#0f172a; background:#ffffff; border:1px solid #cbd5e1; padding: 8px 12px; border-radius: 8px;">Límite Máximo Tolerable: <strong style="color:#b45309;">${item.unit.includes("g") ? item.max_tolerable + "% MS" : item.max_tolerable + " ppm"}</strong></div>
+                </div>
+                <p style="margin-top:12px; font-size:0.92rem; color:#1e293b; line-height:1.5;"><strong style="color:#047857;">Función Fisiológica:</strong> ${item.function}</p>
+                <p style="margin-top:6px; font-size:0.90rem; color:#334155; line-height:1.5;"><strong style="color:#0f172a;">Síntomas de Deficiencia:</strong> ${item.deficiency}</p>
+            </div>
+        `;
+    }
+
+    // Populate Macromineral Table
+    if (macroMineralTableBody) {
+        macroMineralTableBody.innerHTML = "";
+        ["Ca", "P", "Mg", "K", "Na", "Cl", "S"].forEach(sym => {
+            const min = catalog[sym];
+            if (min) {
+                const row = document.createElement("tr");
+                if (sym === activeSelectedMineral) row.classList.add("selected-row");
+                row.style.cursor = "pointer";
+                row.innerHTML = `<td><strong>${min.name} (${min.symbol})</strong></td><td>${min.req_per_kg_dm} g/kg MS</td><td><strong>${(dmi * min.req_per_kg_dm).toFixed(1)} g/día</strong></td>`;
+                row.addEventListener("click", () => {
+                    activeSelectedMineral = sym;
+                    if (mineralTypeSelect) mineralTypeSelect.value = sym;
+                    updateMineralTablesAndHighlight();
+                    triggerMooAudio();
+                });
+                macroMineralTableBody.appendChild(row);
+            }
         });
     }
 
-    // Render Mineral Highlight Ficha Técnica Card
-    function updateMineralTablesAndHighlight() {
-        if (!nutrientDB || !nutrientDB.mineral_catalog) return;
-        const catalog = nutrientDB.mineral_catalog;
-        const bw = parseFloat(bwInput.value) || 650;
-        const milk = parseFloat(milkInput.value) || 35;
-        const milkE = milk * (0.0929 * 3.8 + 0.0547 * 3.2 + 0.0395 * 4.8);
-        const dmiBase = 9.4 + 0.305 * milkE + 0.022 * bw - 0.689 * 3.0;
-        const dmi = Math.max(12, dmiBase);
-
-        if (mineralAnimalBadge) mineralAnimalBadge.innerText = `Vaca ${bw} kg | DMI Est: ${dmi.toFixed(1)} kg MS/d`;
-
-        const item = catalog[activeSelectedMineral];
-        if (item && mineralDetailsContainer) {
-            const isMacro = item.unit.includes("g");
-            const reqVal = isMacro ? `${item.req_per_kg_dm} g/kg MS` : `${item.req_per_kg_dm} mg/kg MS (ppm)`;
-            const totalVal = isMacro ? `${(dmi * item.req_per_kg_dm).toFixed(1)} g/día` : `${(dmi * item.req_per_kg_dm).toFixed(0)} mg/día`;
-
-            mineralDetailsContainer.innerHTML = `
-                <div class="practical-card" style="border-left-color: var(--primary-emerald); background: #f0fdf4; border: 1.5px solid #a7f3d0;">
-                    <div style="display:flex; justify-content:space-between; align-items:center;">
-                        <h4 style="margin:0; font-size:1.25rem; font-weight:700; color:#0f172a;">🧪 Ficha Técnica: ${item.name} (${item.symbol})</h4>
-                        <span class="badge-source" style="background:#dcfce7; color:#047857; border-color:#86efac;">${item.category}</span>
-                    </div>
-                    <div class="practical-stats" style="margin-top:12px;">
-                        <div class="practical-stat-item" style="color:#0f172a; background:#ffffff; border:1px solid #cbd5e1;">Requerimiento por kg MS: <strong style="color:#047857;">${reqVal}</strong></div>
-                        <div class="practical-stat-item" style="color:#0f172a; background:#ffffff; border:1px solid #cbd5e1;">Consumo Total Estimado: <strong style="color:#047857;">${totalVal}</strong></div>
-                        <div class="practical-stat-item" style="color:#0f172a; background:#ffffff; border:1px solid #cbd5e1;">Límite Máximo Tolerable: <strong style="color:#b45309;">${item.unit.includes("g") ? item.max_tolerable + "% MS" : item.max_tolerable + " ppm"}</strong></div>
-                    </div>
-                    <p style="margin-top:12px; font-size:0.92rem; color:#1e293b; line-height:1.5;"><strong style="color:#047857;">Función Fisiológica:</strong> ${item.function}</p>
-                    <p style="margin-top:6px; font-size:0.90rem; color:#334155; line-height:1.5;"><strong style="color:#0f172a;">Síntomas de Deficiencia:</strong> ${item.deficiency}</p>
-                </div>
-            `;
-        }
-
-        if (macroMineralTableBody) {
-            macroMineralTableBody.innerHTML = "";
-            ["Ca", "P", "Mg", "K", "Na", "Cl", "S"].forEach(sym => {
-                const min = catalog[sym];
-                if (min) {
-                    const row = document.createElement("tr");
-                    if (sym === activeSelectedMineral) row.classList.add("selected-row");
-                    row.style.cursor = "pointer";
-                    row.innerHTML = `<td><strong>${min.name} (${min.symbol})</strong></td><td>${min.req_per_kg_dm} g/kg MS</td><td><strong>${(dmi * min.req_per_kg_dm).toFixed(1)} g/día</strong></td>`;
-                    row.addEventListener("click", () => { activeSelectedMineral = sym; if (mineralTypeSelect) mineralTypeSelect.value = sym; updateMineralTablesAndHighlight(); triggerMooAudio(); });
-                    macroMineralTableBody.appendChild(row);
-                }
-            });
-        }
-
-        if (microMineralTableBody) {
-            microMineralTableBody.innerHTML = "";
-            ["Fe", "Zn", "Cu", "Mn", "I", "Se", "Co"].forEach(sym => {
-                const min = catalog[sym];
-                if (min) {
-                    const row = document.createElement("tr");
-                    if (sym === activeSelectedMineral) row.classList.add("selected-row");
-                    row.style.cursor = "pointer";
-                    row.innerHTML = `<td><strong>${min.name} (${min.symbol})</strong></td><td>${min.req_per_kg_dm} mg/kg MS (ppm)</td><td><strong>${(dmi * min.req_per_kg_dm).toFixed(0)} mg/día</strong></td>`;
-                    row.addEventListener("click", () => { activeSelectedMineral = sym; if (mineralTypeSelect) mineralTypeSelect.value = sym; updateMineralTablesAndHighlight(); triggerMooAudio(); });
-                    microMineralTableBody.appendChild(row);
-                }
-            });
-        }
+    // Populate Micromineral Table
+    if (microMineralTableBody) {
+        microMineralTableBody.innerHTML = "";
+        ["Fe", "Zn", "Cu", "Mn", "I", "Se", "Co"].forEach(sym => {
+            const min = catalog[sym];
+            if (min) {
+                const row = document.createElement("tr");
+                if (sym === activeSelectedMineral) row.classList.add("selected-row");
+                row.style.cursor = "pointer";
+                row.innerHTML = `<td><strong>${min.name} (${min.symbol})</strong></td><td>${min.req_per_kg_dm} mg/kg MS (ppm)</td><td><strong>${(dmi * min.req_per_kg_dm).toFixed(0)} mg/día</strong></td>`;
+                row.addEventListener("click", () => {
+                    activeSelectedMineral = sym;
+                    if (mineralTypeSelect) mineralTypeSelect.value = sym;
+                    updateMineralTablesAndHighlight();
+                    triggerMooAudio();
+                });
+                microMineralTableBody.appendChild(row);
+            }
+        });
     }
-
-    // Render Cornell CNCPS Module Card
-    function renderCornellModule() {
+}
+function renderCornellModule() {
         if (!cornellModuleContainer || !nutrientDB || !nutrientDB.cornell_cncps_2023) return;
         const cornell = nutrientDB.cornell_cncps_2023;
         cornellModuleContainer.innerHTML = `
@@ -1694,106 +1812,197 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // AI Nutrition Q&A Knowledge Database
     const qaKnowledgeBase = [
-        {
-            id: "proteina",
-            keywords: ["proteina", "proteína", "proteinas", "proteínas", "protein", "proteico", "mp", "cp", "rup", "rdp", "aminoacido", "aminoacidos", "lisina", "metionina", "nrc", "nasem"],
-            title: "🥩 Proteína Cruda (CP), Proteína Metabolizable (MP) y Aminoácidos (NASEM 2021 Cap. 6 & CNCPS)",
-            badge: "NASEM 2021 Cap. 6 & Cornell CNCPS",
-            formula: "MP Requerida (g/d) = (3.8 * BW^0.75) + (Milk_kg * %Protein * 10 * 1.4) | MP Lys:Met = 2.7 : 1.0",
-            body: "<b>Capítulo 6 NASEM 2021 (NRC Ganado de Leche):</b> La proteína ya no se formula basándose únicamente en Proteína Cruda (CP%), sino en <b>Proteína Metabolizable (MP)</b>, que representa los aminoácidos absorbidos en el intestino delgado procedentes de:<br>1. <b>Proteína Microbiana (MCP):</b> Síntesis ruminal alimentada por NDF digerible y almidón.<br>2. <b>Proteína Ingradable en Rumen (RUP):</b> Proteína del alimento que escapa al rumen sin degradarse.<br><br><b>Recomendaciones de Formulación NASEM 2021 & CNCPS:</b><br>• <b>Proteína Metabolizable (MP):</b> 11.0 - 12.5% de la MS en lactancia alta (1750 - 2400 g MP/día).<br>• <b>Proteína Degradable en Rumen (RDP):</b> 9.5 - 10.5% de la MS para mantener la microbiota ruminal eficiente.<br>• <b>Aminoácidos Limitantes:</b> La Lisina debe representar el <b>6.9 - 7.2% de la MP</b> y la Metionina el <b>2.6 - 2.8% de la MP</b> (Relación ideal Lys:Met = 2.7 : 1.0).",
-            sources: "NASEM 2021 (8ª Edición, Cap. 6) • Cornell CNCPS v6.5/v7.0 (Dr. Mike Van Amburgh)"
-        },
-        {
-            id: "energia",
-            keywords: ["energia", "energía", "energias", "energy", "nel", "nem", "neg", "tdn", "mcal", "caloria", "calorias", "carbohidrato", "carbohidratos", "almidon", "almidones", "nrc", "nasem"],
-            title: "⚡ Requerimientos Energéticos (NEL, NEm, NEg y TDN) en NASEM 2021",
-            badge: "NASEM 2021 Cap. 3 & Cap. 4",
-            formula: "NEL Requerida (Mcal/d) = (0.080 * BW^0.75) + Milk_kg * (0.0929 * %Fat + 0.0547 * %Prot + 0.192)",
-            body: "<b>Capítulos 3 y 4 NASEM 2021:</b> La energía es expresada en <b>Energía Neta (NE)</b> dividida en mantenimiento (NEm), lactancia (NEL) y ganancia (NEg).<br><br><b>Puntos Clave del Manual NASEM 2021:</b><br>• <b>Mantenimiento:</b> 0.080 Mcal NEL / kg BW^0.75 (ej. 10.3 Mcal/día para una vaca de 650 kg).<br>• <b>Producción de Leche:</b> Cada kg de leche al 3.8% de Grasa y 3.2% de Proteína requiere <b>0.70 Mcal de NEL</b>.<br>• <b>Densidad Energética Recomendada:</b> 1.62 a 1.72 Mcal NEL / kg MS en dietas de alta producción.<br>• <b>Carbohidratos No Estructurales (NFC):</b> 36 - 40% de la MS (Almidón ruminal máximo 24 - 28% para prevenir acidosis ruminal subaguda SARA).",
-            sources: "NASEM 2021 (8ª Edición, Cap. 3 & 4) • NASEM Beef / Oklahoma Standards"
-        },
-        {
-            id: "calcio",
-            keywords: ["calcio", "calcios", "ca", "calcium", "hipocalcemia", "fiebre de leche", "nrc", "nasem", "mineral", "minerales"],
-            title: "🧪 Calcio (Ca): Requerimientos, Absorción y Prevención de Hipocalcemia",
-            badge: "NASEM 2021 Cap. 7",
-            formula: "Req. Ca = (dmi * 6.5) g/día (6.5 g/kg MS en lactancia | 100 - 140 g Ca/día total)",
-            body: "<b>Capítulo 7 NASEM 2021:</b> El Calcio es el macromineral con mayor demanda durante la lactancia (la leche contiene 1.22 g Ca/kg).<br><br><b>Estándares NASEM 2021:</b><br>• <b>Requerimiento en Dieta:</b> 0.65 - 0.85% de la MS en lactancia alta.<br>• <b>Coeficiente de Absorción (Ab):</b> 0.60 para carbonato de calcio inorgánico y 0.85 para quelatos orgánicos.<br>• <b>Preparto & DCAD:</b> Durante el periodo preparto, el Ca en dieta se restringe a 0.35-0.45% si la dieta no es aniónica, o se eleva a 1.20-1.40% Ca cuando se aplica un DCAD aniónico (-100 mEq/kg) para forzar el flujo cálcico metabólico al parto.",
-            sources: "NASEM 2021 (8ª Edición, Cap. 7 & Cap. 12)"
-        },
-        {
-            id: "fosforo",
-            keywords: ["fosforo", "fósforo", "fosforos", "fósforos", "p", "phosphorus", "mineral", "minerales", "salud reproductora", "nrc", "nasem"],
-            title: "🧪 Fósforo (P): Requerimientos Amortiguados y Nutrición Ambiental",
-            badge: "NASEM 2021 Cap. 7",
-            formula: "Req. P = (dmi * 3.8) g/día (3.8 - 4.2 g/kg MS | 70 - 95 g P/día total)",
-            body: "<b>Capítulo 7 NASEM 2021:</b> NASEM 2021 redujo los márgenes de seguridad de Fósforo respecto a NRC 2001 para minimizar la contaminación ambiental por excretas sin perjudicar la fertilidad.<br><br><b>Estándares NASEM 2021:</b><br>• <b>Requerimiento en Dieta:</b> 0.35 - 0.42% de la MS en lactancia.<br>• <b>Absorción Intestinal:</b> 0.70 de biodisponibilidad promedio.<br>• <b>Mito de Fertilidad:</b> Niveles > 0.45% P no mejoran la reproducción y aumentan significativamente los costos de la ración y el impacto ambiental.",
-            sources: "NASEM 2021 (8ª Edición, Cap. 7) • Dr. Bill Weiss (Cornell University)"
-        },
-        {
-            id: "dmi",
-            keywords: ["dmi", "consumo", "materia seca", "ingesta", "desouza", "ecuacion 2-1", "nrc", "nasem"],
-            title: "📊 Consumo de Materia Seca (DMI) Ecuaciones Oficiales NASEM 2021",
-            badge: "NASEM 2021 Eq. 2-1 (de Souza et al.)",
-            formula: "DMI (kg/d) = [(3.7 + Parity*5.7) + 0.305*MilkE + 0.022*BW - 0.689*BCS] * [1 - exp(-0.212*(DIM/7 + 2.56))]",
-            body: "<b>Capítulo 2 NASEM 2021:</b> La Ecuación 2-1 de Souza et al. (2019) reemplazó al modelo NRC 2001.<br><br><b>Factores Determinantes del DMI:</b><br>1. <b>Peso Vivo (BW):</b> Coeficiente lineal directo (+0.022 kg DMI por cada kg de BW).<br>2. <b>Energía de la Leche (MilkE):</b> Coeficiente (+0.305 kg DMI por Mcal de MilkE).<br>3. <b>Paridad:</b> Las vacas multiparas consumen +5.7 kg MS adicionales sobre las primíparas en pico.<br>4. <b>Condición Corporal (BCS):</b> Vacas sobreacondicionadas (BCS > 3.5) reducen su DMI en un 10-15%.<br>5. <b>Rango Normal de DMI:</b> 3.2% a 4.2% del Peso Vivo en lactancia pico (22.0 - 28.5 kg MS/día).",
-            sources: "Libro Oficial NASEM 2021 (Página 32, Ecuación 2-1)"
-        },
-        {
-            id: "fibra",
-            keywords: ["fibra", "fiber", "fdn", "ndf", "fda", "pendf", "undf", "undf240h", "rumen", "acidosis", "sara", "grant"],
-            title: "🌿 Carbohidratos Fibrosos (NDF, ADF, peNDF y uNDF240h) & Salud Ruminal",
-            badge: "NASEM 2021 Cap. 5 & Miner Institute",
-            formula: "peNDF mínimo >= 21 - 23% MS | uNDF240h máximo <= 0.35 - 0.40% BW",
-            body: "<b>Capítulo 5 NASEM 2021 & Dr. Rick Grant (Miner Institute):</b> La fibra es esencial para la masticación, salivación (bicarbonato natural) y estratificación de la capa ruminal.<br><br><b>Límites y Fracciones Críticas:</b><br>• <b>FDN Total (aNDFom):</b> Mínimo 28 - 32% de la MS total (con 75% procedente de forrajes).<br>• <b>Fibra Efectiva Físicamente (peNDF):</b> Mínimo 21% de la MS (retendida en criba de 4 y 8 mm del Separador de Penn State).<br>• <b>Fibra Indigestible (uNDF240h):</b> Determina la capacidad física máxima del rumen. No debe superar el <b>0.38% del Peso Vivo</b> (2.47 kg de uNDF240h para una vaca de 650 kg).",
-            sources: "NASEM 2021 Cap. 5 • Miner Institute / Cornell Shortcourse (Dr. Rick Grant)"
-        },
-        {
-            id: "dcad",
-            keywords: ["dcad", "bac", "preparto", "anionico", "hipocalcemia", "cloro", "azufre", "potasio", "sodio", "ph urinario"],
-            title: "⚡ Balance Catiónico-Aniónico de la Dieta (DCAD / BAC) en Preparto",
-            badge: "NASEM 2021 Cap. 12",
-            formula: "DCAD (mEq/kg MS) = [(%Na/0.023 + %K/0.039) - (%Cl/0.0355 + 2*%S/0.016)] * 10",
-            body: "<b>Capítulo 12 NASEM 2021 (Manejo de Transición):</b> El DCAD preparto controla la sensibilidad tisular a la Paratohormona (PTH).<br><br><b>Estrategia de Acidificación Metabólica:</b><br>• <b>Objetivo DCAD Preparto (21 días antes del parto):</b> <b>-50 a -150 mEq/kg MS</b>.<br>• <b>Monitoreo de pH Urinario:</b> El pH de la orina en vacas Holstein debe situarse entre <b>6.0 y 6.5</b> (pH normal no acidificado es 8.0-8.5).<br>• <b>Resultado Clínico:</b> Previene en un 90% la hipocalcemia clínica (fiebre de leche) y subclínica, reduciendo la metritis, retención de placenta y desplazamiento de abomaso.",
-            sources: "NASEM 2021 Cap. 12 • Curso Formulación de Raciones 2026 (Dr. José Maiztegui)"
-        },
-        {
-            id: "agua",
-            keywords: ["agua", "water", "bebida", "hidratacion", "litros", "temperatura", "wetherly", "cardoso", "illinois"],
-            title: "💧 Consumo de Agua de Bebida: Ecuaciones de la Universidad de Illinois",
-            badge: "Univ. of Illinois 2025 (Wetherly & Cardoso)",
-            formula: "Agua (L/día) = 15.99 + (1.58 * DMI_kg) + (0.90 * Milk_kg) + (0.05 * Na_g) + (1.20 * Temp_C)",
-            body: "<b>Universidad de Illinois 2025 (Dres. Phil Cardoso & James Drackley):</b> El agua es el nutriente cuantitativamente más importante en rumiantes (la leche es 87% agua).<br><br><b>Pautas Prácticas de Consumo:</b><br>• <b>Vaca de Alta Producción (35 kg leche, 25°C):</b> <b>115 a 135 Litros/día</b>.<br>• <b>Estrés Hídrico:</b> Una restricción de agua del 10% reduce el DMI de forma inmediata en un 15-20%, provocando una caída drástica en el pico de producción.<br>• <b>Calidad de Agua:</b> Sólidos Totales Disueltos (TDS) < 1,000 ppm, Sulfatos < 500 ppm, Nitratos < 100 ppm.",
-            sources: "University of Illinois Dairy Focus 2025 • Wetherly & Cardoso (2015)"
-        },
-        {
-            id: "grasa",
-            keywords: ["grasa", "grasas", "fat", "lipido", "omega", "linoleico", "linolenico", "epa", "dha", "tecnigrasas", "rolando", "hernandez", "fiv", "ovocito"],
-            title: "🥑 Nutrición Lipídica y Ácidos Grasos Esenciales (Omega-6 y Omega-3)",
-            badge: "Tecnigrasas SAS & UCV (MV MSc Rolando Hernández)",
-            formula: "Relación Ideal AGPI Omega-6 : Omega-3 = 4.0 : 1.0 a 5.0 : 1.0 | Grasa Total: 5.0 - 7.0% MS",
-            body: "<b>Investigaciones del MV MSc Rolando Hernández Mora (Tecnigrasas SAS & UCV):</b><br>La suplementación con ácidos grasos poliinsaturados (AGPI) sobrepasa la biohidrogenación ruminal mediante sales de calcio de ácidos grasos (soja y pescado).<br><br><b>Impacto en Reproducción y Fertilización In Vitro (FIV):</b><br>• <b>Relación Omega-6 : Omega-3:</b> Ajustar a <b>4.0:1 a 5.0:1</b> estimula la síntesis de progesterona en cuerpo lúteo, mejora el diámetro folicular y la viabilidad del ovocito en programas de aspiración folicular (OPU/FIV).<br>• <b>Dosis Recomendada:</b> 1.5 a 3.0% de la MS en forma de grasa inerte (300 a 500 g/cabeza/día).",
-            sources: "Tecnigrasas SAS & Universidad Central de Venezuela • MV MSc Rolando Hernández Mora"
-        },
-        {
-            id: "eficiencia",
-            keywords: ["eficiencia", "fe", "hutjens", "penn state", "fcm", "leche corregida", "pico"],
-            title: "🥛 Eficiencia Alimenticia (FE = FCM / DMI) & Metas del Hato",
-            badge: "Penn State University (Dr. Mike Hutjens)",
-            formula: "FE (kg Leche / kg MS) = Leche Corregida por Grasa al 3.5% (FCM) / Consumo DMI (kg/d)",
-            body: "<b>Penn State University Dairy Extension (Dr. Mike Hutjens):</b> La Eficiencia Alimenticia mide cuántos kg de leche al 3.5% FCM produce la vaca por cada kg de Materia Seca consumido.<br><br><b>Metas de Eficiencia por Etapa:</b><br>• <b>Promedio del Hato:</b> <b>>= 1.50 kg Leche / kg DMI</b>.<br>• <b>Pico de Lactancia (30 - 90 DEL):</b> <b>1.60 - 1.85</b> (alta conversión de nutrientes).<br>• <b>Lactancia Tardía (> 200 DEL):</b> 1.30 - 1.40.<br>• <b>Retorno Económico:</b> Cada +0.10 unidades de mejora en FE representa +1.5 a +2.0 kg de leche extra sin aumentar el consumo de alimento.",
-            sources: "Penn State University Extension • Dr. Mike Hutjens Dairy Course"
-        },
-        {
-            id: "minerales",
-            keywords: ["minerales", "minerals", "macrominerales", "microminerales", "oligoelementos", "quelatos", "organicos", "weiss", "nrc", "nasem"],
-            title: "🧪 Catálogo y Biodisponibilidad de Minerales en NASEM 2021",
-            badge: "NASEM 2021 Cap. 7 & Dr. Bill Weiss",
-            formula: "Biodisponibilidad Orgánica (Quelatos/Metioninatos) >= 120 - 160% vs Óxidos Inorgánicos",
-            body: "<b>Capítulo 7 NASEM 2021:</b> Revisa a fondo los requerimientos de 14 minerales esenciales.<br><br><b>Requerimientos Clave en MS:</b><br>• <b>Macrominerales (g/kg MS):</b> Ca (6.5), P (3.8), Mg (3.0), K (12.0), Na (2.2), Cl (3.0), S (2.0).<br>• <b>Microminerales (mg/kg MS ppm):</b> Fe (120), Zn (60), Cu (15), Mn (40), I (0.8), Se (0.3), Co (0.2).<br>• <b>Ventaja de Minerales Quelatados:</b> La sustitución del 30-50% de los microminerales inorgánicos por proteolitos/quelatos orgánicos reduce las pérdidas por antagonismo (ej. Cobre vs Molibdeno/Azufre) y potencia la inmunidad mamaria (reducida Somatic Cell Count SCC).",
-            sources: "NASEM 2021 Cap. 7 • Ohio State University (Dr. Bill Weiss)"
-        }
-    ];
+    {
+        id: "proteina_mp",
+        keywords: ["proteina", "proteína", "mp", "cp", "rup", "rdp", "nnp", "urea", "úrea", "mcp", "nitrogeno", "nitrógeno", "nue", "nrc", "nasem"],
+        title: "🥩 Proteína Metabolizable (MP), RUP, RDP y Proteína Microbiana (NASEM Cap. 6)",
+        badge: "NASEM 2021 Cap. 6 (Páginas 85-112)",
+        formula: "MP Requerida (g/d) = (3.8 * BW^0.75) + (Milk_kg * %Protein * 10 * 1.4) | MP Lys:Met = 2.7 : 1.0",
+        body: `<b>Capítulo 6 NASEM 2021 (NRC Ganado de Leche):</b> NASEM 2021 abandona definitivamente el uso de Proteína Cruda (CP%) como métrica principal de formulación y se enfoca en la <b>Proteína Metabolizable (MP)</b> absorbida en el intestino delgado procedente de:
+<br>1. <b>Proteína Microbiana (MCP):</b> Generada en el rumen por bacterias alimentadas con RDP y carbohidratos fermentables (aporte: 50-70% de la MP total).
+<br>2. <b>Proteína Indegradable en Rumen (RUP):</b> Proteína del alimento que escapa a la fermentación ruminal (digestibilidad intestinal RUP: 70-95%).
+<br><br>
+<b>Límites de Formulación Recomendados NASEM 2021:</b>
+<br>• <b>Proteína Metabolizable (MP):</b> 11.0 - 12.5% de la MS en vacas de alta producción (1,800 - 2,500 g MP/día).
+<br>• <b>Proteína Degradable en Rumen (RDP):</b> 9.5 - 10.5% de la MS para maximizar la síntesis microbiana sin desperdicio de nitrógeno ureico en sangre (BUN < 14 mg/dL).
+<br>• <b>Eficiencia del Uso del Nitrógeno (NUE):</b> NASEM 2021 busca una NUE > 30-33% en leche (Leche N / Consumo N).`,
+        sources: "NASEM 2021 (8ª Edición Revisada, Capítulo 6)"
+    },
+    {
+        id: "aminoacidos_esenciales",
+        keywords: ["aminoacido", "aminoacidos", "aminoácido", "aminoácidos", "lisina", "lys", "metionina", "met", "histidina", "his", "leucina", "isoleucina", "valina", "treonina", "triptofano", "fenilalanina", "arginina", "cncps"],
+        title: "🧬 Aminoácidos Esenciales Limitantes: Lisina, Metionina e Histidina (NASEM Cap. 6 & CNCPS)",
+        badge: "NASEM 2021 & Cornell CNCPS v7.0",
+        formula: "MP Lisina = 6.9 - 7.2% de MP | MP Metionina = 2.6 - 2.8% de MP | Relación Lys:Met = 2.7 : 1.0",
+        body: `<b>Capítulo 6 NASEM 2021 & Cornell CNCPS v7.0 (Dr. Mike Van Amburgh):</b>
+<br>Los 10 aminoácidos esenciales requeridos son: <b>Lisina (Lys), Metionina (Met), Histidina (His), Leucina (Leu), Isoleucina (Ile), Valina (Val), Treonina (Thr), Triptófano (Trp), Fenilalanina (Phe) y Arginina (Arg)</b>.
+<br><br>
+<b>Jerarquía de Aminoácidos Limitantes:</b>
+<br>1. <b>Lisina (1er o 2º limitante):</b> Crítico para el volumen total de leche y síntesis de proteína láctea. Meta: <b>6.9 - 7.2% de la MP</b>.
+<br>2. <b>Metionina (1er o 2º limitante):</b> Regulador epigenético y precursor de grasa en leche. Meta: <b>2.6 - 2.8% de la MP</b>.
+<br>3. <b>Histidina (3er limitante):</b> Identificado en NASEM 2021 como limitante secundario en dietas basadas en ensilaje de hierba/alfalfa. Meta: > 2.2% de la MP.
+<br>• <b>Suplementación Protegida:</b> El uso de Metionina y Lisina protegidas de la degradación ruminal (RPM/RPL) incrementa la producción de proteína de leche en un +0.15 a +0.25% sin elevar el nitrógeno excretado.`,
+        sources: "NASEM 2021 Cap. 6 • Cornell University CNCPS v7.0 (Dr. Mike Van Amburgh)"
+    },
+    {
+        id: "energia_nel",
+        keywords: ["energia", "energía", "nel", "nem", "neg", "tdn", "mcal", "caloria", "calorias", "nrc", "nasem"],
+        title: "⚡ Energía Neta de Lactancia (NEL), Mantenimiento (NEm) y Ganancia (NEg) (NASEM Cap. 3 & 4)",
+        badge: "NASEM 2021 Cap. 3 & 4",
+        formula: "NEL (Mcal/d) = (0.080 * BW^0.75) + Leche_kg * (0.0929 * %Grasa + 0.0547 * %Proteína + 0.192)",
+        body: `<b>Capítulos 3 y 4 NASEM 2021:</b> La energía útil de la ración se mide en <b>Energía Neta (NE)</b>.
+<br><br>
+<b>Fracciones y Coeficientes NASEM 2021:</b>
+<br>• <b>NEm (Mantenimiento):</b> 0.080 Mcal NEL / kg BW^0.75 (ej. 10.3 Mcal/día para una vaca de 650 kg).
+<br>• <b>NEL (Lactancia):</b> Cada kg de leche al 3.8% Grasa y 3.2% Proteína requiere <b>0.70 Mcal de NEL</b>.
+<br>• <b>NEg (Ganancia de Peso):</b> Requiere 3.5 a 5.2 Mcal NEg por kg de ganancia diaria de peso corporal.
+<br>• <b>Densidad Recomendada:</b> 1.65 a 1.74 Mcal NEL / kg MS en raciones TMR de alta producción.`,
+        sources: "NASEM 2021 (8ª Edición, Capítulos 3 y 4)"
+    },
+    {
+        id: "carbohidratos_fibra",
+        keywords: ["fibra", "fdn", "ndf", "fda", "adf", "pendf", "undf", "undf240h", "lignina", "rumen", "acidosis", "sara", "grant"],
+        title: "🌿 Carbohidratos Fibrosos (aNDFom, ADF, peNDF y uNDF240h) (NASEM Cap. 5 & Miner Institute)",
+        badge: "NASEM 2021 Cap. 5 & Miner Institute",
+        formula: "aNDFom Total >= 28 - 32% MS | peNDF >= 21 - 23% MS | uNDF240h <= 0.38% BW",
+        body: `<b>Capítulo 5 NASEM 2021 & Dr. Rick Grant:</b> La fibra forrajera sostiene la masticación, salivación (bicarbonato sódico endógeno) y la capa ruminal estructurada.
+<br><br>
+<b>Métricas Clave de la Fibra:</b>
+<br>• <b>aNDFom (FDN libre de cenizas):</b> 28 - 32% de la MS (mínimo 75% proveniente de forrajes de fibra larga).
+<br>• <b>peNDF (Fibra Físicamente Efectiva):</b> Mínimo 21 - 23% de la MS para mantener el pH ruminal > 6.0 y prevenir Acidosis Ruminal Subaguda (SARA).
+<br>• <b>uNDF240h (FDN Indigestible a 240 horas):</b> Regula el llenado físico ruminal. Límite máximo: <b><= 0.38% del Peso Vivo</b> (2.47 kg uNDF240h en vaca de 650 kg).`,
+        sources: "NASEM 2021 Cap. 5 • Miner Institute / Cornell Shortcourse (Dr. Rick Grant)"
+    },
+    {
+        id: "carbohidratos_no_estructurales",
+        keywords: ["nfc", "almidon", "almidón", "azucar", "azucares", "azúcares", "pectina", "pectinas", "carbohidratos", "nrc", "nasem"],
+        title: "🌽 Carbohidratos No Estructurales (NFC): Almidón Ruminal, Azúcares y Pectinas (NASEM Cap. 5)",
+        badge: "NASEM 2021 Cap. 5 (Páginas 65-84)",
+        formula: "NFC (% MS) = 100 - (aNDFom% + CP% + EE% + Cenizas%) | Almidón Ruminal = 22 - 28% MS",
+        body: `<b>Capítulo 5 NASEM 2021:</b> Los NFC proveen la energía de fermentación rápida requerida para la síntesis de Proteína Microbiana (MCP).
+<br><br>
+<b>Componentes y Recomendaciones:</b>
+<br>• <b>NFC Total:</b> 36 - 42% de la MS.
+<br>• <b>Almidón Ruminal:</b> 22 - 28% de la MS en dietas de maíz/sorgo. Niveles > 30% almidón degradable aumentan bruscamente el riesgo de SARA y depresión de grasa láctea (MFD).
+<br>• <b>Azúcares Solubles (Sacarosa/Melaza):</b> 4 - 7% de la MS (estimulan el consumo y la población de bacterias utilizadoras de lactato).
+<br>• <b>Pectinas (Pulpa de remolacha / Cascarilla de soya):</b> 6 - 10% de la MS (altamente fermentables sin generar ácido láctico).`,
+        sources: "NASEM 2021 (8ª Edición, Cap. 5)"
+    },
+    {
+        id: "macrominerales_ca_p",
+        keywords: ["calcio", "ca", "fosforo", "fósforo", "p", "macrominerales", "macromineral", "hipocalcemia", "fiebre de leche", "nrc", "nasem"],
+        title: "🧪 Macrominerales Principales: Calcio (Ca) y Fósforo (P) (NASEM Cap. 7)",
+        badge: "NASEM 2021 Cap. 7 (Páginas 113-145)",
+        formula: "Req. Ca = (DMI * 6.5) g/día (0.65 - 0.85% MS) | Req. P = (DMI * 3.8) g/día (0.35 - 0.42% MS)",
+        body: `<b>Capítulo 7 NASEM 2021:</b>
+<br>• <b>Calcio (Ca):</b> Requerido para la estructura ósea, contracción muscular y secreción de leche (1.22 g Ca/kg de leche). Coeficiente de absorción (Ab): 0.60 en inorgánicos vs 0.85 en orgánicos quelatados.
+<br>• <b>Fósforo (P):</b> Imprescindible para el metabolismo energético (ATP) y amortiguador ruminal (saliva). NASEM 2021 fijó el objetivo en <b>0.38 - 0.42% de la MS</b> para eliminar la contaminación ambiental por fosfatos sin alterar la fertilidad.`,
+        sources: "NASEM 2021 Cap. 7 • Dr. Bill Weiss (Ohio State University)"
+    },
+    {
+        id: "macrominerales_mg_k_na_cl_s",
+        keywords: ["magnesio", "mg", "potasio", "k", "sodio", "na", "cloro", "cl", "azufre", "s", "tetania", "sal", "bicarbonato", "nrc", "nasem"],
+        title: "🧪 Macrominerales Electrolíticos: Magnesio (Mg), Potasio (K), Sodio (Na), Cloro (Cl) y Azufre (S) (NASEM Cap. 7)",
+        badge: "NASEM 2021 Cap. 7 Electrolitos",
+        formula: "Mg = 0.30-0.40% MS | K = 1.2-1.5% MS | Na = 0.22-0.30% MS | Cl = 0.30% MS | S = 0.20% MS",
+        body: `<b>Capítulo 7 NASEM 2021:</b>
+<br>• <b>Magnesio (Mg):</b> Requerido 0.30 - 0.40% MS. El Mg previene la tetania de los pastos. El potasio elevado (K > 2.5%) antagoniza la absorción ruminal de Mg.
+<br>• <b>Potasio (K):</b> Requerido 1.2 - 1.5% MS en lactancia (aumenta a 1.6-1.8% en estrés por calor). En vacas secas se debe mantener K < 1.3% para prevenir alcalosis y hipocalcemia.
+<br>• <b>Sodio (Na) y Cloro (Cl):</b> Sal común (NaCl) a 0.5% de la MS + Bicarbonato de Sodio (0.75-1.0% MS).
+<br>• <b>Azufre (S):</b> Requerido 0.20% MS para aminoácidos azufrados (Metionina/Cisteína). Límite máximo: 0.40% MS (evita toxicidad por sulfuro de hidrógeno H2S).`,
+        sources: "NASEM 2021 Cap. 7 (Páginas 113-145)"
+    },
+    {
+        id: "microminerales_fe_zn_cu_mn_i_se_co_cr",
+        keywords: ["hierro", "fe", "zinc", "cinc", "zn", "cobre", "cu", "manganeso", "mn", "yodo", "i", "selenio", "se", "cobalto", "co", "cromo", "cr", "microminerales", "oligoelementos", "quelatos", "nrc", "nasem"],
+        title: "🔬 Microminerales y Oligoelementos: Fe, Zn, Cu, Mn, I, Se, Co y Cromo (Cr) (NASEM Cap. 7)",
+        badge: "NASEM 2021 Cap. 7 Microminerales",
+        formula: "Fe: 120 ppm | Zn: 60 ppm | Cu: 15 ppm | Mn: 40 ppm | I: 0.8 ppm | Se: 0.3 ppm | Co: 0.2 ppm | Cr: 0.5 ppm",
+        body: `<b>Capítulo 7 NASEM 2021:</b>
+<br>• <b>Cinc / Zinc (Zn - 60 ppm):</b> Integridad de la pezuña, queratina del canal del pezón e inmunidad.
+<br>• <b>Cobre (Cu - 15 ppm):</b> Antagonizado por Molibdeno (Mo), Azufre (S) e Hierro (Fe). NASEM 2021 recomienda controlar la acumulación hepática de Cu.
+<br>• <b>Manganeso (Mn - 40 ppm):</b> Desarrollo embrionario y lubricación articular.
+<br>• <b>Yodo (I - 0.8 ppm):</b> Hormonas tiroideas T3/T4 y metabolismo basal.
+<br>• <b>Selenio (Se - 0.3 ppm):</b> Antioxidante (Glutatión Peroxidasa) en combinación con Vitamina E.
+<br>• <b>Cobalto (Co - 0.2 ppm):</b> Precursor exclusivo para la síntesis microbiana de Vitamina B12 en rumen.
+<br>• <b>Cromo (Cr - 0.5 ppm):</b> Novedad en NASEM 2021. Sensibilizador de insulina que aumenta el DMI en transición y estrés térmico.`,
+        sources: "NASEM 2021 (8ª Edición, Cap. 7)"
+    },
+    {
+        id: "vitaminas_liposolubles",
+        keywords: ["vitamina a", "vitamina d", "vitamina e", "vitamina k", "beta caroteno", "tocoferol", "colecalciferol", "retinol", "vitaminas", "nrc", "nasem"],
+        title: "💊 Vitaminas Liposolubles: Vitamina A, Vitamina D3 y Vitamina E (NASEM Cap. 8)",
+        badge: "NASEM 2021 Cap. 8 (Páginas 147-160)",
+        formula: "Vit A: 110 UI/kg BW | Vit D3: 30 UI/kg BW | Vit E: 1.6 - 4.0 UI/kg BW (1000 - 2000 UI/día preparto)",
+        body: `<b>Capítulo 8 NASEM 2021:</b>
+<br>• <b>Vitamina A (110 UI/kg BW | ~70,000 UI/día):</b> Esencial para la salud epitelial, mucosas uterinas y visión.
+<br>• <b>Vitamina D3 (30 UI/kg BW | ~20,000 UI/día):</b> Homeostasis del calcio y resorción ósea.
+<br>• <b>Vitamina E (1,000 - 2,000 UI/día en secas/preparto):</b> Antioxidante celular de membrana. Reduce drásticamente la incidencia de mastitis subclínica y retención de placenta al parto.`,
+        sources: "NASEM 2021 (8ª Edición, Cap. 8)"
+    },
+    {
+        id: "vitaminas_hidrosolubles_colina",
+        keywords: ["vitaminas b", "complejo b", "biotina", "niacina", "colina", "colina protegida", "rpc", "tiamina", "b12", "b6", "pantotenico", "folico", "nrc", "nasem"],
+        title: "💊 Vitaminas Hidrosolubles (Complejo B, Biotina, Niacina) y Colina Protegida (RPC) (NASEM Cap. 8)",
+        badge: "NASEM 2021 Cap. 8 Vitaminas B & RPC",
+        formula: "Colina Protegida RPC = 12.9 g/día de Colina pura (60 g RPC/día) | Biotina = 20 mg/día",
+        body: `<b>Capítulo 8 NASEM 2021:</b>
+<br>• <b>Colina Protegida en Rumen (RPC):</b> NASEM 2021 respaldó formalmente la suplementación de RPC (12.9 g/día de colina ion pura) en el periodo de transición (21 días preparto a 21 días posparto). Promueve la exportación de VLDL desde el hígado, reduciendo el hígado graso y la cetosis en un 70%.
+<br>• <b>Biotina (20 mg/día):</b> Fortalece la estructura del casco (línea blanca) y aumenta la producción de leche en +1.3 kg/día al actuar como coenzima en la gluconeogénesis (piruvato carboxilasa).
+<br>• <b>Niacina (B3 - 6 a 12 g/día):</b> Reduce la lipólisis excesiva y ayuda en estrés térmico.`,
+        sources: "NASEM 2021 Cap. 8 • Dr. Ric Grummer (Univ. of Wisconsin)"
+    },
+    {
+        id: "lipidos_acidos_grasos",
+        keywords: ["grasa", "grasas", "fat", "lipido", "lipidos", "extracto etereo", "palmitico", "estearico", "oleico", "linoleico", "linolenico", "omega", "epa", "dha", "tecnigrasas", "rolando", "hernandez", "fiv", "ovocito"],
+        title: "🥑 Nutrición Lipídica y Perfil de Ácidos Grasos (C16:0, C18:0, C18:1, Omega-6 y Omega-3) (NASEM Cap. 4 & Tecnigrasas)",
+        badge: "NASEM 2021 Cap. 4 & Tecnigrasas SAS",
+        formula: "Grasa Total Dieta <= 6.0 - 7.0% MS | Relación AGPI Omega-6 : Omega-3 = 4.0:1 a 5.0:1",
+        body: `<b>Capítulo 4 NASEM 2021 & Investigaciones del MV MSc Rolando Hernández Mora (Tecnigrasas SAS):</b>
+<br>• <b>Límite de Grasa en Dieta:</b> La grasa total no debe superar el 6.5-7.0% de la MS (grasa libre en rumen < 4.0% para no inhibir bacterias celulolíticas).
+<br>• <b>Ácido Palmítico (C16:0):</b> Incrementa el porcentaje y rendimiento de grasa en leche.
+<br>• <b>Ácido Oleico (C18:1):</b> Mejora la digestibilidad de la grasa total y el estado energético.
+<br>• <b>Ácidos Grasos Poliinsaturados AGPI (Omega-6 y Omega-3):</b> La suplementación con sales de calcio en relación 4:1 a 5:1 eleva la progesterona celular, estimula la calidad ovocitaria y aumenta las tasas de concepción en Fertilización In Vitro (FIV).`,
+        sources: "NASEM 2021 Cap. 4 • Tecnigrasas SAS & UCV (MV MSc Rolando Hernández Mora)"
+    },
+    {
+        id: "agua_hidratacion",
+        keywords: ["agua", "water", "bebida", "hidratacion", "litros", "temperatura", "wetherly", "cardoso", "illinois", "nrc", "nasem"],
+        title: "💧 Consumo de Agua de Bebida y Estrés Hídrico (NASEM Cap. 9 & Univ. Illinois 2025)",
+        badge: "NASEM 2021 Cap. 9 & Univ. of Illinois",
+        formula: "Agua (L/día) = 15.99 + (1.58 * DMI_kg) + (0.90 * Leche_kg) + (0.05 * Na_g) + (1.20 * Temp_C)",
+        body: `<b>Capítulo 9 NASEM 2021 & Universidad de Illinois (Wetherly & Cardoso, 2015):</b>
+<br>El agua representa el 87% del volumen de la leche producida.
+<br>• <b>Consumo Promedio:</b> 115 a 140 Litros/cabeza/día en vacas de alta producción a 25°C.
+<br>• <b>Sensibilidad al Calor:</b> Por cada 1°C de aumento sobre los 20°C, el consumo de agua se incrementa en +1.2 Litros/día.
+<br>• <b>Impacto en Producción:</b> Restringir el agua en un 10% reduce el DMI inmediatamente en un 15-20%.`,
+        sources: "NASEM 2021 Cap. 9 • University of Illinois 2025"
+    },
+    {
+        id: "transicion_dcad_hipocalcemia",
+        keywords: ["dcad", "bac", "preparto", "transicion", "hipocalcemia", "fiebre de leche", "cloro", "azufre", "potasio", "ph urinario", "goldilocks", "drackley", "nasem"],
+        title: "⚡ Manejo Nutricional de Transición, DCAD y Dieta Goldilocks (NASEM Cap. 12 & Illinois)",
+        badge: "NASEM 2021 Cap. 12 & Illinois Goldilocks",
+        formula: "DCAD Preparto = -50 a -150 mEq/kg MS | pH Urinario Holstein = 6.0 - 6.5 | Paja de Trigo = 3.0 - 4.5 kg/d",
+        body: `<b>Capítulo 12 NASEM 2021 & Dr. James Drackley (Univ. of Illinois):</b>
+<br>• <b>DCAD Aniónico Preparto:</b> Formular con DCAD de -50 a -150 mEq/kg MS durante los 21 días previos al parto genera una acidificación metabólica leve transitoria que activa los receptores de PTH, previniendo la hipocalcemia clínica y subclínica.
+<br>• <b>Dieta de Energía Controlada "Goldilocks":</b> Utilizar 3.0 a 4.5 kg/día de paja de trigo picada (< 5 cm) limita la densidad energética a 1.30-1.35 Mcal NEL/kg MS, previniendo la sobrecondición, el hígado graso y el desplazamiento de abomaso (LDA).`,
+        sources: "NASEM 2021 Cap. 12 • University of Illinois 2025 (Dr. James Drackley)"
+    },
+    {
+        id: "eficiencia_alimenticia_fe",
+        keywords: ["eficiencia", "fe", "hutjens", "penn state", "fcm", "leche corregida", "pico", "retorno"],
+        title: "🥛 Eficiencia Alimenticia (FE = FCM / DMI) & Metas del Hato (Penn State University)",
+        badge: "Penn State University (Dr. Mike Hutjens)",
+        formula: "FE (kg Leche / kg MS) = Leche Corregida por Grasa al 3.5% (FCM) / Consumo DMI (kg/d)",
+        body: `<b>Penn State University Dairy Extension (Dr. Mike Hutjens):</b>
+<br>Mide la conversión biológica del alimento consumido en leche corregida por grasa (FCM 3.5%).
+<br>• <b>Meta Promedio del Hato:</b> >= 1.50 kg Leche / kg DMI.
+<br>• <b>Pico de Lactancia (30 - 90 DEL):</b> 1.60 - 1.85.
+<br>• <b>Rentabilidad:</b> Un incremento de +0.10 unidades en FE equivale a +1.5 a +2.0 kg de leche adicional por vaca/día sin gasto extra en forraje o concentrado.`,
+        sources: "Penn State University Extension • Dr. Mike Hutjens Dairy Course"
+    }
+];
 
     function removeAccents(str) {
         if (!str) return "";
@@ -1913,6 +2122,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     populateCategories();
     calculateRequirements();
+    updateMineralTablesAndHighlight();
     renderCornellModule();
     renderPresetsTable();
 });
