@@ -689,16 +689,71 @@ function renderPresetsTable() {
 /**
  * RolanNutriPro - AI Nutrition Q&A Knowledge Engine
  * Author: Rolando Hernández Mora, MV MSc Nutrición Animal
+ * Standards: NASEM 2021 (8th Ed.), Cornell CNCPS 2023, Univ. Illinois 2025
  */
 
 const STOP_WORDS = new Set([
     "de", "del", "la", "el", "en", "con", "sin", "por", "para", "que", "un", "una", 
     "los", "las", "como", "cual", "cuanto", "cuanta", "es", "son", "sobre", "mas", 
     "menos", "dame", "busca", "dime", "y", "o", "a", "al", "mi", "mis", "tu", "tus", 
-    "su", "sus", "ver", "vaca", "vacas", "ganado", "animal", "dame", "dar", "hacer"
+    "su", "sus", "ver", "vaca", "vacas", "ganado", "animal", "dame", "dar", "hacer", "tiene", "necesita"
 ]);
 
+const mineralMap = {
+    "calcio": "Ca", "ca": "Ca",
+    "fosforo": "P", "p": "P",
+    "magnesio": "Mg", "mg": "Mg",
+    "potasio": "K", "k": "K",
+    "sodio": "Na", "na": "Na",
+    "cloro": "Cl", "cl": "Cl",
+    "azufre": "S", "s": "S",
+    "hierro": "Fe", "fe": "Fe",
+    "cinc": "Zn", "zinc": "Zn", "zn": "Zn",
+    "cobre": "Cu", "cu": "Cu",
+    "manganeso": "Mn", "mn": "Mn",
+    "yodo": "I", "i": "I",
+    "selenio": "Se", "se": "Se",
+    "cobalto": "Co", "co": "Co"
+};
+
 const qaKnowledgeBase = [
+    {
+        id: "calcium_p",
+        keywords: ["calcio", "ca", "fosforo", "p", "macrominerales", "hueso", "leche calcio", "relacion ca p"],
+        title: "🧪 Calcio (Ca) y Fósforo (P) en Rumiantes (NASEM 2021 Cap. 7)",
+        badge: "NASEM 2021 (Cap. 7)",
+        formula: "Requerimiento Ca: 6.5 g/kg MS | Requerimiento P: 3.8 g/kg MS | Relación Ca:P = 1.5 - 2.0 : 1.0",
+        body: `<b>Modelo Nutricional de Macrominerales NASEM 2021 (Capítulo 7):</b>
+<br>• <b>Calcio (Ca):</b> Requerido para contracción muscular, transmisión nerviosa y secreción láctea (1.22 g Ca/kg leche). Requerimiento dietario: <b>6.5 g/kg MS</b> (~150-180 g/día en lactancia alta).
+<br>• <b>Fósforo (P):</b> Indispensable para síntesis de ATP, amortiguación ruminal y metabolismo óseo. Requerimiento dietario: <b>3.8 g/kg MS</b> (~85-100 g/día).
+<br>• <b>Relación Ca:P:</b> Debe mantenerse entre <b>1.5:1 y 2.0:1</b> para prevenir osteodistrofia y deficiencias secundarias.`,
+        sources: "NASEM 2021 8ª Edición • Capítulo 7: Mineral Requirements"
+    },
+    {
+        id: "protein",
+        keywords: ["proteina", "cp", "rup", "rdp", "mp", "proteina metabolizable", "proteina cruda", "nitrogeno", "urea", "mun"],
+        title: "🧬 Proteína Metabolizable (MP), RUP y RDP en Rumiantes (NASEM 2021 Cap. 6)",
+        badge: "NASEM 2021 (Cap. 6)",
+        formula: "MP Total (g/d) = Proteína Microbiana Absorbida (MiP) + RUP Digestible Intestinal",
+        body: `<b>Requerimientos de Proteína Metabolizable NASEM 2021:</b>
+<br>• <b>Proteína Cruda (CP):</b> Rango dietario objetivo de <b>15.0% - 16.5% de la MS</b>.
+<br>• <b>RDP (Proteína Degradable en Rumen):</b> 9.5% - 10.5% de la MS para maximizar síntesis de proteína microbiana.
+<br>• <b>RUP (Proteína Insoluble en Rumen):</b> 5.5% - 6.5% de la MS digestible en intestino delgado.
+<br>• <b>Nitrógeno Ureico en Leche (MUN):</b> Meta dietaria de <b>8.0 a 12.0 mg/dL</b>. Valores > 14 mg/dL indican exceso de RDP o déficit de carbohidratos fermentables.`,
+        sources: "NASEM 2021 8ª Edición • Capítulo 6: Protein and Amino Acids"
+    },
+    {
+        id: "energy",
+        keywords: ["energia", "nel", "nem", "neg", "tdn", "almidon", "mcal", "energia neta", "carbohidratos"],
+        title: "⚡ Energía Neta de Lactancia (NEL) y Carbohidratos (NASEM 2021 Cap. 3)",
+        badge: "NASEM 2021 (Cap. 3)",
+        formula: "NEL Total (Mcal/d) = NEm (0.080 * BW^0.75) + NE Milk (Leche * [0.0929*Fat% + 0.0547*Prot% + 0.192])",
+        body: `<b>Sistema de Energía Neta NASEM 2021:</b>
+<br>• <b>Densidad Energética Dietaria:</b> 1.65 - 1.75 Mcal NEL/kg MS en lactancia alta.
+<br>• <b>Almidón Ruminal:</b> Meta de <b>24.0% - 28.0% de la MS</b>. Nivel máximo de 30.0% para prevenir Acidosis Ruminal Subaguda (SARA).
+<br>• <b>Nutrientes Digestibles Totales (TDN):</b> 68% - 74% de la MS en vacas en ordeño.`,
+        sources: "NASEM 2021 8ª Edición • Capítulo 3: Energy Requirements"
+    },
     {
         id: "dmi",
         keywords: ["dmi", "materia seca", "consumo", "alimento", "cuanto come", "ingesta", "kg ms", "2-1", "souza"],
@@ -740,7 +795,7 @@ const qaKnowledgeBase = [
     },
     {
         id: "aminoacids",
-        keywords: ["aminoacidos", "proteina", "lisina", "metionina", "lys", "met", "relacion", "cornell", "cncps", "bypass"],
+        keywords: ["aminoacidos", "lisina", "metionina", "lys", "met", "relacion", "cornell", "cncps", "bypass"],
         title: "🧬 Aminoácidos Limitantes: Lisina y Metionina Metabolizable (Cornell CNCPS v6.5/v7.0)",
         badge: "Cornell CNCPS v7.0",
         formula: "Relación Óptima MP Lys : MP Met = 2.70 : 1.00 (6.9% Lys MP : 2.6% Met MP)",
@@ -806,18 +861,61 @@ function searchNutritionQA(query) {
 
     const rawQuery = query.trim();
     const cleanQuery = removeAccents(rawQuery);
-    const rawQueryWords = cleanQuery.split(/[^a-z0-9]+/).filter(w => w.length > 1);
+    const rawQueryWords = cleanQuery.split(/[^a-z0-9]+/).filter(w => w.length > 0);
     
     // Filter out Spanish stop words
-    const queryWords = rawQueryWords.filter(w => !STOP_WORDS.has(w) && w.length >= 2);
+    const queryWords = rawQueryWords.filter(w => !STOP_WORDS.has(w) && w.length >= 1);
 
+    // 1. DYNAMIC MINERAL ENGINE LOOKUP (NASEM 2021 Cap. 7)
+    let matchedMineralKey = null;
+    for (const w of queryWords) {
+        if (mineralMap[w]) {
+            matchedMineralKey = mineralMap[w];
+            break;
+        }
+    }
+
+    if (matchedMineralKey && nutrientDB && nutrientDB.mineral_catalog && nutrientDB.mineral_catalog[matchedMineralKey]) {
+        const item = nutrientDB.mineral_catalog[matchedMineralKey];
+        const isMacro = item.unit.includes("g");
+        const reqVal = isMacro ? `${item.req_per_kg_dm} g/kg MS` : `${item.req_per_kg_dm} mg/kg MS (ppm)`;
+
+        // Calculate DMI for current category or 24.5 kg default
+        const bw = parseFloat(bwInput ? bwInput.value : 650) || 650;
+        const estDmi = bw * 0.037;
+        const totalVal = isMacro ? `${(estDmi * item.req_per_kg_dm).toFixed(1)} g/día` : `${(estDmi * item.req_per_kg_dm).toFixed(0)} mg/día`;
+
+        qaAnswerContainer.style.display = "block";
+        qaAnswerContainer.innerHTML = `
+            <div class="qa-answer-card" style="background:#ffffff; border-left:5px solid var(--primary-emerald); border:1px solid #cbd5e1; padding:18px; border-radius:12px;">
+                <div class="qa-answer-title" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                    <span style="font-size:1.15rem; font-weight:700; color:#0f172a;">🧪 Ficha Nutricional NASEM 2021: ${item.name} (${item.symbol})</span>
+                    <span class="badge-source" style="background:#ecfdf5; color:#047857; border-color:#a7f3d0;">${item.category}</span>
+                </div>
+                <div class="qa-formula-box" style="background:#f8fafc; border:1px dashed #059669; border-radius:8px; padding:10px 14px; margin:10px 0; color:#065f46; font-weight:700;">
+                    📐 Requerimiento NASEM 2021: ${reqVal} | Consumo Total Est: ${totalVal}
+                </div>
+                <div class="qa-answer-body" style="font-size:0.95rem; line-height:1.6; color:#1e293b;">
+                    <strong style="color:#047857;">Función Fisiológica Principal:</strong> ${item.function}
+                    <br><br>
+                    <strong style="color:#0f172a;">Síntomas Clínicos de Deficiencia:</strong> ${item.deficiency}
+                    <br><br>
+                    <strong style="color:#b45309;">Límite Máximo Tolerable NASEM:</strong> ${item.unit.includes("g") ? item.max_tolerable + "% MS" : item.max_tolerable + " ppm"}
+                </div>
+                <div class="qa-sources-footer" style="margin-top:12px; padding-top:10px; border-top:1px solid #e2e8f0; font-size:0.84rem; color:#475569;">📖 <strong style="color:#0f172a;">Fuente Autorizada:</strong> NASEM 2021 8ª Edición • Capítulo 7: Mineral Requirements</div>
+            </div>
+        `;
+        return;
+    }
+
+    // 2. GENERAL KNOWLEDGE BASE LOOKUP
     let matchedItem = null;
     let maxHits = 0;
 
     qaKnowledgeBase.forEach(item => {
         let hits = 0;
 
-        // 1. Keyword Exact and Partial Matching
+        // Keyword Matching
         item.keywords.forEach(kw => {
             const normKw = removeAccents(kw);
 
@@ -840,7 +938,7 @@ function searchNutritionQA(query) {
             });
         });
 
-        // 2. Title Match
+        // Title Match
         const normTitle = removeAccents(item.title);
         queryWords.forEach(qWord => {
             if (qWord.length >= 3 && normTitle.includes(qWord)) {
@@ -848,7 +946,7 @@ function searchNutritionQA(query) {
             }
         });
 
-        // 3. Body Match
+        // Body Match
         const normBody = removeAccents(item.body);
         queryWords.forEach(qWord => {
             if (qWord.length >= 4 && normBody.includes(qWord)) {
@@ -862,7 +960,7 @@ function searchNutritionQA(query) {
         }
     });
 
-    const CONFIDENCE_THRESHOLD = 25;
+    const CONFIDENCE_THRESHOLD = 15;
 
     if (qaAnswerContainer) {
         qaAnswerContainer.style.display = "block";
