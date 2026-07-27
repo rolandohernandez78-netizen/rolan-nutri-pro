@@ -1808,7 +1808,7 @@ function renderPresetsTable() {
 /**
  * RolanNutriPro - AI Nutrition Q&A Knowledge Engine
  * Author: Rolando Hernández Mora, MV MSc Nutrición Animal
- * Standards: NASEM 2021 (8th Ed.), Cornell CNCPS 2023, Univ. Illinois 2025
+ * Standards: NASEM 2021 (8th Ed.), Cornell CNCPS 2023, Univ. Illinois 2025, Penn State 2025, Tecnigrasas 2018
  */
 
 const STOP_WORDS = new Set([
@@ -1837,16 +1837,56 @@ const mineralMap = {
 
 const qaKnowledgeBase = [
     {
-        id: "calcium_p",
-        keywords: ["calcio", "ca", "fosforo", "p", "macrominerales", "hueso", "leche calcio", "relacion ca p"],
-        title: "🧪 Calcio (Ca) y Fósforo (P) en Rumiantes (NASEM 2021 Cap. 7)",
-        badge: "NASEM 2021 (Cap. 7)",
-        formula: "Requerimiento Ca: 6.5 g/kg MS | Requerimiento P: 3.8 g/kg MS | Relación Ca:P = 1.5 - 2.0 : 1.0",
-        body: `<b>Modelo Nutricional de Macrominerales NASEM 2021 (Capítulo 7):</b>
-<br>• <b>Calcio (Ca):</b> Requerido para contracción muscular, transmisión nerviosa y secreción láctea (1.22 g Ca/kg leche). Requerimiento dietario: <b>6.5 g/kg MS</b> (~150-180 g/día en lactancia alta).
-<br>• <b>Fósforo (P):</b> Indispensable para síntesis de ATP, amortiguación ruminal y metabolismo óseo. Requerimiento dietario: <b>3.8 g/kg MS</b> (~85-100 g/día).
-<br>• <b>Relación Ca:P:</b> Debe mantenerse entre <b>1.5:1 y 2.0:1</b> para prevenir osteodistrofia y deficiencias secundarias.`,
-        sources: "NASEM 2021 8ª Edición • Capítulo 7: Mineral Requirements"
+        id: "vitamins",
+        keywords: ["vitamina", "vitaminas", "vitamina a", "vitamina d", "vitamina d3", "vitamina e", "niacina", "colina", "biotina", "retinol", "tocoferol"],
+        title: "💊 Vitaminas Liposolubles (A, D3, E) e Hidrosolubles (NASEM 2021 Cap. 8)",
+        badge: "NASEM 2021 (Cap. 8)",
+        formula: "Vit A: 110 UI/kg BW | Vit D3: 30 UI/kg BW | Vit E: 1.6-2.5 UI/kg BW | Niacina: 6-12 g/d | Colina: 12.9 g/d MP",
+        body: `<b>Requerimientos de Vitaminas NASEM 2021 en Ganado Lechero (Capítulo 8):</b>
+<br>• <b>Vitamina A (Retinol):</b> 70,000 - 100,000 UI/día. Esencial para salud de mucosas epiteliales, reproducción y función inmune.
+<br>• <b>Vitamina D3 (Colecalciferol):</b> 20,000 - 30,000 UI/día. Regula la homeostasis, absorción intestinal y resorción de Calcio y Fósforo.
+<br>• <b>Vitamina E (Alfa-Tocoferol):</b> 1,000 - 2,000 UI/día en preparto. Potente antioxidante que reduce la frecuencia de retención de placenta y mastitis.
+<br>• <b>Niacina (B3) y Colina Rumen-Bypass:</b> 12.9 g/d de Colina Metabolizable reduce la acumulación de triglicéridos hepáticos previniendo hígado graso y cetosis metabólica.
+<br>• <b>Biotina (B7):</b> 20 mg/día estimula la síntesis de queratina en la pezuña (firmeza podal) e incrementa el rendimiento lácteo (+1.2 kg/día).`,
+        sources: "NASEM 2021 8ª Edición • Capítulo 8: Vitamin Requirements • Weiss et al."
+    },
+    {
+        id: "carbohydrates",
+        keywords: ["carbohidratos", "nfc", "nsc", "almidon", "azucares", "pectinas", "tdn", "digestibilidad almidon", "kps"],
+        title: "🌽 Carbohidratos No Fibrosos (NFC), Almidón y Azúcares (NASEM 2021 Cap. 5)",
+        badge: "NASEM 2021 (Cap. 5)",
+        formula: "NFC (%) = 100 - [NDF% + CP% + EE% + Cenizas%] | Meta Dietaria NFC: 38.0% - 42.0% MS",
+        body: `<b>Dinámica de Carbohidratos Fermentables y Almidón Ruminal (NASEM 2021 Capítulo 5):</b>
+<br>• <b>Almidón Ruminal:</b> Nivel óptimo de <b>24.0% a 28.0% de la MS</b> en lactancia alta. Niveles > 30.0% incrementan el riesgo de Acidosis Ruminal Subaguda (SARA).
+<br>• <b>Azúcares Solubles (Sacarosa / Melaza):</b> 4.0% - 6.0% de la MS para estimular bacterias celulolíticas y la ingesta inicial.
+<br>• <b>Pectinas (Pulpa de Cítricos / Remolacha):</b> Carbohidratos no fibrosos de rápida fermentación sin producción de ácido láctico (rumen seguro).
+<br>• <b>Digestibilidad Ruminal 7h del Almidón:</b> Meta >= 75% del almidón total (silaje de maíz procesado con kPS > 70%).`,
+        sources: "NASEM 2021 8ª Edición • Capítulo 5: Carbohydrates • Ferraretto & Shaver"
+    },
+    {
+        id: "fiber",
+        keywords: ["fibra", "ndf", "adf", "pendf", "undf", "undf240", "pdndf", "lignina", "paja", "forraje", "salud ruminal", "penn state"],
+        title: "🌿 Fibra Detergente Neutro (NDF), ADF y Fibra Efectiva peNDF (NASEM 2021 & Penn State)",
+        badge: "NASEM 2021 & Penn State",
+        formula: "NDF Total Min: 28.0% - 32.0% MS | NDF Forraje Min: 19.0% - 21.0% MS | peNDF Min: >= 21.0% MS",
+        body: `<b>Requerimientos de Fibra y Estratificación del Rumen (NASEM 2021 & Penn State University):</b>
+<br>• <b>NDF Total:</b> 28.0% - 32.0% de la MS para mantener la motilidad ruminal y tiempo de rumiado (> 450 minutos/día).
+<br>• <b>NDF Forrajera (fNDF):</b> Mínimo 19.0% - 21.0% de la MS proveniente de forrajes efectivos.
+<br>• <b>ADF (Fibra Detergente Ácido):</b> 19.0% - 21.0% de la MS, inversamente correlacionado con la digestibilidad de la energía.
+<br>• <b>peNDF (Separador de Partículas Penn State):</b> Retención >= 21.0% de la MS en las cribas superior y media (8 mm y 19 mm) para estimular la salivación rica en bicarbonato de sodio.`,
+        sources: "NASEM 2021 8ª Edición • Capítulo 5 • Penn State Particle Separator Manual"
+    },
+    {
+        id: "lipids",
+        keywords: ["lipidos", "grasa", "acidos grasos", "palmitico", "oleico", "linoleico", "linolenico", "c16", "c18", "extracto etereo", "ee", "jabones de calcio", "tecnigrasas", "bypass fat"],
+        title: "🥑 Lípidos, Grasas Inertes y Ácidos Grasos Esenciales (NASEM Cap. 4 & Tecnigrasas SAS)",
+        badge: "NASEM Cap. 4 & Tecnigrasas",
+        formula: "Grasa Total Dietaria Max: 5.5% - 6.5% MS | Extracto Etéreo (EE): 3.5% - 6.0% MS",
+        body: `<b>Perfil de Ácidos Grasos para Rendimiento Lácteo y Fertilidad (MV MSc Rolando Hernández Mora):</b>
+<br>• <b>Lípidos Totales:</b> No sobrepasar el 6.5% de la MS para evitar el recubrimiento forrajero por ácidos grasos libres (NEFA) que inhiben las bacterias celulolíticas.
+<br>• <b>Ácido Palmítico (C16:0 >= 80%):</b> Incrementa directamente la síntesis de novo de grasa en leche y la masa grasa en tanque.
+<br>• <b>Ácido Oleico (C18:1) & Sales de Calcio:</b> Elevada digestibilidad intestinal (> 85%) y estimulación de la progesterona folicular para aumentar la tasa de concepción en los primeros 90 días postparto.`,
+        sources: "NASEM 2021 Capítulo 4: Fat Requirements • Tecnigrasas SAS Technical Bulletin 2018"
     },
     {
         id: "protein",
@@ -1862,8 +1902,20 @@ const qaKnowledgeBase = [
         sources: "NASEM 2021 8ª Edición • Capítulo 6: Protein and Amino Acids"
     },
     {
+        id: "calcium_p",
+        keywords: ["calcio", "ca", "fosforo", "p", "macrominerales", "hueso", "leche calcio", "relacion ca p"],
+        title: "🧪 Calcio (Ca) y Fósforo (P) en Rumiantes (NASEM 2021 Cap. 7)",
+        badge: "NASEM 2021 (Cap. 7)",
+        formula: "Requerimiento Ca: 6.5 g/kg MS | Requerimiento P: 3.8 g/kg MS | Relación Ca:P = 1.5 - 2.0 : 1.0",
+        body: `<b>Modelo Nutricional de Macrominerales NASEM 2021 (Capítulo 7):</b>
+<br>• <b>Calcio (Ca):</b> Requerido para contracción muscular, transmisión nerviosa y secreción láctea (1.22 g Ca/kg leche). Requerimiento dietario: <b>6.5 g/kg MS</b> (~150-180 g/día en lactancia alta).
+<br>• <b>Fósforo (P):</b> Indispensable para síntesis de ATP, amortiguación ruminal y metabolismo óseo. Requerimiento dietario: <b>3.8 g/kg MS</b> (~85-100 g/día).
+<br>• <b>Relación Ca:P:</b> Debe mantenerse entre <b>1.5:1 y 2.0:1</b> para prevenir osteodistrofia y deficiencias secundarias.`,
+        sources: "NASEM 2021 8ª Edición • Capítulo 7: Mineral Requirements"
+    },
+    {
         id: "energy",
-        keywords: ["energia", "nel", "nem", "neg", "tdn", "almidon", "mcal", "energia neta", "carbohidratos"],
+        keywords: ["energia", "nel", "nem", "neg", "tdn", "mcal", "energia neta"],
         title: "⚡ Energía Neta de Lactancia (NEL) y Carbohidratos (NASEM 2021 Cap. 3)",
         badge: "NASEM 2021 (Cap. 3)",
         formula: "NEL Total (Mcal/d) = NEm (0.080 * BW^0.75) + NE Milk (Leche * [0.0929*Fat% + 0.0547*Prot% + 0.192])",
@@ -1926,7 +1978,7 @@ const qaKnowledgeBase = [
     },
     {
         id: "goldilocks",
-        keywords: ["goldilocks", "dieta seca", "vaca seca", "paja", "fibra", "volumen", "drant"],
+        keywords: ["goldilocks", "dieta seca", "vaca seca", "paja", "volumen", "drant"],
         title: "🌾 Dieta de Alta Fibra / Control de Energía en Vacas Secas (Dieta Goldilocks / Dr. Gordie Jones)",
         badge: "Univ. de Illinois & Miner Institute",
         formula: "Energía Secas: 1.30 - 1.35 Mcal NEL/kg MS | NDF Forraje: >= 40-50% de la MS",
@@ -1935,29 +1987,6 @@ const qaKnowledgeBase = [
 <br>• Mantiene el rumen lleno con volumen físico alto sin sobrepasar los requerimientos de energía (previniendo sobrecondición BCS > 3.5 al parto).
 <br>• Reduce drásticamente la incidencia de desplazamiento de abomaso (DA), cetosis metabólica y retención de placenta postparto.`,
         sources: "Miner Institute Dairy Research • Dr. Gordie Jones & Dr. Mike Hutjens Goldilocks Concept"
-    },
-    {
-        id: "undf",
-        keywords: ["undf", "undf240", "fibra no digerible", "digestibilidad", "grant", "miner"],
-        title: "🌿 Fibra Detergente Neutro Indigestible a las 240 Horas (uNDF240h)",
-        badge: "Miner Institute (Dr. Rick Grant)",
-        formula: "uNDF240h Objetivo Dietario: 8.5% - 10.0% del Consumo Total de MS",
-        body: `<b>Fracción de Fibra Indigestible y Dinámica de Llena del Rumen (Dr. Rick Grant, Miner Institute):</b>
-<br>• La fracción <b>uNDF240h</b> mide el residuo indigestible de la fibra forrajera tras 240 horas de fermentación in vitro.
-<br>• Determina el tiempo de permanencia de la masa forrajera en el rumen y la tasa máxima de pasaje.
-<br>• Si el consumo de uNDF240h supera el <b>0.40% - 0.45% del Peso Vivo</b>, se produce una limitación física de consumo DMI por sobrellenado ruminal.`,
-        sources: "Miner Institute Forage Research • Dr. Rick Grant & Cumberland Valley Analytical Services"
-    },
-    {
-        id: "fat",
-        keywords: ["grasa", "acidos grasos", "oleico", "palmitico", "estearico", "tecnigrasas", "c16", "c18", "bypass fat"],
-        title: "🥑 Nutrición con Ácidos Grasos Esenciales y Grasas Inertes (Tecnigrasas SAS)",
-        badge: "Tecnigrasas SAS (MV MSc Rolando Hernández)",
-        formula: "Grasa Total Dietaria Max: 5.5% - 6.5% MS | Ácido Palmítico C16:0 & Oleico C18:1",
-        body: `<b>Perfil de Ácidos Grasos para Rendimiento Lácteo y Fertilidad (MV MSc Rolando Hernández Mora):</b>
-<br>• <b>Ácido Palmítico (C16:0 >= 80%):</b> Incrementa directamente la síntesis de grasa en leche y la masa de grasa en tanque. Ideal en lactancia media y tardía.
-<br>• <b>Ácido Oleico (C18:1) y Calcio Sales:</b> Mejora la digestibilidad total de la grasa, la absorción intestinal y estimula el desarrollo folicular ovariano (progesterona) mejorando la tasa de concepción en primeros 90 días.`,
-        sources: "Tecnigrasas SAS Technical Bulletin 2018 • Rolando Hernández Mora MSc Animal Nutrition"
     },
     {
         id: "efficiency",
@@ -2107,14 +2136,16 @@ function searchNutritionQA(query) {
                         <br><br>
                         <strong style="color:#0f172a;">Te sugerimos realizar consultas sobre:</strong>
                         <ul style="margin-top:8px; padding-left:20px; color:#1e293b;">
+                            <li>Vitaminas Liposolubles (A, D3, E) e Hidrosolubles (Niacina, Colina, Biotina)</li>
+                            <li>Carbohidratos No Fibrosos (NFC), NSC, Almidón Ruminal y Azúcares</li>
+                            <li>Fibra Detergente Neutro (NDF), ADF, peNDF (Penn State) y uNDF240h</li>
+                            <li>Lípidos, Grasas Inertes, Ácido Palmítico (C16:0) y Oleico (C18:1)</li>
                             <li>Proteína Metabolizable (MP), CP, RUP, RDP y Aminoácidos (Lys:Met)</li>
-                            <li>Energía Neta (NEL, NEm, NEg), TDN y Almidón Ruminal</li>
-                            <li>Calcio (Ca), Fósforo (P), Magnesio y Requerimientos Minerales (NASEM Cap. 7)</li>
+                            <li>Energía Neta (NEL, NEm, NEg), TDN y Requerimientos Minerales (NASEM Cap. 7)</li>
                             <li>Consumo de Materia Seca (DMI) y Ecuación NASEM 2021 Eq. 2-1</li>
                             <li>Balance Catiónico-Aniónico (DCAD / BAC) en Preparto</li>
                             <li>Consumo de Agua de Bebida (Ecuación Illinois Wetherly & Cardoso)</li>
                             <li>Eficiencia Alimenticia FE (Metas Penn State Dr. Mike Hutjens)</li>
-                            <li>Ácidos Grasos Esenciales Omega-6 y Omega-3 (Tecnigrasas MV MSc Rolando Hernández)</li>
                         </ul>
                     </div>
                 </div>
