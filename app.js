@@ -22,7 +22,8 @@ window.NUTRIENT_DB = {
           "milk_kg": 30,
           "fat_pct": 3.8,
           "protein_pct": 3.2,
-          "dim": 60
+          "dim": 60,
+          "bcs": 3.0
         },
         {
           "id": "lactating_multiparous",
@@ -31,7 +32,8 @@ window.NUTRIENT_DB = {
           "milk_kg": 38,
           "fat_pct": 3.7,
           "protein_pct": 3.2,
-          "dim": 75
+          "dim": 75,
+          "bcs": 3.0
         },
         {
           "id": "dry_far_off",
@@ -280,6 +282,13 @@ function removeAccents(str) {
     return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
 }
 
+function escapeHtml(str) {
+    if (!str) return "";
+    const div = document.createElement("div");
+    div.textContent = str;
+    return div.innerHTML;
+}
+
 
 /* === MODULE: nasem_calculator.js === */
 /**
@@ -297,6 +306,7 @@ function calculateRequirements() {
     proteinInput = proteinInput || document.getElementById("protein-input");
     dimInput = dimInput || document.getElementById("dim-input");
     adgInput = adgInput || document.getElementById("adg-input");
+    bcsInput = bcsInput || document.getElementById("bcs-input");
     resultsContainer = resultsContainer || document.getElementById("results-container");
 
     if (!speciesSelect || !categorySelect || !nutrientDB) return;
@@ -317,27 +327,29 @@ function calculateRequirements() {
     const protein = parseFloat(proteinInput.value) || cat.protein_pct || 3.20;
     const dim = parseFloat(dimInput.value) || cat.dim || 60;
     const adg = parseFloat(adgInput.value) || cat.adg_kg || 1.20;
+    const bcs = parseFloat(bcsInput ? bcsInput.value : NaN) || cat.bcs || 3.0;
 
     let dmi = 0, nel = 0, mp = 0, ca = 0, p = 0;
     let dmiNote = "";
 
     if (catId === "lactating_primiparous") {
-        const fcm4 = milk * (0.4 + 0.15 * fat);
-        const dmiBase = (3.75 + (0.022 * bw) + (0.305 * fcm4)) * 0.88;
-        const wol = dim / 7.0;
-        const lag = 1.0 - Math.exp(-0.192 * (wol + 3.67));
-        dmi = Math.max(12.0, dmiBase * lag);
-        dmiNote = "Estimado por Ecuación NASEM 2021 Eq. 2-1 (Vaca Primípara 1er Parto).";
+        // NASEM 2021 Ecuación 2-1 real (de Souza et al. 2019). Parity = 0 (primípara).
+        // DMI = [3.7 + 0.305*MilkE + 0.022*BW - 0.689*BCS] * [1 - 0.212*e^(-0.053*DIM)]
+        const milkE = milk * (0.0929 * fat + 0.0585 * protein + 0.192); // MilkE, Mcal/d
+        const dmiBase = 3.7 + (0.305 * milkE) + (0.022 * bw) - (0.689 * bcs);
+        const lag = 1.0 - (0.212 * Math.exp(-0.053 * dim));
+        dmi = Math.max(12.0, dmiBase * lag); // piso de seguridad defensivo, no forma parte de la ecuación NASEM
+        dmiNote = "Estimado por Ecuación NASEM 2021 Eq. 2-1 real, de Souza et al. 2019 (incluye BCS y MilkE, Vaca Primípara).";
 
-        const nem = 0.080 * Math.pow(bw, 0.75);
-        const neMilk = milk * (0.0929 * fat + 0.0547 * protein + 0.192);
+        const nem = 0.10 * Math.pow(bw, 0.75);
+        const neMilk = milkE;
         nel = nem + neMilk;
 
         const mpMaint = 3.8 * Math.pow(bw, 0.75);
         const mpMilk = milk * (protein / 100.0) * 1000.0 * 1.4;
         mp = (mpMaint + mpMilk) / 1000.0;
 
-        const caMaint = 0.031 * bw;
+        const caMaint = 0.90 * dmi;
         const caMilk = 1.22 * milk;
         ca = (caMaint + caMilk) / 0.60;
 
@@ -345,22 +357,23 @@ function calculateRequirements() {
         const pMilk = 0.90 * milk;
         p = (pMaint + pMilk) / 0.70;
     } else if (catId === "lactating_multiparous") {
-        const fcm4 = milk * (0.4 + 0.15 * fat);
-        const dmiBase = 3.75 + (0.022 * bw) + (0.305 * fcm4);
-        const wol = dim / 7.0;
-        const lag = 1.0 - Math.exp(-0.192 * (wol + 3.67));
-        dmi = Math.max(14.0, dmiBase * lag);
-        dmiNote = "Estimado por Ecuación NASEM 2021 Eq. 2-1 (Vaca Multípara 2+ Partos).";
+        // NASEM 2021 Ecuación 2-1 real (de Souza et al. 2019). Parity = 1 (multípara).
+        // DMI = [9.4 + 0.305*MilkE + 0.022*BW - 2.559*BCS] * [1 - 0.348*e^(-0.053*DIM)]
+        const milkE = milk * (0.0929 * fat + 0.0585 * protein + 0.192); // MilkE, Mcal/d
+        const dmiBase = 9.4 + (0.305 * milkE) + (0.022 * bw) - (2.559 * bcs);
+        const lag = 1.0 - (0.348 * Math.exp(-0.053 * dim));
+        dmi = Math.max(14.0, dmiBase * lag); // piso de seguridad defensivo, no forma parte de la ecuación NASEM
+        dmiNote = "Estimado por Ecuación NASEM 2021 Eq. 2-1 real, de Souza et al. 2019 (incluye BCS y MilkE, Vaca Multípara).";
 
-        const nem = 0.080 * Math.pow(bw, 0.75);
-        const neMilk = milk * (0.0929 * fat + 0.0547 * protein + 0.192);
+        const nem = 0.10 * Math.pow(bw, 0.75);
+        const neMilk = milkE;
         nel = nem + neMilk;
 
         const mpMaint = 3.8 * Math.pow(bw, 0.75);
         const mpMilk = milk * (protein / 100.0) * 1000.0 * 1.4;
         mp = (mpMaint + mpMilk) / 1000.0;
 
-        const caMaint = 0.031 * bw;
+        const caMaint = 0.90 * dmi;
         const caMilk = 1.22 * milk;
         ca = (caMaint + caMilk) / 0.60;
 
@@ -370,23 +383,23 @@ function calculateRequirements() {
     } else if (catId === "dry_far_off") {
         dmi = bw * 0.0197;
         dmiNote = "Vaca Seca Lejana (NASEM 2021: 1.97% del Peso Vivo).";
-        nel = 0.080 * Math.pow(bw, 0.75) * 1.25;
+        nel = 0.10 * Math.pow(bw, 0.75) * 1.25;
         mp = (3.8 * Math.pow(bw, 0.75) * 1.2) / 1000.0;
-        ca = (0.031 * bw + 12.0) / 0.60;
+        ca = (0.90 * dmi + 5.0) / 0.60; // 5.0 g/d: aproximación para gestación temprana/media (día ~190-250), Ec. 7-3 NASEM 2021 — ver nota de confianza
         p = (0.018 * bw + 8.0) / 0.70;
     } else if (catId === "dry_close_up") {
         dmi = bw * 0.0170;
         dmiNote = "Vaca Preparto Close-Up (NASEM 2021 Cap. 12: 1.70% Peso Vivo).";
-        nel = 0.080 * Math.pow(bw, 0.75) * 1.40;
+        nel = 0.10 * Math.pow(bw, 0.75) * 1.40;
         mp = (3.8 * Math.pow(bw, 0.75) * 1.4) / 1000.0;
-        ca = (0.031 * bw + 18.0) / 0.60;
+        ca = (0.90 * dmi + 13.0) / 0.60; // 13.0 g/d: cifra textual explícita NASEM 2021 Cap. 12 (vaca 650 kg, últimas semanas de gestación)
         p = (0.018 * bw + 10.0) / 0.70;
     } else if (catId === "growing_heifer") {
         dmi = bw * 0.0245;
         dmiNote = "Novilla en Crecimiento (NASEM 2021 Cap. 14: 2.45% Peso Vivo).";
-        nel = 0.080 * Math.pow(bw, 0.75) + adg * 3.5;
+        nel = 0.10 * Math.pow(bw, 0.75) + adg * 3.5;
         mp = (3.8 * Math.pow(bw, 0.75) + adg * 220) / 1000.0;
-        ca = (0.031 * bw + adg * 15) / 0.60;
+        ca = (0.90 * dmi + adg * 15) / 0.60;
         p = (0.018 * bw + adg * 8) / 0.70;
     } else if (catId === "steer_finishing") {
         dmi = bw * 0.0265;
@@ -523,20 +536,22 @@ function updateMineralTablesAndHighlight() {
     const bw = parseFloat(bwInput ? bwInput.value : 650) || (cat ? cat.bw_kg : 650);
     const milk = parseFloat(milkInput ? milkInput.value : 35.0) || (cat ? cat.milk_kg : 35.0);
     const fat = parseFloat(fatInput ? fatInput.value : 3.80) || (cat ? cat.fat_pct : 3.80);
+    const protein = parseFloat(proteinInput ? proteinInput.value : 3.20) || (cat ? cat.protein_pct : 3.20);
     const dim = parseFloat(dimInput ? dimInput.value : 60) || (cat ? cat.dim : 60);
+    const bcs = parseFloat(bcsInput ? bcsInput.value : NaN) || (cat ? cat.bcs : 3.0) || 3.0;
 
     let dmi = 0;
     if (catId === "lactating_primiparous") {
-        const fcm4 = milk * (0.4 + 0.15 * fat);
-        const dmiBase = (3.75 + (0.022 * bw) + (0.305 * fcm4)) * 0.88;
-        const wol = dim / 7.0;
-        const lag = 1.0 - Math.exp(-0.192 * (wol + 3.67));
+        // NASEM 2021 Ecuación 2-1 real (de Souza et al. 2019). Parity = 0.
+        const milkE = milk * (0.0929 * fat + 0.0585 * protein + 0.192);
+        const dmiBase = 3.7 + (0.305 * milkE) + (0.022 * bw) - (0.689 * bcs);
+        const lag = 1.0 - (0.212 * Math.exp(-0.053 * dim));
         dmi = Math.max(12.0, dmiBase * lag);
     } else if (catId === "lactating_multiparous") {
-        const fcm4 = milk * (0.4 + 0.15 * fat);
-        const dmiBase = 3.75 + (0.022 * bw) + (0.305 * fcm4);
-        const wol = dim / 7.0;
-        const lag = 1.0 - Math.exp(-0.192 * (wol + 3.67));
+        // NASEM 2021 Ecuación 2-1 real (de Souza et al. 2019). Parity = 1.
+        const milkE = milk * (0.0929 * fat + 0.0585 * protein + 0.192);
+        const dmiBase = 9.4 + (0.305 * milkE) + (0.022 * bw) - (2.559 * bcs);
+        const lag = 1.0 - (0.348 * Math.exp(-0.053 * dim));
         dmi = Math.max(14.0, dmiBase * lag);
     } else if (catId === "dry_far_off") {
         dmi = bw * 0.0197;
@@ -722,10 +737,10 @@ const qaKnowledgeBase = [
         keywords: ["vitamina", "vitaminas", "vitamina a", "vitamina d", "vitamina d3", "vitamina e", "niacina", "colina", "biotina", "retinol", "tocoferol"],
         title: "💊 Vitaminas Liposolubles (A, D3, E) e Hidrosolubles (NASEM 2021 Cap. 8)",
         badge: "NASEM 2021 (Cap. 8)",
-        formula: "Vit A: 110 UI/kg BW | Vit D3: 30 UI/kg BW | Vit E: 1.6-2.5 UI/kg BW | Niacina: 6-12 g/d | Colina: 12.9 g/d MP",
+        formula: "Vit A: 110 UI/kg BW | Vit D3: 30 UI/kg BW (secas/novillas) - 40 UI/kg BW (lactancia) | Vit E: 1.6-2.5 UI/kg BW | Niacina: 6-12 g/d | Colina: 12.9 g/d MP",
         body: `<b>Requerimientos de Vitaminas NASEM 2021 en Ganado Lechero (Capítulo 8):</b>
 <br>• <b>Vitamina A (Retinol):</b> 70,000 - 100,000 UI/día. Esencial para salud de mucosas epiteliales, reproducción y función inmune.
-<br>• <b>Vitamina D3 (Colecalciferol):</b> 20,000 - 30,000 UI/día. Regula la homeostasis, absorción intestinal y resorción de Calcio y Fósforo.
+<br>• <b>Vitamina D3 (Colecalciferol):</b> 30 UI/kg BW en vacas secas y novillas, 40 UI/kg BW en vacas en lactancia (aprox. 19,500-20,400 UI/día en secas y 24,000-28,000 UI/día en lactancia para vacas de 650-700 kg). Regula la homeostasis, absorción intestinal y resorción de Calcio y Fósforo.
 <br>• <b>Vitamina E (Alfa-Tocoferol):</b> 1,000 - 2,000 UI/día en preparto. Potente antioxidante que reduce la frecuencia de retención de placenta y mastitis.
 <br>• <b>Niacina (B3) y Colina Rumen-Bypass:</b> 12.9 g/d de Colina Metabolizable reduce la acumulación de triglicéridos hepáticos previniendo hígado graso y cetosis metabólica.
 <br>• <b>Biotina (B7):</b> 20 mg/día estimula la síntesis de queratina en la pezuña (firmeza podal) e incrementa el rendimiento lácteo (+1.2 kg/día).`,
@@ -799,7 +814,7 @@ const qaKnowledgeBase = [
         keywords: ["energia", "nel", "nem", "neg", "tdn", "mcal", "energia neta"],
         title: "⚡ Energía Neta de Lactancia (NEL) y Carbohidratos (NASEM 2021 Cap. 3)",
         badge: "NASEM 2021 (Cap. 3)",
-        formula: "NEL Total (Mcal/d) = NEm (0.080 * BW^0.75) + NE Milk (Leche * [0.0929*Fat% + 0.0547*Prot% + 0.192])",
+        formula: "NEL Total (Mcal/d) = NEm (0.10 * BW^0.75) + NE Milk (Leche * [0.0929*Fat% + 0.0585*Prot% + 0.192])",
         body: `<b>Sistema de Energía Neta NASEM 2021:</b>
 <br>• <b>Densidad Energética Dietaria:</b> 1.65 - 1.75 Mcal NEL/kg MS en lactancia alta.
 <br>• <b>Almidón Ruminal:</b> Meta de <b>24.0% - 28.0% de la MS</b>. Nivel máximo de 30.0% para prevenir Acidosis Ruminal Subaguda (SARA).
@@ -1013,7 +1028,7 @@ function searchNutritionQA(query) {
                         <span class="badge-source" style="background:#fef3c7; color:#b45309; border-color:#fde68a;">Fuera de Ámbito</span>
                     </div>
                     <div class="qa-answer-body" style="font-size:0.95rem; line-height:1.6; color:#1e293b;">
-                        La pregunta realizada (<em>"${rawQuery}"</em>) no coincide con los temas nutricionales de rumiantes registrados en nuestra base de datos.
+                        La pregunta realizada (<em>"${escapeHtml(rawQuery)}"</em>) no coincide con los temas nutricionales de rumiantes registrados en nuestra base de datos.
                         <br><br>
                         <strong style="color:#0f172a;">Te sugerimos realizar consultas sobre:</strong>
                         <ul style="margin-top:8px; padding-left:20px; color:#1e293b;">
@@ -1133,8 +1148,8 @@ let currentViewMode = "technical"; // "technical" or "practical"
 let activeSelectedMineral = "Ca"; // Default mineral selection
 
 // Global DOM Element References
-let speciesSelect, categorySelect, bwInput, milkInput, fatInput, proteinInput, dimInput, adgInput;
-let groupMilk, groupFat, groupProtein, groupDim, groupAdg;
+let speciesSelect, categorySelect, bwInput, milkInput, fatInput, proteinInput, dimInput, adgInput, bcsInput;
+let groupMilk, groupFat, groupProtein, groupDim, groupAdg, groupBcs;
 let btnCalculate, btnTechView, btnPracticalView, resultsContainer;
 let mineralTypeSelect, btnCalcMineral, mineralDetailsContainer, macroMineralTableBody, microMineralTableBody, mineralAnimalBadge;
 let cornellModuleContainer, presetTableHead, presetTableBody;
@@ -1150,12 +1165,14 @@ function updateFormFieldsAndDefaults() {
     proteinInput = proteinInput || document.getElementById("protein-input");
     dimInput = dimInput || document.getElementById("dim-input");
     adgInput = adgInput || document.getElementById("adg-input");
+    bcsInput = bcsInput || document.getElementById("bcs-input");
 
     groupMilk = groupMilk || document.getElementById("group-milk");
     groupFat = groupFat || document.getElementById("group-fat");
     groupProtein = groupProtein || document.getElementById("group-protein");
     groupDim = groupDim || document.getElementById("group-dim");
     groupAdg = groupAdg || document.getElementById("group-adg");
+    groupBcs = groupBcs || document.getElementById("group-bcs");
 
     if (!nutrientDB || !speciesSelect || !categorySelect) return;
     const speciesKey = speciesSelect.value;
@@ -1173,6 +1190,7 @@ function updateFormFieldsAndDefaults() {
     if (cat.protein_pct !== undefined && proteinInput) proteinInput.value = cat.protein_pct;
     if (cat.dim !== undefined && dimInput) dimInput.value = cat.dim;
     if (cat.adg_kg !== undefined && adgInput) adgInput.value = cat.adg_kg;
+    if (cat.bcs !== undefined && bcsInput) bcsInput.value = cat.bcs;
 
     if (speciesKey === "dairy_nasem") {
         if (cat.name.includes("Seca") || cat.name.includes("Pre-parto")) {
@@ -1180,18 +1198,21 @@ function updateFormFieldsAndDefaults() {
             if (groupFat) groupFat.style.display = "none";
             if (groupProtein) groupProtein.style.display = "none";
             if (groupDim) groupDim.style.display = "none";
+            if (groupBcs) groupBcs.style.display = "none";
             if (groupAdg) groupAdg.style.display = "none";
         } else if (cat.name.includes("Recría") || cat.name.includes("Vaquillona")) {
             if (groupMilk) groupMilk.style.display = "none";
             if (groupFat) groupFat.style.display = "none";
             if (groupProtein) groupProtein.style.display = "none";
             if (groupDim) groupDim.style.display = "none";
+            if (groupBcs) groupBcs.style.display = "none";
             if (groupAdg) groupAdg.style.display = "block";
         } else {
             if (groupMilk) groupMilk.style.display = "block";
             if (groupFat) groupFat.style.display = "block";
             if (groupProtein) groupProtein.style.display = "block";
             if (groupDim) groupDim.style.display = "block";
+            if (groupBcs) groupBcs.style.display = "block";
             if (groupAdg) groupAdg.style.display = "none";
         }
     } else {
@@ -1200,12 +1221,14 @@ function updateFormFieldsAndDefaults() {
             if (groupFat) groupFat.style.display = "none";
             if (groupProtein) groupProtein.style.display = "none";
             if (groupDim) groupDim.style.display = "none";
+            if (groupBcs) groupBcs.style.display = "none";
             if (groupAdg) groupAdg.style.display = "none";
         } else {
             if (groupMilk) groupMilk.style.display = "none";
             if (groupFat) groupFat.style.display = "none";
             if (groupProtein) groupProtein.style.display = "none";
             if (groupDim) groupDim.style.display = "none";
+            if (groupBcs) groupBcs.style.display = "none";
             if (groupAdg) groupAdg.style.display = "block";
         }
     }
@@ -1254,12 +1277,14 @@ document.addEventListener("DOMContentLoaded", async () => {
     proteinInput = document.getElementById("protein-input");
     dimInput = document.getElementById("dim-input");
     adgInput = document.getElementById("adg-input");
+    bcsInput = document.getElementById("bcs-input");
 
     groupMilk = document.getElementById("group-milk");
     groupFat = document.getElementById("group-fat");
     groupProtein = document.getElementById("group-protein");
     groupDim = document.getElementById("group-dim");
     groupAdg = document.getElementById("group-adg");
+    groupBcs = document.getElementById("group-bcs");
 
     btnCalculate = document.getElementById("btn-calculate");
     btnTechView = document.getElementById("btn-tech-view");
@@ -1320,5 +1345,3 @@ document.addEventListener("DOMContentLoaded", async () => {
     renderCornellModule();
     renderPresetsTable();
 });
-
-
