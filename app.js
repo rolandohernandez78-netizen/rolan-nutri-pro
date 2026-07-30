@@ -574,7 +574,7 @@ function updateMineralTablesAndHighlight() {
     // Highlighted Mineral Card
     const item = catalog[activeSelectedMineral];
     if (item && mineralDetailsContainer) {
-        const isMacro = item.unit.includes("g");
+        const isMacro = item.unit.startsWith("g/");
         const reqVal = isMacro ? `${item.req_per_kg_dm} g/kg MS` : `${item.req_per_kg_dm} mg/kg MS (ppm)`;
         const totalVal = isMacro ? `${(dmi * item.req_per_kg_dm).toFixed(1)} g/día` : `${(dmi * item.req_per_kg_dm).toFixed(0)} mg/día`;
 
@@ -587,7 +587,7 @@ function updateMineralTablesAndHighlight() {
                 <div class="practical-stats" style="margin-top:12px; display: grid; gap: 8px;">
                     <div class="practical-stat-item" style="color:#0f172a; background:#ffffff; border:1px solid #cbd5e1; padding: 8px 12px; border-radius: 8px;">Requerimiento por kg MS: <strong style="color:#047857;">${reqVal}</strong></div>
                     <div class="practical-stat-item" style="color:#0f172a; background:#ffffff; border:1px solid #cbd5e1; padding: 8px 12px; border-radius: 8px;">Consumo Total Estimado: <strong style="color:#047857;">${totalVal}</strong></div>
-                    <div class="practical-stat-item" style="color:#0f172a; background:#ffffff; border:1px solid #cbd5e1; padding: 8px 12px; border-radius: 8px;">Límite Máximo Tolerable: <strong style="color:#b45309;">${item.unit.includes("g") ? item.max_tolerable + "% MS" : item.max_tolerable + " ppm"}</strong></div>
+                    <div class="practical-stat-item" style="color:#0f172a; background:#ffffff; border:1px solid #cbd5e1; padding: 8px 12px; border-radius: 8px;">Límite Máximo Tolerable: <strong style="color:#b45309;">${isMacro ? item.max_tolerable + "% MS" : item.max_tolerable + " ppm"}</strong></div>
                 </div>
                 <p style="margin-top:12px; font-size:0.92rem; color:#1e293b; line-height:1.5;"><strong style="color:#047857;">Función Fisiológica:</strong> ${item.function}</p>
                 <p style="margin-top:6px; font-size:0.90rem; color:#334155; line-height:1.5;"><strong style="color:#0f172a;">Síntomas de Deficiencia:</strong> ${item.deficiency}</p>
@@ -921,7 +921,7 @@ function searchNutritionQA(query) {
 
     if (matchedMineralKey && nutrientDB && nutrientDB.mineral_catalog && nutrientDB.mineral_catalog[matchedMineralKey]) {
         const item = nutrientDB.mineral_catalog[matchedMineralKey];
-        const isMacro = item.unit.includes("g");
+        const isMacro = item.unit.startsWith("g/");
         const reqVal = isMacro ? `${item.req_per_kg_dm} g/kg MS` : `${item.req_per_kg_dm} mg/kg MS (ppm)`;
 
         // Calculate DMI for current category or 24.5 kg default
@@ -944,7 +944,7 @@ function searchNutritionQA(query) {
                     <br><br>
                     <strong style="color:#0f172a;">Síntomas Clínicos de Deficiencia:</strong> ${item.deficiency}
                     <br><br>
-                    <strong style="color:#b45309;">Límite Máximo Tolerable NASEM:</strong> ${item.unit.includes("g") ? item.max_tolerable + "% MS" : item.max_tolerable + " ppm"}
+                    <strong style="color:#b45309;">Límite Máximo Tolerable NASEM:</strong> ${isMacro ? item.max_tolerable + "% MS" : item.max_tolerable + " ppm"}
                 </div>
                 <div class="qa-sources-footer" style="margin-top:12px; padding-top:10px; border-top:1px solid #e2e8f0; font-size:0.84rem; color:#475569;">📖 <strong style="color:#0f172a;">Fuente Autorizada:</strong> NASEM 2021 8ª Edición • Capítulo 7: Mineral Requirements</div>
             </div>
@@ -1150,7 +1150,7 @@ let activeSelectedMineral = "Ca"; // Default mineral selection
 // Global DOM Element References
 let speciesSelect, categorySelect, bwInput, milkInput, fatInput, proteinInput, dimInput, adgInput, bcsInput;
 let groupMilk, groupFat, groupProtein, groupDim, groupAdg, groupBcs;
-let btnCalculate, btnTechView, btnPracticalView, resultsContainer;
+let btnCalculate, btnTechView, btnPracticalView, bannerModeBadge, resultsContainer;
 let mineralTypeSelect, btnCalcMineral, mineralDetailsContainer, macroMineralTableBody, microMineralTableBody, mineralAnimalBadge;
 let cornellModuleContainer, presetTableHead, presetTableBody;
 let mascotWrapper, speechBubble, cowIcon, avatar;
@@ -1289,6 +1289,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     btnCalculate = document.getElementById("btn-calculate");
     btnTechView = document.getElementById("btn-tech-view");
     btnPracticalView = document.getElementById("btn-practical-view");
+    bannerModeBadge = document.getElementById("banner-mode-badge");
     resultsContainer = document.getElementById("results-container");
 
     mineralTypeSelect = document.getElementById("mineral-type-select");
@@ -1320,8 +1321,20 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (btnCalcMineral) btnCalcMineral.addEventListener("click", () => { if (mineralTypeSelect) activeSelectedMineral = mineralTypeSelect.value; updateMineralTablesAndHighlight(); triggerMooAudio(); });
     if (mineralTypeSelect) mineralTypeSelect.addEventListener("change", () => { activeSelectedMineral = mineralTypeSelect.value; updateMineralTablesAndHighlight(); });
 
-    if (btnTechView) btnTechView.addEventListener("click", () => { currentViewMode = "technical"; if (btnTechView) btnTechView.classList.add("active"); if (btnPracticalView) btnPracticalView.classList.remove("active"); calculateRequirements(); });
-    if (btnPracticalView) btnPracticalView.addEventListener("click", () => { currentViewMode = "practical"; if (btnPracticalView) btnPracticalView.classList.add("active"); if (btnTechView) btnTechView.classList.remove("active"); calculateRequirements(); });
+    if (btnTechView) btnTechView.addEventListener("click", () => {
+        currentViewMode = "technical";
+        btnTechView.classList.add("active");
+        if (btnPracticalView) btnPracticalView.classList.remove("active");
+        if (bannerModeBadge) bannerModeBadge.innerText = "VISTA TÉCNICA ACTIVA";
+        calculateRequirements();
+    });
+    if (btnPracticalView) btnPracticalView.addEventListener("click", () => {
+        currentViewMode = "practical";
+        btnPracticalView.classList.add("active");
+        if (btnTechView) btnTechView.classList.remove("active");
+        if (bannerModeBadge) bannerModeBadge.innerText = "VISTA PRÁCTICA ACTIVA";
+        calculateRequirements();
+    });
 
     if (mascotWrapper) mascotWrapper.addEventListener("click", triggerMooAudio);
     if (cowIcon) cowIcon.addEventListener("click", triggerMooAudio);

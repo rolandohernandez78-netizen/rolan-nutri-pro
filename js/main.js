@@ -10,7 +10,7 @@ let activeSelectedMineral = "Ca"; // Default mineral selection
 // Global DOM Element References
 let speciesSelect, categorySelect, bwInput, milkInput, fatInput, proteinInput, dimInput, adgInput;
 let groupMilk, groupFat, groupProtein, groupDim, groupAdg;
-let btnCalculate, btnTechView, btnPracticalView, resultsContainer;
+let btnCalculate, btnTechView, btnPracticalView, bannerModeBadge, resultsContainer;
 let mineralTypeSelect, btnCalcMineral, mineralDetailsContainer, macroMineralTableBody, microMineralTableBody, mineralAnimalBadge;
 let cornellModuleContainer, presetTableHead, presetTableBody;
 let mascotWrapper, speechBubble, cowIcon, avatar;
@@ -139,6 +139,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     btnCalculate = document.getElementById("btn-calculate");
     btnTechView = document.getElementById("btn-tech-view");
     btnPracticalView = document.getElementById("btn-practical-view");
+    bannerModeBadge = document.getElementById("banner-mode-badge");
     resultsContainer = document.getElementById("results-container");
 
     mineralTypeSelect = document.getElementById("mineral-type-select");
@@ -170,8 +171,20 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (btnCalcMineral) btnCalcMineral.addEventListener("click", () => { if (mineralTypeSelect) activeSelectedMineral = mineralTypeSelect.value; updateMineralTablesAndHighlight(); triggerMooAudio(); });
     if (mineralTypeSelect) mineralTypeSelect.addEventListener("change", () => { activeSelectedMineral = mineralTypeSelect.value; updateMineralTablesAndHighlight(); });
 
-    if (btnTechView) btnTechView.addEventListener("click", () => { currentViewMode = "technical"; if (btnTechView) btnTechView.classList.add("active"); if (btnPracticalView) btnPracticalView.classList.remove("active"); calculateRequirements(); });
-    if (btnPracticalView) btnPracticalView.addEventListener("click", () => { currentViewMode = "practical"; if (btnPracticalView) btnPracticalView.classList.add("active"); if (btnTechView) btnTechView.classList.remove("active"); calculateRequirements(); });
+    if (btnTechView) btnTechView.addEventListener("click", () => {
+        currentViewMode = "technical";
+        btnTechView.classList.add("active");
+        if (btnPracticalView) btnPracticalView.classList.remove("active");
+        if (bannerModeBadge) bannerModeBadge.innerText = "VISTA TÉCNICA ACTIVA";
+        calculateRequirements();
+    });
+    if (btnPracticalView) btnPracticalView.addEventListener("click", () => {
+        currentViewMode = "practical";
+        btnPracticalView.classList.add("active");
+        if (btnTechView) btnTechView.classList.remove("active");
+        if (bannerModeBadge) bannerModeBadge.innerText = "VISTA PRÁCTICA ACTIVA";
+        calculateRequirements();
+    });
 
     if (mascotWrapper) mascotWrapper.addEventListener("click", triggerMooAudio);
     if (cowIcon) cowIcon.addEventListener("click", triggerMooAudio);

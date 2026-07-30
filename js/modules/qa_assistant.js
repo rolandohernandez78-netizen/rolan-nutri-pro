@@ -218,7 +218,7 @@ function searchNutritionQA(query) {
 
     if (matchedMineralKey && nutrientDB && nutrientDB.mineral_catalog && nutrientDB.mineral_catalog[matchedMineralKey]) {
         const item = nutrientDB.mineral_catalog[matchedMineralKey];
-        const isMacro = item.unit.includes("g");
+        const isMacro = item.unit.startsWith("g/");
         const reqVal = isMacro ? `${item.req_per_kg_dm} g/kg MS` : `${item.req_per_kg_dm} mg/kg MS (ppm)`;
 
         // Calculate DMI for current category or 24.5 kg default
@@ -241,7 +241,7 @@ function searchNutritionQA(query) {
                     <br><br>
                     <strong style="color:#0f172a;">Síntomas Clínicos de Deficiencia:</strong> ${item.deficiency}
                     <br><br>
-                    <strong style="color:#b45309;">Límite Máximo Tolerable NASEM:</strong> ${item.unit.includes("g") ? item.max_tolerable + "% MS" : item.max_tolerable + " ppm"}
+                    <strong style="color:#b45309;">Límite Máximo Tolerable NASEM:</strong> ${isMacro ? item.max_tolerable + "% MS" : item.max_tolerable + " ppm"}
                 </div>
                 <div class="qa-sources-footer" style="margin-top:12px; padding-top:10px; border-top:1px solid #e2e8f0; font-size:0.84rem; color:#475569;">📖 <strong style="color:#0f172a;">Fuente Autorizada:</strong> NASEM 2021 8ª Edición • Capítulo 7: Mineral Requirements</div>
             </div>
