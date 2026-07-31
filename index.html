@@ -45,7 +45,7 @@
         <!-- Header -->
         <header class="app-header">
             <div class="brand">
-                <div class="brand-icon" id="cow-brand-icon" title="¡Haz clic para escuchar el Muuu de la vaca!">
+                <div class="brand-icon" id="cow-brand-icon" role="button" tabindex="0" aria-label="Reproducir sonido de la vaca" title="¡Haz clic para escuchar el Muuu de la vaca!">
                     <span style="font-size: 1.8rem; line-height: 1;">🐮</span>
                 </div>
                 <div class="brand-text">
@@ -55,11 +55,11 @@
             </div>
 
             <!-- Realistic Holstein Cow Mascot Avatar (Top Right Corner) -->
-            <div class="holstein-mascot-wrapper" id="holstein-mascot-wrapper" title="¡Haz clic en la vaca Holstein para escucharla mugir!">
+            <div class="holstein-mascot-wrapper" id="holstein-mascot-wrapper" role="button" tabindex="0" aria-label="Reproducir sonido de la vaca Holstein" title="¡Haz clic en la vaca Holstein para escucharla mugir!">
                 <div class="mascot-speech-bubble" id="mascot-speech-bubble">¡Hola! Soy la Vaca Holstein 🐮</div>
                 <div class="holstein-cow-avatar realistic-avatar" id="holstein-cow-avatar">
                     <!-- High Resolution Photorealistic Holstein Cow Image -->
-                    <img src="images/realistic_holstein.png" alt="Vaca Holstein Realista RolanNutriPro" class="cow-img-realistic" id="cow-img-element">
+                    <img src="images/realistic_holstein.jpg" width="512" height="512" alt="Vaca Holstein Realista RolanNutriPro" class="cow-img-realistic" id="cow-img-element">
                     <!-- Animated Thumbs-Up Hoof Overlay Badge -->
                     <div class="hoof-thumbs-up-badge" id="hoof-thumbs-up-badge">
                         <span class="thumbs-icon">👍</span>
@@ -397,7 +397,8 @@
                 </div>
 
                 <!-- Input Box & Search Button -->
-                <div class="qa-search-box" style="margin-top: 14px; display: flex; gap: 10px; flex-wrap: wrap;">
+                <label for="qa-input-text" class="qa-search-label">Escribe tu consulta nutricional:</label>
+                <div class="qa-search-box" style="display: flex; gap: 10px; flex-wrap: wrap;">
                     <input type="text" id="qa-input-text" class="form-control" style="flex: 1; min-width: 280px;" placeholder="Escribe tu consulta de nutrición aquí (ej. ¿Cuál es el consumo de agua?, ¿Cómo calcular el DCAD?)...">
                     <button type="button" id="btn-submit-qa" class="btn-primary" style="margin-top:0; width: auto; padding: 10px 24px;">
                         🔍 Consultar Base de Datos

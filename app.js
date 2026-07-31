@@ -1336,8 +1336,20 @@ document.addEventListener("DOMContentLoaded", async () => {
         calculateRequirements();
     });
 
+    const enableKeyboardActivation = (element) => {
+        if (!element) return;
+        element.addEventListener("keydown", (event) => {
+            if (!event.repeat && (event.key === "Enter" || event.key === " ")) {
+                event.preventDefault();
+                triggerMooAudio();
+            }
+        });
+    };
+
     if (mascotWrapper) mascotWrapper.addEventListener("click", triggerMooAudio);
     if (cowIcon) cowIcon.addEventListener("click", triggerMooAudio);
+    enableKeyboardActivation(mascotWrapper);
+    enableKeyboardActivation(cowIcon);
 
     if (qaBtn) qaBtn.addEventListener("click", () => { const val = qaInput ? qaInput.value : ""; searchNutritionQA(val); triggerMooAudio(); });
     if (qaInput) qaInput.addEventListener("keypress", (e) => { if (e.key === "Enter") { searchNutritionQA(qaInput.value); triggerMooAudio(); } });

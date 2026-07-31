@@ -705,3 +705,159 @@ body {
     color: #047857 !important;
     font-weight: 700 !important;
 }
+
+.qa-search-label {
+    display: block;
+    margin-top: 14px;
+    margin-bottom: 6px;
+    color: #334155;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.brand-icon:focus-visible,
+.holstein-mascot-wrapper:focus-visible {
+    outline: 3px solid #0369a1;
+    outline-offset: 3px;
+}
+
+@media (max-width: 600px) {
+    .app-container {
+        padding: 0 8px 32px;
+    }
+
+    .app-header {
+        padding: 16px 12px;
+        gap: 16px;
+    }
+
+    .brand {
+        width: 100%;
+        min-width: 0;
+    }
+
+    .brand-text {
+        min-width: 0;
+    }
+
+    .brand-text h1 {
+        font-size: 1.65rem;
+    }
+
+    .subtitle {
+        font-size: 0.8rem;
+        overflow-wrap: anywhere;
+    }
+
+    .holstein-mascot-wrapper {
+        width: 100%;
+        max-width: 100%;
+        min-width: 0;
+        justify-content: space-between;
+        padding: 6px 10px;
+    }
+
+    .mascot-speech-bubble {
+        min-width: 0;
+        padding: 6px 10px;
+        text-align: center;
+        white-space: normal;
+        overflow-wrap: anywhere;
+    }
+
+    .holstein-cow-avatar.realistic-avatar {
+        width: 68px;
+        height: 68px;
+        flex: 0 0 68px;
+    }
+
+    .audience-toggle-container {
+        width: 100%;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 6px;
+    }
+
+    .toggle-label {
+        text-align: center;
+    }
+
+    .toggle-switch {
+        width: 100%;
+    }
+
+    .toggle-btn {
+        flex: 1;
+        min-width: 0;
+        min-height: 48px;
+        justify-content: center;
+        padding: 10px 6px;
+        font-size: 0.8rem;
+        text-align: center;
+    }
+
+    .info-banner {
+        padding: 18px 16px;
+    }
+
+    .card {
+        padding: 18px 16px;
+        border-radius: 14px;
+    }
+
+    .card-header {
+        align-items: flex-start;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .card-title {
+        min-width: 0;
+    }
+
+    .card-title h3 {
+        font-size: 1.1rem;
+        overflow-wrap: anywhere;
+    }
+
+    .badge-source {
+        max-width: 100%;
+        white-space: normal;
+    }
+
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .form-control {
+        min-height: 48px;
+        font-size: 16px;
+    }
+
+    .btn-primary,
+    .chip-btn {
+        min-height: 48px;
+    }
+
+    .chip-btn {
+        padding: 10px 14px;
+    }
+
+    #btn-calc-mineral,
+    #btn-submit-qa {
+        width: 100% !important;
+    }
+
+    #qa-input-text {
+        min-width: 0 !important;
+    }
+
+    .qa-search-box {
+        align-items: stretch;
+    }
+
+    .data-table th,
+    .data-table td {
+        padding: 14px 12px !important;
+    }
+}
