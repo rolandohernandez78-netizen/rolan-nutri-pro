@@ -388,6 +388,234 @@ body {
     display: none !important;
 }
 
+/* ===== Fase 3: Accesibilidad ===== */
+.skip-link {
+    position: absolute;
+    top: -50px;
+    left: 8px;
+    background: var(--primary-emerald);
+    color: #ffffff;
+    font-weight: 700;
+    font-size: 0.9rem;
+    padding: 10px 18px;
+    border-radius: 0 0 10px 10px;
+    z-index: 100;
+    transition: top 0.2s ease;
+}
+.skip-link:focus {
+    top: 0;
+}
+
+/* ===== Fase 3: Escenarios guardados (localStorage) ===== */
+.scenarios-panel {
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 1px solid #f1f5f9;
+}
+
+.scenarios-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 6px;
+    margin-bottom: 10px;
+}
+
+.scenarios-title {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--text-secondary);
+}
+
+.scenarios-privacy-note {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+}
+
+.scenarios-save-row {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.scenarios-save-row .form-control {
+    flex: 1;
+    min-width: 180px;
+}
+
+.btn-secondary {
+    background: #ffffff;
+    color: var(--primary-emerald);
+    border: 1.5px solid var(--primary-emerald);
+    border-radius: 10px;
+    padding: 10px 16px;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.88rem;
+    font-weight: 700;
+    cursor: pointer;
+    min-height: 44px;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+.btn-secondary:hover {
+    background: #ecfdf5;
+}
+
+.scenarios-empty {
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    margin-top: 10px;
+}
+
+.scenarios-list {
+    list-style: none;
+    margin-top: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.scenario-item {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    background: #f8fafc;
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    padding: 8px 12px;
+}
+
+.scenario-item-info {
+    flex: 1;
+    min-width: 120px;
+}
+
+.scenario-item-name {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.scenario-item-date {
+    display: block;
+    font-size: 0.7rem;
+    color: var(--text-muted);
+}
+
+.scenario-btn-load,
+.scenario-btn-delete {
+    min-height: 40px;
+    min-width: 40px;
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    cursor: pointer;
+    border: 1.5px solid var(--border-color);
+    background: #ffffff;
+}
+
+.scenario-btn-load {
+    color: var(--accent-blue);
+    border-color: var(--accent-blue);
+}
+
+.scenario-btn-delete {
+    color: #dc2626;
+    border-color: #fecaca;
+}
+
+/* ===== Fase 3: Acciones de resultados (copiar / imprimir) ===== */
+.results-actions {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 16px;
+}
+
+.btn-utility {
+    background: #f8fafc;
+    color: var(--text-secondary);
+    border: 1.5px solid var(--border-color);
+    border-radius: 10px;
+    padding: 8px 14px;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 600;
+    cursor: pointer;
+    min-height: 44px;
+    transition: all 0.2s ease;
+}
+
+.btn-utility:hover {
+    background: #eef2f7;
+    border-color: #94a3b8;
+}
+
+.results-actions-feedback {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--primary-emerald);
+}
+
+/* ===== Fase 3: Estilos de impresión ===== */
+@media print {
+    .skip-link,
+    .module-tabs-wrapper,
+    .mascot-floating,
+    .audience-toggle-container,
+    .scenarios-panel,
+    .qa-quick-chips,
+    .qa-search-box,
+    #btn-calculate,
+    #btn-calc-mineral,
+    #btn-submit-qa,
+    .btn-utility,
+    .hoof-thumbs-up-badge {
+        display: none !important;
+    }
+
+    body {
+        background: #ffffff !important;
+    }
+
+    .app-container {
+        max-width: 100%;
+        padding: 0;
+    }
+
+    .card,
+    .info-banner,
+    .module-panel,
+    .practical-card,
+    .mineral-table-box {
+        box-shadow: none !important;
+        border: 1px solid #cbd5e1 !important;
+        break-inside: avoid;
+        background: #ffffff !important;
+    }
+
+    .result-box,
+    .result-box *,
+    .practical-card,
+    .practical-card *,
+    .practical-stat-item,
+    .practical-stat-item * {
+        color: #0f172a !important;
+        background: #ffffff !important;
+        text-shadow: none !important;
+    }
+
+    .result-box {
+        border: 1px solid #cbd5e1 !important;
+    }
+}
+
 /* ===== Fase 1: Navegación Modular (Tabs) ===== */
 .module-tabs-wrapper {
     position: relative;
@@ -1052,9 +1280,70 @@ body {
     }
 }
 
+/* ===== Fase 3: Clases utilitarias (reemplazan patrones style="" repetidos 3+ veces) =====
+   Colocadas al final de la hoja de estilos a propósito: en empates de especificidad,
+   el orden en la fuente decide, y así estas reglas ganan sin tocar ninguna regla existente. */
+.util-stat-box {
+    color: #0f172a;
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
+    padding: 8px 12px;
+    border-radius: 8px;
+}
+.util-stat-box2 {
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
+    padding: 10px 14px;
+    border-radius: 8px;
+}
+.util-text-emerald {
+    color: #047857;
+}
+.util-text-amber {
+    color: #b45309;
+}
+.util-text-dark {
+    color: #0f172a;
+}
+.util-mt-10 {
+    margin-top: 10px;
+}
+.util-result-value {
+    font-size: 1.65rem;
+    font-weight: 800;
+    color: #ffffff;
+    margin-top: 6px;
+    line-height: 1.2;
+}
+.util-text-suffix {
+    font-size: 1.15rem;
+    font-weight: 700;
+}
+.util-text-lg-bold-dark {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #0f172a;
+}
+.util-hr-light {
+    border: 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.25);
+    margin: 12px 0 10px 0;
+}
+.util-qa-body-text {
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: #1e293b;
+}
+.util-flex-between {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
 </style>
 </head>
 <body>
+    <a href="#module-content" class="skip-link">Saltar al contenido</a>
     <div class="app-container">
         <!-- Header -->
         <header class="app-header">
@@ -1098,6 +1387,8 @@ body {
             </div>
         </div>
 
+        <div id="module-content" tabindex="-1">
+
         <!-- Module Tabs Navigation (Fase 1) -->
         <nav class="module-tabs-wrapper" id="module-tabs-wrapper" aria-label="Navegación de módulos de la aplicación">
             <div class="module-tabs" role="tablist" id="module-tablist" aria-label="Módulos">
@@ -1115,7 +1406,7 @@ body {
         <section class="module-panel" id="panel-inicio" data-module="inicio" role="tabpanel" aria-labelledby="tab-inicio" tabindex="0">
 
         <!-- Main Banner Info -->
-        <section class="info-banner" id="info-banner">
+        <section class="info-banner" id="info-banner" aria-labelledby="banner-title">
             <div class="banner-badge" id="banner-mode-badge">VISTA TÉCNICA ACTIVA</div>
             <h2 id="banner-title">Evaluación Bioquímica Rigurosa de Nutrición de Rumiantes</h2>
             <p id="banner-desc">Acceso a ecuaciones NASEM 2021 (8ª Edición), guías Cornell CNCPS 2023, energía neta en Mcal/kg MS, proteína metabolizable (MP) y mineralograma expresado en unidades kg/g/mg.</p>
@@ -1124,11 +1415,11 @@ body {
         <!-- Dynamic Grid: Calculator + Live Balance Dashboard -->
         <main class="main-content">
             <!-- Left Panel: Interactive Calculator -->
-            <section class="card calculator-card">
+            <section class="card calculator-card" aria-labelledby="calculator-title">
                 <div class="card-header">
                     <div class="card-title">
                         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="6" x2="16" y2="6"/><line x1="16" y1="14" x2="16" y2="18"/><path d="M16 10h.01"/><path d="M12 10h.01"/><path d="M8 10h.01"/><path d="M12 14h.01"/><path d="M8 14h.01"/><path d="M12 18h.01"/><path d="M8 18h.01"/></svg>
-                        <h3>Calculadora de Requerimientos</h3>
+                        <h3 id="calculator-title">Calculadora de Requerimientos</h3>
                     </div>
                     <span class="badge-source">Fórmulas 100% en kg</span>
                 </div>
@@ -1191,10 +1482,24 @@ body {
                         🐮 Calcular Requerimientos (Muuuu!)
                     </button>
                 </form>
+
+                <!-- Fase 3: Escenarios guardados (localStorage) -->
+                <div class="scenarios-panel" id="scenarios-panel" aria-labelledby="scenarios-title">
+                    <div class="scenarios-header">
+                        <span class="scenarios-title" id="scenarios-title">💾 Escenarios guardados</span>
+                        <span class="scenarios-privacy-note">Se guardan solo en este navegador, no se envían a ningún servidor</span>
+                    </div>
+                    <div class="scenarios-save-row">
+                        <input type="text" id="scenario-name-input" class="form-control" placeholder="Nombre del escenario (ej. Vaca pico 35L)" maxlength="40">
+                        <button type="button" id="btn-save-scenario" class="btn-secondary">Guardar actual</button>
+                    </div>
+                    <p class="scenarios-empty" id="scenarios-empty">Aún no has guardado ningún escenario.</p>
+                    <ul class="scenarios-list" id="scenarios-list" aria-live="polite"></ul>
+                </div>
             </section>
 
             <!-- Right Panel: Results & Diagnostics -->
-            <section class="card results-card">
+            <section class="card results-card" aria-labelledby="results-title">
                 <div class="card-header">
                     <div class="card-title">
                         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
@@ -1203,12 +1508,19 @@ body {
                     <span class="status-pill" id="status-pill">Calculado en Tiempo Real (kg)</span>
                 </div>
 
-                <div id="results-container" class="results-container">
+                <!-- Fase 3: Exportar / imprimir / copiar -->
+                <div class="results-actions">
+                    <button type="button" id="btn-copy-results" class="btn-utility">📋 Copiar resultados</button>
+                    <button type="button" id="btn-print-results" class="btn-utility">🖨️ Imprimir</button>
+                    <span class="results-actions-feedback" id="results-actions-feedback" role="status" aria-live="polite"></span>
+                </div>
+
+                <div id="results-container" class="results-container" aria-live="polite">
                     <!-- Dynamic rendering based on View Mode -->
                 </div>
 
                 <!-- Fase 2: Visualización simple de resultados vs. rango de referencia orientativo -->
-                <div id="results-visual-container" class="results-visual-container">
+                <div id="results-visual-container" class="results-visual-container" aria-live="polite">
                     <!-- SVG generado dinámicamente por renderResultsVisualization() -->
                 </div>
             </section>
@@ -1219,11 +1531,11 @@ body {
         <section class="module-panel hidden" id="panel-minerales" data-module="minerales" role="tabpanel" aria-labelledby="tab-minerales" tabindex="0">
 
         <!-- DEDICATED ANIMAL MINERAL CONSULTATION SECTION WITH DIRECT CALCULATION BUTTON -->
-        <section class="card mineral-card" id="mineral-section">
+        <section class="card mineral-card" id="mineral-section" aria-labelledby="mineral-title">
             <div class="card-header">
                 <div class="card-title">
                     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-                    <h3>Consulta y Cálculo de Requerimientos Minerales (NASEM 2021 Cap. 7)</h3>
+                    <h3 id="mineral-title">Consulta y Cálculo de Requerimientos Minerales (NASEM 2021 Cap. 7)</h3>
                 </div>
                 <span class="badge-source" id="mineral-animal-badge">Sincronizado con Calculadora</span>
             </div>
@@ -1261,7 +1573,7 @@ body {
                 </div>
 
                 <!-- Individual Mineral Highlight Card -->
-                <div id="mineral-details-container" class="results-container" style="margin-top: 16px;">
+                <div id="mineral-details-container" class="results-container" style="margin-top: 16px;" aria-live="polite">
                     <!-- Dynamic rendering via app.js -->
                 </div>
 
@@ -1313,18 +1625,18 @@ body {
         <section class="module-panel hidden" id="panel-transicion" data-module="transicion" role="tabpanel" aria-labelledby="tab-transicion" tabindex="0">
 
         <!-- DCAD / BAC Transition Protocol Module (NASEM 2026 Dr. Maiztegui) -->
-        <section class="card table-card" id="dcad-section">
+        <section class="card table-card" id="dcad-section" aria-labelledby="dcad-title">
             <div class="card-header">
                 <div class="card-title">
                     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-                    <h3>Calculadora de Balance Anión-Catión (DCAD / BAC) en Preparto (NASEM 2026)</h3>
+                    <h3 id="dcad-title">Calculadora de Balance Anión-Catión (DCAD / BAC) en Preparto (NASEM 2026)</h3>
                 </div>
                 <span class="badge-source">Prevención de Hipocalcemia</span>
             </div>
             <div class="practical-card" style="border-left-color: var(--accent-amber);">
                 <h4>Ecuación Oficial de Balance Cationico-Aniónico (DCAD)</h4>
                 <p><strong>DCAD (mEq/kg MS)</strong> = [(%Na / 0.023 + %K / 0.039) - (%Cl / 0.0355 + 2 * %S / 0.016)] * 10</p>
-                <div class="practical-stats" style="margin-top:10px;">
+                <div class="practical-stats util-mt-10">
                     <div class="practical-stat-item">Meta Preparto: <strong>-50 a -150 mEq/kg MS</strong></div>
                     <div class="practical-stat-item">pH Urinario Objetivo: <strong>6.0 - 6.5 (vacas Holstein)</strong></div>
                     <div class="practical-stat-item">Efecto Fisiológico: <strong>Induce acidosis metabólica transitoria para activar PTH y movilizar calcio óseo</strong></div>
@@ -1333,18 +1645,18 @@ body {
         </section>
 
         <!-- Water & Goldilocks Dry Cow Module (Univ. Illinois 2025 - Drackley & Cardoso) -->
-        <section class="card table-card" id="illinois-section">
+        <section class="card table-card" id="illinois-section" aria-labelledby="illinois-title">
             <div class="card-header">
                 <div class="card-title">
                     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-                    <h3>Estimación de Consumo de Agua y Dieta de Energía Controlada (Univ. Illinois 2025)</h3>
+                    <h3 id="illinois-title">Estimación de Consumo de Agua y Dieta de Energía Controlada (Univ. Illinois 2025)</h3>
                 </div>
                 <span class="badge-source">Drackley & Cardoso</span>
             </div>
             <div class="practical-card" style="border-left-color: var(--accent-blue);">
                 <h4>Ecuación Predicción de Consumo de Agua de Bebida (Wetherly & Cardoso)</h4>
                 <p><strong>Agua Requerida (L/día)</strong> = 15.99 + (1.58 * DMI_kg) + (0.90 * Leche_kg) + (0.05 * Na_g) + (1.20 * Temp_C)</p>
-                <div class="practical-stats" style="margin-top:10px;">
+                <div class="practical-stats util-mt-10">
                     <div class="practical-stat-item">Consumo Típico Vaca Alta Producción (35 kg Leche): <strong>115 - 130 Litros/día</strong></div>
                     <div class="practical-stat-item">Dieta "Goldilocks" Vaca Seca (Drackley): <strong>1.30 - 1.35 Mcal/kg MS de NEL + 3.0 - 4.5 kg Paja Trigo</strong></div>
                     <div class="practical-stat-item">Fibra peNDF (Caja Penn State): <strong>>= 21% MS (10-15% en bandeja superior >19mm)</strong></div>
@@ -1357,18 +1669,18 @@ body {
         <section class="module-panel hidden" id="panel-cncps" data-module="cncps" role="tabpanel" aria-labelledby="tab-cncps" tabindex="0">
 
         <!-- Cornell Advanced 2023 Amino Acids & uNDF240h Module (Van Amburgh & Grant) -->
-        <section class="card table-card" id="cornell-advanced-section">
+        <section class="card table-card" id="cornell-advanced-section" aria-labelledby="cncps-advanced-title">
             <div class="card-header">
                 <div class="card-title">
                     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-                    <h3>Criterios Avanzados CNCPS: Aminoácidos Metabolizables, uNDF240h y Minerales Orgánicos (Cornell 2023)</h3>
+                    <h3 id="cncps-advanced-title">Criterios Avanzados CNCPS: Aminoácidos Metabolizables, uNDF240h y Minerales Orgánicos (Cornell 2023)</h3>
                 </div>
                 <span class="badge-source">Van Amburgh, Grant & Weiss</span>
             </div>
             <div class="practical-card" style="border-left-color: var(--primary-emerald);">
                 <h4>Relaciones de Aminoácidos Metabolizables (MP Lys y MP Met)</h4>
                 <p><strong>Perfil Óptimo CNCPS:</strong> Lisina Metabolizable (MP Lys) = 6.9 - 7.2% del MP Total | Metionina Metabolizable (MP Met) = 2.6 - 2.8% del MP Total | <strong>Relación Ideal Lys : Met = 2.7 : 1.0</strong>.</p>
-                <div class="practical-stats" style="margin-top:10px;">
+                <div class="practical-stats util-mt-10">
                     <div class="practical-stat-item">Límite Fibra Indigestible (uNDF240h, Grant): <strong>&le; 0.35 - 0.40% del Peso Vivo (para evitar rechazo ruminal)</strong></div>
                     <div class="practical-stat-item">Biodisponibilidad Minerales (Weiss): <strong>Minerales Quelatados/Orgánicos (>120% vs óxidos) para estrés por calor y pezuñas</strong></div>
                     <div class="practical-stat-item">Colina Protegida (RPC, McFadden): <strong>12.5 - 15.0 g/día de colina activa en transición reduce hígado graso</strong></div>
@@ -1381,18 +1693,18 @@ body {
         <section class="module-panel hidden" id="panel-eficiencia" data-module="eficiencia" role="tabpanel" aria-labelledby="tab-eficiencia" tabindex="0">
 
         <!-- Penn State Feed Efficiency (FE) Module (Dr. Mike Hutjens) -->
-        <section class="card table-card" id="pennstate-section">
+        <section class="card table-card" id="pennstate-section" aria-labelledby="pennstate-title">
             <div class="card-header">
                 <div class="card-title">
                     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-                    <h3>Indicadores de Eficiencia Alimenticia (FE) & Metas Penn State (Dr. Mike Hutjens)</h3>
+                    <h3 id="pennstate-title">Indicadores de Eficiencia Alimenticia (FE) & Metas Penn State (Dr. Mike Hutjens)</h3>
                 </div>
                 <span class="badge-source">Penn State University</span>
             </div>
             <div class="practical-card" style="border-left-color: var(--primary-emerald);">
                 <h4>Ecuación de Eficiencia Alimenticia (FE = FCM 3.5% / DMI)</h4>
                 <p><strong>FE (kg leche / kg MS)</strong> = Leche corregida por grasa al 3.5% (FCM) / Consumo de materia seca (DMI, kg/día).</p>
-                <div class="practical-stats" style="margin-top:10px;">
+                <div class="practical-stats util-mt-10">
                     <div class="practical-stat-item">Meta Pico de Lactancia (30-90 DEL): <strong>> 1.6 - 1.8 kg Leche / kg MS</strong></div>
                     <div class="practical-stat-item">Meta Promedio del Hato: <strong>>= 1.50 kg Leche / kg MS</strong></div>
                     <div class="practical-stat-item">Regla de Oro Hutjens: <strong>+1 kg DMI en pico genera +2.0 a +2.5 kg de Leche adicional</strong></div>
@@ -1405,18 +1717,18 @@ body {
         <section class="module-panel hidden" id="panel-grasas" data-module="grasas" role="tabpanel" aria-labelledby="tab-grasas" tabindex="0">
 
         <!-- Tecnigrasas Lipid & Essential Fatty Acid Module (Rolando Hernández Mora) -->
-        <section class="card table-card" id="tecnigrasas-section">
+        <section class="card table-card" id="tecnigrasas-section" aria-labelledby="tecnigrasas-title">
             <div class="card-header">
                 <div class="card-title">
                     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-                    <h3>Nutrición Lipídica Avanzada y Ácidos Grasos Esenciales (MV MSc Rolando Hernández Mora)</h3>
+                    <h3 id="tecnigrasas-title">Nutrición Lipídica Avanzada y Ácidos Grasos Esenciales (MV MSc Rolando Hernández Mora)</h3>
                 </div>
                 <span class="badge-source">Tecnigrasas SAS & UCV</span>
             </div>
             <div class="practical-card" style="border-left-color: var(--accent-amber);">
                 <h4>Relación Óptima de Ácidos Grasos Poliinsaturados (AGPI Ω-6 : Ω-3)</h4>
                 <p><strong>Meta Reproducción y Calidad de Ovocito/Embrión (FIV):</strong> Grasa Total = 5.0 - 7.0% de la MS | Grasa Inerte Protegida = 1.5 - 3.0% MS (300-500 g/d en sales de Ca) | <strong>Relación Ideal Ω-6 : Ω-3 = 4.0 : 1.0 a 5.0 : 1.0</strong>.</p>
-                <div class="practical-stats" style="margin-top:10px;">
+                <div class="practical-stats util-mt-10">
                     <div class="practical-stat-item">Rol Ω-6 (Linoleico C18:2): <strong>Involución uterina, ciclicidad e inducción de PGF2a posparto</strong></div>
                     <div class="practical-stat-item">Rol Ω-3 (Linolénico, EPA, DHA): <strong>Supresión de PGF2a pre-implantacional, sobrevivencia embrionaria y calidad en FIV</strong></div>
                     <div class="practical-stat-item">Límite Grasa Ruminal No Protegida: <strong>&le; 3.5 - 4.0% MS (para prevenir cubrimiento de fibra y toxicidad ruminal)</strong></div>
@@ -1429,11 +1741,11 @@ body {
         <section class="module-panel hidden" id="panel-qa" data-module="qa" role="tabpanel" aria-labelledby="tab-qa" tabindex="0">
 
         <!-- NEW DEDICATED AI NUTRITION Q&A ASSISTANT MODULE AT THE BOTTOM -->
-        <section class="card table-card" id="nutrition-qa-section">
+        <section class="card table-card" id="nutrition-qa-section" aria-labelledby="qa-title">
             <div class="card-header">
                 <div class="card-title">
                     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-                    <h3>💬 Asistente de Consultas y Preguntas Frecuentes en Nutrición Animal</h3>
+                    <h3 id="qa-title">💬 Asistente de Consultas y Preguntas Frecuentes en Nutrición Animal</h3>
                 </div>
                 <span class="badge-source">Basado en Base de Datos Oficial</span>
             </div>
@@ -1465,7 +1777,7 @@ body {
                 </div>
 
                 <!-- Answer Container -->
-                <div id="qa-answer-container" class="results-container" style="margin-top: 18px; display: none;">
+                <div id="qa-answer-container" class="results-container" style="margin-top: 18px; display: none;" aria-live="polite">
                     <!-- Rendered dynamically by app.js -->
                 </div>
             </div>
@@ -1476,11 +1788,11 @@ body {
         <section class="module-panel hidden" id="panel-referencia" data-module="referencia" role="tabpanel" aria-labelledby="tab-referencia" tabindex="0">
 
         <!-- Comparative Preset Reference Section -->
-        <section class="card table-card" id="preset-reference-section">
+        <section class="card table-card" id="preset-reference-section" aria-labelledby="preset-title">
             <div class="card-header">
                 <div class="card-title">
                     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>
-                    <h3>Tabla Comparativa de Perfiles Estándar (NASEM 2021 vs. Beef Cattle)</h3>
+                    <h3 id="preset-title">Tabla Comparativa de Perfiles Estándar (NASEM 2021 vs. Beef Cattle)</h3>
                 </div>
             </div>
             <div class="table-responsive">
@@ -1496,6 +1808,8 @@ body {
         </section>
 
         </section>
+
+        </div>
 
         <!-- Footer with Explicit Author Credit -->
         <footer class="app-footer">
@@ -1846,6 +2160,170 @@ function renderResultsVisualization(dmi, bw, nel, mp, ca, p) {
     `;
 }
 
+/* === Fase 3: Persistencia local (últimos valores + escenarios guardados) === */
+const SCENARIOS_KEY = "rolanutripro_scenarios";
+const LAST_INPUTS_KEY = "rolanutripro_last_inputs";
+const MAX_SCENARIOS = 5;
+
+function collectCurrentInputs() {
+    return {
+        species: speciesSelect ? speciesSelect.value : "",
+        category: categorySelect ? categorySelect.value : "",
+        bw: bwInput ? bwInput.value : "",
+        milk: milkInput ? milkInput.value : "",
+        fat: fatInput ? fatInput.value : "",
+        protein: proteinInput ? proteinInput.value : "",
+        dim: dimInput ? dimInput.value : "",
+        adg: adgInput ? adgInput.value : "",
+        bcs: bcsInput ? bcsInput.value : ""
+    };
+}
+
+function applyInputs(inputs) {
+    if (!inputs) return;
+    if (speciesSelect && inputs.species) speciesSelect.value = inputs.species;
+    populateCategories();
+    if (categorySelect && inputs.category !== undefined) categorySelect.value = inputs.category;
+    updateFormFieldsAndDefaults();
+    if (bwInput && inputs.bw !== undefined) bwInput.value = inputs.bw;
+    if (milkInput && inputs.milk !== undefined) milkInput.value = inputs.milk;
+    if (fatInput && inputs.fat !== undefined) fatInput.value = inputs.fat;
+    if (proteinInput && inputs.protein !== undefined) proteinInput.value = inputs.protein;
+    if (dimInput && inputs.dim !== undefined) dimInput.value = inputs.dim;
+    if (adgInput && inputs.adg !== undefined) adgInput.value = inputs.adg;
+    if (bcsInput && inputs.bcs !== undefined) bcsInput.value = inputs.bcs;
+    calculateRequirements();
+}
+
+function saveLastInputs() {
+    try {
+        localStorage.setItem(LAST_INPUTS_KEY, JSON.stringify(collectCurrentInputs()));
+    } catch (e) { /* localStorage no disponible */ }
+}
+
+function restoreLastInputs() {
+    try {
+        const raw = localStorage.getItem(LAST_INPUTS_KEY);
+        if (!raw) return false;
+        applyInputs(JSON.parse(raw));
+        return true;
+    } catch (e) {
+        return false;
+    }
+}
+
+function getScenarios() {
+    try {
+        const raw = localStorage.getItem(SCENARIOS_KEY);
+        return raw ? JSON.parse(raw) : [];
+    } catch (e) {
+        return [];
+    }
+}
+
+function saveScenariosList(list) {
+    try {
+        localStorage.setItem(SCENARIOS_KEY, JSON.stringify(list));
+    } catch (e) { /* localStorage no disponible */ }
+}
+
+function renderScenariosList() {
+    const listEl = document.getElementById("scenarios-list");
+    const emptyEl = document.getElementById("scenarios-empty");
+    if (!listEl) return;
+    const scenarios = getScenarios();
+
+    if (emptyEl) emptyEl.style.display = scenarios.length === 0 ? "block" : "none";
+
+    listEl.innerHTML = scenarios.map((sc, index) => {
+        const dateStr = new Date(sc.savedAt).toLocaleDateString("es-CO", { day: "2-digit", month: "2-digit", year: "numeric" });
+        return `
+            <li class="scenario-item">
+                <span class="scenario-item-info">
+                    <span class="scenario-item-name">${escapeHtml(sc.name)}</span>
+                    <span class="scenario-item-date">${dateStr}</span>
+                </span>
+                <button type="button" class="scenario-btn-load" data-index="${index}">Cargar</button>
+                <button type="button" class="scenario-btn-delete" data-index="${index}" aria-label="Eliminar escenario ${escapeHtml(sc.name)}">🗑️</button>
+            </li>
+        `;
+    }).join("");
+
+    listEl.querySelectorAll(".scenario-btn-load").forEach((btn) => {
+        btn.addEventListener("click", () => {
+            const idx = parseInt(btn.getAttribute("data-index"), 10);
+            const current = getScenarios();
+            if (current[idx]) {
+                applyInputs(current[idx].inputs);
+                triggerMooAudio();
+            }
+        });
+    });
+    listEl.querySelectorAll(".scenario-btn-delete").forEach((btn) => {
+        btn.addEventListener("click", () => {
+            const idx = parseInt(btn.getAttribute("data-index"), 10);
+            const current = getScenarios();
+            current.splice(idx, 1);
+            saveScenariosList(current);
+            renderScenariosList();
+        });
+    });
+}
+
+function saveCurrentScenario() {
+    const nameInput = document.getElementById("scenario-name-input");
+    if (!nameInput) return;
+    const name = nameInput.value.trim();
+    if (!name) {
+        nameInput.focus();
+        return;
+    }
+    const scenarios = getScenarios();
+    if (scenarios.length >= MAX_SCENARIOS) {
+        nameInput.value = "";
+        nameInput.placeholder = "Límite de " + MAX_SCENARIOS + " alcanzado. Elimina uno primero.";
+        return;
+    }
+    scenarios.push({ name: name, savedAt: Date.now(), inputs: collectCurrentInputs() });
+    saveScenariosList(scenarios);
+    nameInput.value = "";
+    nameInput.placeholder = "Nombre del escenario (ej. Vaca pico 35L)";
+    renderScenariosList();
+}
+
+function copyResultsToClipboard() {
+    const resultsEl = document.getElementById("results-container");
+    const feedbackEl = document.getElementById("results-actions-feedback");
+    if (!resultsEl) return;
+    const text = resultsEl.innerText.trim();
+    if (!text) return;
+    const showFeedback = (msg) => {
+        if (!feedbackEl) return;
+        feedbackEl.innerText = msg;
+        setTimeout(() => { feedbackEl.innerText = ""; }, 2500);
+    };
+    const legacyCopyFallback = () => {
+        try {
+            const textarea = document.createElement("textarea");
+            textarea.value = text;
+            textarea.style.position = "fixed";
+            textarea.style.opacity = "0";
+            document.body.appendChild(textarea);
+            textarea.select();
+            const ok = document.execCommand("copy");
+            document.body.removeChild(textarea);
+            showFeedback(ok ? "¡Copiado!" : "No se pudo copiar.");
+        } catch (e) {
+            showFeedback("No se pudo copiar.");
+        }
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(() => showFeedback("¡Copiado!")).catch(legacyCopyFallback);
+    } else {
+        legacyCopyFallback();
+    }
+}
+
 function calculateRequirements() {
     speciesSelect = speciesSelect || document.getElementById("species-select");
     categorySelect = categorySelect || document.getElementById("category-select");
@@ -1987,50 +2465,50 @@ function calculateRequirements() {
                     <!-- CARD 1: CONSUMO DE MATERIA SECA (DMI) -->
                     <div class="result-box" style="background: linear-gradient(135deg, #059669 0%, #047857 100%); border-left: 6px solid #10b981; padding: 18px; border-radius: 16px; box-shadow: 0 4px 14px rgba(5, 150, 105, 0.25); color: #ffffff;">
                         <div style="font-size: 0.82rem; font-weight: 700; color: #ecfdf5; letter-spacing: 0.5px; text-transform: uppercase;">CONSUMO DE MATERIA SECA (DMI)</div>
-                        <div style="font-size: 1.65rem; font-weight: 800; color: #ffffff; margin-top: 6px; line-height: 1.2;">
-                            ${dmi.toFixed(2)} kg MS/día <span style="font-size: 1.15rem; font-weight: 700;">(${((dmi / bw) * 100).toFixed(2)}% BW)</span>
+                        <div class="util-result-value">
+                            ${dmi.toFixed(2)} kg MS/día <span class="util-text-suffix">(${((dmi / bw) * 100).toFixed(2)}% BW)</span>
                         </div>
-                        <hr style="border: 0; border-top: 1px solid rgba(255, 255, 255, 0.25); margin: 12px 0 10px 0;">
+                        <hr class="util-hr-light">
                         <div style="font-size: 0.82rem; color: #d1fae5; line-height: 1.4;">${dmiNote}</div>
                     </div>
 
                     <!-- CARD 2: ENERGÍA NETA DE LACTANCIA (NEL) -->
                     <div class="result-box" style="background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%); border-left: 6px solid #3b82f6; padding: 18px; border-radius: 16px; box-shadow: 0 4px 14px rgba(37, 99, 235, 0.25); color: #ffffff;">
                         <div style="font-size: 0.82rem; font-weight: 700; color: #eff6ff; letter-spacing: 0.5px; text-transform: uppercase;">ENERGÍA NETA DE LACTANCIA (NEL)</div>
-                        <div style="font-size: 1.65rem; font-weight: 800; color: #ffffff; margin-top: 6px; line-height: 1.2;">
-                            ${nel.toFixed(2)} Mcal/día <span style="font-size: 1.15rem; font-weight: 700;">(${(nel / dmi).toFixed(2)} Mcal/kg MS)</span>
+                        <div class="util-result-value">
+                            ${nel.toFixed(2)} Mcal/día <span class="util-text-suffix">(${(nel / dmi).toFixed(2)} Mcal/kg MS)</span>
                         </div>
-                        <hr style="border: 0; border-top: 1px solid rgba(255, 255, 255, 0.25); margin: 12px 0 10px 0;">
+                        <hr class="util-hr-light">
                         <div style="font-size: 0.82rem; color: #dbeafe; line-height: 1.4;">Energía Neta NASEM 2021 para mantenimiento y producción.</div>
                     </div>
 
                     <!-- CARD 3: PROTEÍNA METABOLIZABLE (MP) -->
                     <div class="result-box" style="background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%); border-left: 6px solid #8b5cf6; padding: 18px; border-radius: 16px; box-shadow: 0 4px 14px rgba(124, 58, 237, 0.25); color: #ffffff;">
                         <div style="font-size: 0.82rem; font-weight: 700; color: #f5f3ff; letter-spacing: 0.5px; text-transform: uppercase;">PROTEÍNA METABOLIZABLE (MP)</div>
-                        <div style="font-size: 1.65rem; font-weight: 800; color: #ffffff; margin-top: 6px; line-height: 1.2;">
-                            ${(mp * 1000).toFixed(0)} g MP/día <span style="font-size: 1.15rem; font-weight: 700;">(${((mp / dmi) * 100).toFixed(2)}% MP en MS)</span>
+                        <div class="util-result-value">
+                            ${(mp * 1000).toFixed(0)} g MP/día <span class="util-text-suffix">(${((mp / dmi) * 100).toFixed(2)}% MP en MS)</span>
                         </div>
-                        <hr style="border: 0; border-top: 1px solid rgba(255, 255, 255, 0.25); margin: 12px 0 10px 0;">
+                        <hr class="util-hr-light">
                         <div style="font-size: 0.82rem; color: #ede9fe; line-height: 1.4;">Requerimiento de aminoácidos absorbidos en intestino delgado.</div>
                     </div>
 
                     <!-- CARD 4: CALCIO (CA) -->
                     <div class="result-box" style="background: linear-gradient(135deg, #d97706 0%, #b45309 100%); border-left: 6px solid #f59e0b; padding: 18px; border-radius: 16px; box-shadow: 0 4px 14px rgba(217, 119, 6, 0.25); color: #ffffff;">
                         <div style="font-size: 0.82rem; font-weight: 700; color: #fffbeb; letter-spacing: 0.5px; text-transform: uppercase;">CALCIO (CA)</div>
-                        <div style="font-size: 1.65rem; font-weight: 800; color: #ffffff; margin-top: 6px; line-height: 1.2;">
-                            ${ca.toFixed(1)} g Ca/día <span style="font-size: 1.15rem; font-weight: 700;">(${(ca / dmi).toFixed(1)} g/kg MS)</span>
+                        <div class="util-result-value">
+                            ${ca.toFixed(1)} g Ca/día <span class="util-text-suffix">(${(ca / dmi).toFixed(1)} g/kg MS)</span>
                         </div>
-                        <hr style="border: 0; border-top: 1px solid rgba(255, 255, 255, 0.25); margin: 12px 0 10px 0;">
+                        <hr class="util-hr-light">
                         <div style="font-size: 0.82rem; color: #fef3c7; line-height: 1.4;">NASEM 2021 Cap. 7. Coeficiente de absorción ruminal/intestinal.</div>
                     </div>
 
                     <!-- CARD 5: FÓSFORO (P) -->
                     <div class="result-box" style="background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%); border-left: 6px solid #0ea5e9; padding: 18px; border-radius: 16px; box-shadow: 0 4px 14px rgba(2, 132, 199, 0.25); color: #ffffff;">
                         <div style="font-size: 0.82rem; font-weight: 700; color: #f0f9ff; letter-spacing: 0.5px; text-transform: uppercase;">FÓSFORO (P)</div>
-                        <div style="font-size: 1.65rem; font-weight: 800; color: #ffffff; margin-top: 6px; line-height: 1.2;">
-                            ${p.toFixed(1)} g P/día <span style="font-size: 1.15rem; font-weight: 700;">(${(p / dmi).toFixed(1)} g/kg MS)</span>
+                        <div class="util-result-value">
+                            ${p.toFixed(1)} g P/día <span class="util-text-suffix">(${(p / dmi).toFixed(1)} g/kg MS)</span>
                         </div>
-                        <hr style="border: 0; border-top: 1px solid rgba(255, 255, 255, 0.25); margin: 12px 0 10px 0;">
+                        <hr class="util-hr-light">
                         <div style="font-size: 0.82rem; color: #e0f2fe; line-height: 1.4;">Requerimiento esencial para metabolismo energético y mineral.</div>
                     </div>
                 </div>
@@ -2040,10 +2518,10 @@ function calculateRequirements() {
                 <div class="practical-card" style="border-left-color: var(--primary-emerald); background: #f0fdf4; border: 1.5px solid #a7f3d0; border-radius: 16px; padding: 20px;">
                     <div class="practical-title" style="font-size: 1.15rem; font-weight: 700; color: #065f46;">🌾 Resumen Práctico de Alimentación Recomendado</div>
                     <div class="practical-stats" style="margin-top: 12px; display: grid; gap: 10px;">
-                        <div class="practical-stat-item" style="background: #ffffff; border: 1px solid #cbd5e1; padding: 10px 14px; border-radius: 8px;">Consumo de Alimento Seco (MS): <strong style="color: #047857;">${dmi.toFixed(1)} kg MS/día</strong></div>
-                        <div class="practical-stat-item" style="background: #ffffff; border: 1px solid #cbd5e1; padding: 10px 14px; border-radius: 8px;">Densidad de Energía: <strong style="color: #1d4ed8;">${(nel / dmi).toFixed(2)} Mcal/kg MS</strong></div>
-                        <div class="practical-stat-item" style="background: #ffffff; border: 1px solid #cbd5e1; padding: 10px 14px; border-radius: 8px;">Proteína Metabolizable Total: <strong style="color: #6d28d9;">${(mp * 1000).toFixed(0)} g MP/día</strong></div>
-                        <div class="practical-stat-item" style="background: #ffffff; border: 1px solid #cbd5e1; padding: 10px 14px; border-radius: 8px;">Minerales Principales: <strong style="color: #b45309;">${ca.toFixed(1)}g Ca | ${p.toFixed(1)}g P por día</strong></div>
+                        <div class="practical-stat-item util-stat-box2">Consumo de Alimento Seco (MS): <strong style="color: #047857;">${dmi.toFixed(1)} kg MS/día</strong></div>
+                        <div class="practical-stat-item util-stat-box2">Densidad de Energía: <strong style="color: #1d4ed8;">${(nel / dmi).toFixed(2)} Mcal/kg MS</strong></div>
+                        <div class="practical-stat-item util-stat-box2">Proteína Metabolizable Total: <strong style="color: #6d28d9;">${(mp * 1000).toFixed(0)} g MP/día</strong></div>
+                        <div class="practical-stat-item util-stat-box2">Minerales Principales: <strong style="color: #b45309;">${ca.toFixed(1)}g Ca | ${p.toFixed(1)}g P por día</strong></div>
                     </div>
                     <p style="margin-top: 12px; font-size: 0.9rem; color: #475569; line-height: 1.4;">Valores ajustados según modelo científico NASEM 2021 (8ª Edición). Formular ración TMR para cubrir ${dmi.toFixed(1)} kg MS.</p>
                 </div>
@@ -2054,6 +2532,7 @@ function calculateRequirements() {
     renderCornellModule(dmi, bw, milk, fat, protein);
     updateMineralTablesAndHighlight();
     renderResultsVisualization(dmi, bw, nel, mp, ca, p);
+    saveLastInputs();
 }
 
 
@@ -2135,12 +2614,12 @@ function updateMineralTablesAndHighlight() {
                     <span class="badge-source" style="background:#dcfce7; color:#047857; border-color:#86efac; padding: 4px 10px; border-radius: 20px; font-weight: 700;">${item.category}</span>
                 </div>
                 <div class="practical-stats" style="margin-top:12px; display: grid; gap: 8px;">
-                    <div class="practical-stat-item" style="color:#0f172a; background:#ffffff; border:1px solid #cbd5e1; padding: 8px 12px; border-radius: 8px;">Requerimiento por kg MS: <strong style="color:#047857;">${reqVal}</strong></div>
-                    <div class="practical-stat-item" style="color:#0f172a; background:#ffffff; border:1px solid #cbd5e1; padding: 8px 12px; border-radius: 8px;">Consumo Total Estimado: <strong style="color:#047857;">${totalVal}</strong></div>
-                    <div class="practical-stat-item" style="color:#0f172a; background:#ffffff; border:1px solid #cbd5e1; padding: 8px 12px; border-radius: 8px;">Límite Máximo Tolerable: <strong style="color:#b45309;">${isMacro ? item.max_tolerable + "% MS" : item.max_tolerable + " ppm"}</strong></div>
+                    <div class="practical-stat-item util-stat-box">Requerimiento por kg MS: <strong class="util-text-emerald">${reqVal}</strong></div>
+                    <div class="practical-stat-item util-stat-box">Consumo Total Estimado: <strong class="util-text-emerald">${totalVal}</strong></div>
+                    <div class="practical-stat-item util-stat-box">Límite Máximo Tolerable: <strong class="util-text-amber">${isMacro ? item.max_tolerable + "% MS" : item.max_tolerable + " ppm"}</strong></div>
                 </div>
-                <p style="margin-top:12px; font-size:0.92rem; color:#1e293b; line-height:1.5;"><strong style="color:#047857;">Función Fisiológica:</strong> ${item.function}</p>
-                <p style="margin-top:6px; font-size:0.90rem; color:#334155; line-height:1.5;"><strong style="color:#0f172a;">Síntomas de Deficiencia:</strong> ${item.deficiency}</p>
+                <p style="margin-top:12px; font-size:0.92rem; color:#1e293b; line-height:1.5;"><strong class="util-text-emerald">Función Fisiológica:</strong> ${item.function}</p>
+                <p style="margin-top:6px; font-size:0.90rem; color:#334155; line-height:1.5;"><strong class="util-text-dark">Síntomas de Deficiencia:</strong> ${item.deficiency}</p>
             </div>
         `;
     }
@@ -2203,11 +2682,11 @@ function renderCornellModule() {
         <div class="practical-card" style="border-left-color: var(--primary-emerald); background: #f8fafc; border: 1px solid #e2e8f0; width: 100%; border-radius: 16px; padding: 20px;">
             <h4 style="color:#0f172a; font-weight:700; font-size:1.15rem; margin-top:0;">Guías CNCPS v6.5 / v7.0 de Nutrición de Transición y Salud Ruminal</h4>
             <div class="practical-stats" style="margin-top:12px; display: grid; gap: 8px;">
-                <div class="practical-stat-item" style="color:#0f172a; background:#ffffff; border:1px solid #cbd5e1; padding: 8px 12px; border-radius: 8px;">Metionina Metabolizable (MP Met): <strong style="color:#047857;">${cornell.amino_acid_targets.methionine_mp}</strong></div>
-                <div class="practical-stat-item" style="color:#0f172a; background:#ffffff; border:1px solid #cbd5e1; padding: 8px 12px; border-radius: 8px;">Lisina Metabolizable (MP Lys): <strong style="color:#047857;">${cornell.amino_acid_targets.lysine_mp}</strong></div>
-                <div class="practical-stat-item" style="color:#0f172a; background:#ffffff; border:1px solid #cbd5e1; padding: 8px 12px; border-radius: 8px;">Relación Ideal Lys : Met: <strong style="color:#047857;">${cornell.amino_acid_targets.ideal_lys_met_ratio}</strong></div>
-                <div class="practical-stat-item" style="color:#0f172a; background:#ffffff; border:1px solid #cbd5e1; padding: 8px 12px; border-radius: 8px;">Fibra Efectiva Mínima (peNDF Penn State): <strong style="color:#b45309;">${cornell.rumen_health_guidelines.peNDF_min}</strong></div>
-                <div class="practical-stat-item" style="color:#0f172a; background:#ffffff; border:1px solid #cbd5e1; padding: 8px 12px; border-radius: 8px;">Límite Máximo de Almidón Ruminal: <strong style="color:#b45309;">${cornell.rumen_health_guidelines.starch_max}</strong></div>
+                <div class="practical-stat-item util-stat-box">Metionina Metabolizable (MP Met): <strong class="util-text-emerald">${cornell.amino_acid_targets.methionine_mp}</strong></div>
+                <div class="practical-stat-item util-stat-box">Lisina Metabolizable (MP Lys): <strong class="util-text-emerald">${cornell.amino_acid_targets.lysine_mp}</strong></div>
+                <div class="practical-stat-item util-stat-box">Relación Ideal Lys : Met: <strong class="util-text-emerald">${cornell.amino_acid_targets.ideal_lys_met_ratio}</strong></div>
+                <div class="practical-stat-item util-stat-box">Fibra Efectiva Mínima (peNDF Penn State): <strong class="util-text-amber">${cornell.rumen_health_guidelines.peNDF_min}</strong></div>
+                <div class="practical-stat-item util-stat-box">Límite Máximo de Almidón Ruminal: <strong class="util-text-amber">${cornell.rumen_health_guidelines.starch_max}</strong></div>
             </div>
         </div>
     `;
@@ -2482,21 +2961,21 @@ function searchNutritionQA(query) {
         qaAnswerContainer.style.display = "block";
         qaAnswerContainer.innerHTML = `
             <div class="qa-answer-card" style="background:#ffffff; border-left:5px solid var(--primary-emerald); border:1px solid #cbd5e1; padding:18px; border-radius:12px;">
-                <div class="qa-answer-title" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-                    <span style="font-size:1.15rem; font-weight:700; color:#0f172a;">🧪 Ficha Nutricional NASEM 2021: ${item.name} (${item.symbol})</span>
+                <div class="qa-answer-title util-flex-between">
+                    <span class="util-text-lg-bold-dark">🧪 Ficha Nutricional NASEM 2021: ${item.name} (${item.symbol})</span>
                     <span class="badge-source" style="background:#ecfdf5; color:#047857; border-color:#a7f3d0;">${item.category}</span>
                 </div>
                 <div class="qa-formula-box" style="background:#f8fafc; border:1px dashed #059669; border-radius:8px; padding:10px 14px; margin:10px 0; color:#065f46; font-weight:700;">
                     📐 Requerimiento NASEM 2021: ${reqVal} | Consumo Total Est: ${totalVal}
                 </div>
-                <div class="qa-answer-body" style="font-size:0.95rem; line-height:1.6; color:#1e293b;">
-                    <strong style="color:#047857;">Función Fisiológica Principal:</strong> ${item.function}
+                <div class="qa-answer-body util-qa-body-text">
+                    <strong class="util-text-emerald">Función Fisiológica Principal:</strong> ${item.function}
                     <br><br>
-                    <strong style="color:#0f172a;">Síntomas Clínicos de Deficiencia:</strong> ${item.deficiency}
+                    <strong class="util-text-dark">Síntomas Clínicos de Deficiencia:</strong> ${item.deficiency}
                     <br><br>
-                    <strong style="color:#b45309;">Límite Máximo Tolerable NASEM:</strong> ${isMacro ? item.max_tolerable + "% MS" : item.max_tolerable + " ppm"}
+                    <strong class="util-text-amber">Límite Máximo Tolerable NASEM:</strong> ${isMacro ? item.max_tolerable + "% MS" : item.max_tolerable + " ppm"}
                 </div>
-                <div class="qa-sources-footer" style="margin-top:12px; padding-top:10px; border-top:1px solid #e2e8f0; font-size:0.84rem; color:#475569;">📖 <strong style="color:#0f172a;">Fuente Autorizada:</strong> NASEM 2021 8ª Edición • Capítulo 7: Mineral Requirements</div>
+                <div class="qa-sources-footer" style="margin-top:12px; padding-top:10px; border-top:1px solid #e2e8f0; font-size:0.84rem; color:#475569;">📖 <strong class="util-text-dark">Fuente Autorizada:</strong> NASEM 2021 8ª Edición • Capítulo 7: Mineral Requirements</div>
             </div>
         `;
         return;
@@ -2561,26 +3040,26 @@ function searchNutritionQA(query) {
         if (matchedItem && maxHits >= CONFIDENCE_THRESHOLD) {
             qaAnswerContainer.innerHTML = `
                 <div class="qa-answer-card" style="background:#ffffff; border-left:5px solid var(--primary-emerald); border:1px solid #cbd5e1; padding:18px; border-radius:12px;">
-                    <div class="qa-answer-title" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-                        <span style="font-size:1.15rem; font-weight:700; color:#0f172a;">${matchedItem.title}</span>
+                    <div class="qa-answer-title util-flex-between">
+                        <span class="util-text-lg-bold-dark">${matchedItem.title}</span>
                         <span class="badge-source" style="background:#ecfdf5; color:#047857; border-color:#a7f3d0;">${matchedItem.badge}</span>
                     </div>
                     <div class="qa-formula-box" style="background:#f8fafc; border:1px dashed #059669; border-radius:8px; padding:10px 14px; margin:10px 0; color:#065f46; font-weight:700;">📐 ${matchedItem.formula}</div>
-                    <div class="qa-answer-body" style="font-size:0.95rem; line-height:1.6; color:#1e293b;">${matchedItem.body}</div>
-                    <div class="qa-sources-footer" style="margin-top:12px; padding-top:10px; border-top:1px solid #e2e8f0; font-size:0.84rem; color:#475569;">📖 <strong style="color:#0f172a;">Fuente Autorizada:</strong> ${matchedItem.sources}</div>
+                    <div class="qa-answer-body util-qa-body-text">${matchedItem.body}</div>
+                    <div class="qa-sources-footer" style="margin-top:12px; padding-top:10px; border-top:1px solid #e2e8f0; font-size:0.84rem; color:#475569;">📖 <strong class="util-text-dark">Fuente Autorizada:</strong> ${matchedItem.sources}</div>
                 </div>
             `;
         } else {
             qaAnswerContainer.innerHTML = `
                 <div class="qa-answer-card out-of-scope" style="background:#ffffff; border-left:5px solid #f59e0b; border:1px solid #cbd5e1; padding:18px; border-radius:12px;">
-                    <div class="qa-answer-title" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-                        <span style="font-size:1.15rem; font-weight:700; color:#0f172a;">ℹ️ Consulta fuera del alcance de la Base de Datos Nutricional</span>
+                    <div class="qa-answer-title util-flex-between">
+                        <span class="util-text-lg-bold-dark">ℹ️ Consulta fuera del alcance de la Base de Datos Nutricional</span>
                         <span class="badge-source" style="background:#fef3c7; color:#b45309; border-color:#fde68a;">Fuera de Ámbito</span>
                     </div>
-                    <div class="qa-answer-body" style="font-size:0.95rem; line-height:1.6; color:#1e293b;">
+                    <div class="qa-answer-body util-qa-body-text">
                         La pregunta realizada (<em>"${escapeHtml(rawQuery)}"</em>) no coincide con los temas nutricionales de rumiantes registrados en nuestra base de datos.
                         <br><br>
-                        <strong style="color:#0f172a;">Te sugerimos realizar consultas sobre:</strong>
+                        <strong class="util-text-dark">Te sugerimos realizar consultas sobre:</strong>
                         <ul style="margin-top:8px; padding-left:20px; color:#1e293b;">
                             <li>Vitaminas Liposolubles (A, D3, E) e Hidrosolubles (Niacina, Colina, Biotina)</li>
                             <li>Carbohidratos No Fibrosos (NFC), NSC, Almidón Ruminal y Azúcares</li>
@@ -2612,7 +3091,10 @@ let epidemicCowAudio = null;
 function playRealisticCowMoo() {
     try {
         if (!epidemicCowAudio) {
-            epidemicCowAudio = new Audio("audio/epidemic_cow_moo.mp3");
+            epidemicCowAudio = new Audio();
+            // Ogg Vorbis no lo soporta Safari/iOS; se usa AAC (.m4a) como respaldo automático.
+            const canPlayOgg = epidemicCowAudio.canPlayType('audio/ogg; codecs="vorbis"');
+            epidemicCowAudio.src = canPlayOgg ? "audio/mugido_vaca.ogg" : "audio/mugido_vaca.m4a";
         }
         if (epidemicCowAudio) {
             epidemicCowAudio.currentTime = 0;
@@ -2939,12 +3421,27 @@ document.addEventListener("DOMContentLoaded", async () => {
         });
     });
 
-    populateCategories();
-    updateFormFieldsAndDefaults();
-    calculateRequirements();
+    if (!restoreLastInputs()) {
+        populateCategories();
+        updateFormFieldsAndDefaults();
+        calculateRequirements();
+    }
     updateMineralTablesAndHighlight();
     renderCornellModule();
     renderPresetsTable();
+    renderScenariosList();
+
+    const btnSaveScenario = document.getElementById("btn-save-scenario");
+    const scenarioNameInput = document.getElementById("scenario-name-input");
+    if (btnSaveScenario) btnSaveScenario.addEventListener("click", saveCurrentScenario);
+    if (scenarioNameInput) scenarioNameInput.addEventListener("keypress", (e) => {
+        if (e.key === "Enter") { e.preventDefault(); saveCurrentScenario(); }
+    });
+
+    const btnCopyResults = document.getElementById("btn-copy-results");
+    const btnPrintResults = document.getElementById("btn-print-results");
+    if (btnCopyResults) btnCopyResults.addEventListener("click", copyResultsToClipboard);
+    if (btnPrintResults) btnPrintResults.addEventListener("click", () => window.print());
 
     // Module Tabs Navigation (Fase 1)
     const moduleTablist = document.getElementById("module-tablist");
