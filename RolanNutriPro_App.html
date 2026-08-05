@@ -4582,11 +4582,12 @@ document.addEventListener("DOMContentLoaded", async () => {
         });
     };
 
-    // La mascota flotante abre el Muu-siario (glosario); el ícono de la marca en el
-    // header sigue mugiendo, así que el sonido no se pierde.
-    if (mascotWrapper) mascotWrapper.addEventListener("click", openGlosario);
+    // La mascota flotante muge una vez y abre el Muu-siario (glosario); el ícono de
+    // la marca en el header sigue mugiendo también por su cuenta.
+    const openGlosarioWithMoo = () => { triggerMooAudio(); openGlosario(); };
+    if (mascotWrapper) mascotWrapper.addEventListener("click", openGlosarioWithMoo);
     if (cowIcon) cowIcon.addEventListener("click", triggerMooAudio);
-    enableKeyboardActivation(mascotWrapper, openGlosario);
+    enableKeyboardActivation(mascotWrapper, openGlosarioWithMoo);
     enableKeyboardActivation(cowIcon, triggerMooAudio);
 
     if (qaBtn) qaBtn.addEventListener("click", () => { const val = qaInput ? qaInput.value : ""; searchNutritionQA(val); triggerMooAudio(); });
