@@ -704,6 +704,29 @@ body {
     outline: none;
 }
 
+.tabs-scroll-hint {
+    display: none;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 4px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-align: right;
+    margin: 6px 4px 16px 4px;
+}
+.module-tabs-wrapper.can-scroll-right + .tabs-scroll-hint {
+    display: flex;
+}
+.tabs-scroll-hint-arrow {
+    display: inline-block;
+    animation: tabs-scroll-hint-nudge 1.4s ease-in-out infinite;
+}
+@keyframes tabs-scroll-hint-nudge {
+    0%, 100% { transform: translateX(0); }
+    50% { transform: translateX(4px); }
+}
+
 .toggle-scope-hint {
     display: block;
     font-size: 0.72rem;
@@ -1580,6 +1603,7 @@ body {
                 <button type="button" class="module-tab" id="tab-referencia" role="tab" aria-selected="false" aria-controls="panel-referencia" data-module="referencia" tabindex="-1">📚 Referencia</button>
             </div>
         </nav>
+        <p class="tabs-scroll-hint" id="tabs-scroll-hint">Desliza para ver más funciones <span class="tabs-scroll-hint-arrow" aria-hidden="true">→</span></p>
 
         <section class="module-panel" id="panel-inicio" data-module="inicio" role="tabpanel" aria-labelledby="tab-inicio" tabindex="0">
 
