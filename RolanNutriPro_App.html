@@ -2220,19 +2220,39 @@ body {
         </section>
 
         <!-- Fase 4.9: Ampliación EFA - barrera intestinal -->
-        <section class="card table-card" id="efa-intestinal-barrier-section" aria-labelledby="efa-intestinal-barrier-title">
+        <section class="card table-card" id="calcium-soap-balance-section" aria-labelledby="calcium-soap-balance-title">
             <div class="card-header">
                 <div class="card-title">
                     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-                    <h3 id="efa-intestinal-barrier-title">🛡️ Ácidos Grasos Esenciales y Barrera Intestinal</h3>
+                    <h3 id="calcium-soap-balance-title">⚖️ Jabones Cálcicos: en Sobrepasancia Ruminal, Más No Siempre Es Mejor</h3>
                 </div>
-                <span class="badge-source">Liermann et al., J. Dairy Sci. 109(5) (2026)</span>
+                <span class="badge-source">Dato original: MV MSc Rolando Hernández Mora</span>
             </div>
-            <div class="practical-stats">
-                <div class="practical-stat-item util-stat-box">PUFA Omega-3: <strong class="util-text-emerald">Efecto protector de la barrera intestinal, favorece la integridad de las uniones estrechas (tight junctions)</strong></div>
-                <div class="practical-stat-item util-stat-box">PUFA Omega-6: <strong class="util-text-amber">Efecto proinflamatorio cuando predomina en exceso sobre el Omega-3</strong></div>
-                <div class="practical-stat-item util-stat-box">CLA (Ácido Linoleico Conjugado): <strong class="util-text-dark">Efectos mixtos documentados según el isómero — no todos los CLA actúan igual, se requiere matiz al interpretar</strong></div>
+            <p>Un mayor % de linoleico declarado en el saco no garantiza más ácido graso esencial (AGE) funcional para la vaca. Si el jabón cálcico se disocia en el rumen, ese linoleico se biohidrogena antes de llegar al intestino — o se desvía hacia la vía alterna (trans-10,cis-12 CLA) que suprime la síntesis de grasa láctea (MFD). Lo que define el valor real de una grasa sobrepasante es la combinación de <strong>estabilidad ruminal</strong> (Ca soluble a pH 6.5) y <strong>perfil de ácidos grasos</strong>, no el porcentaje de linoleico aislado.</p>
+            <span class="badge-source">Hernández, R. (2026). Jabones Cálcicos y Ácidos Grasos Esenciales — Resumen Técnico. Tecnigrasas S.A.S., mayo 2026</span>
+            <div class="table-responsive util-mt-10">
+                <table class="data-table" id="calcium-soap-comparison-table">
+                    <thead>
+                        <tr>
+                            <th>Variable</th>
+                            <th>Jabón de Palma</th>
+                            <th>Energras®/Tecnigras®</th>
+                            <th>Jabón de Soya 100%</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td><strong>Linoleico (ω-6)</strong></td><td>9.3% — insuficiente</td><td>18.1% — óptimo ✓</td><td>28.2% — exceso ⚠</td></tr>
+                        <tr><td><strong>Oleico (MUFA)</strong></td><td>37.9% ✓ NASEM</td><td>30.6% ✓ NASEM</td><td>21.4% ✗ bajo NASEM</td></tr>
+                        <tr><td><strong>Estabilidad pH 6.5</strong></td><td>Ca sol. 8.1%</td><td>Ca sol. 1.7% ✓</td><td>Disoc. 62.3±5.6%</td></tr>
+                        <tr><td><strong>Digestibilidad NASEM</strong></td><td>Coef. 0.76</td><td>Coef. 0.76 ✓</td><td>Coef. ~0.61</td></tr>
+                        <tr><td><strong>Riesgo MFD</strong></td><td>Bajo</td><td>Bajo ✓</td><td>Alto ✗</td></tr>
+                        <tr><td><strong>AGE para reproducción</strong></td><td>Insuficiente ✗</td><td>Funcional ✓</td><td>Se destruyen en rumen ✗</td></tr>
+                        <tr><td><strong>Preñez post-IA</strong></td><td>51.2% (Cappellozza 2021)</td><td>Omega-6 → 67.5% ✓</td><td>Riesgo MFD</td></tr>
+                        <tr><td><strong>Energía bruta</strong></td><td>7,463.7 kcal/kg</td><td>8,430.9 kcal/kg ✓</td><td>No reportado</td></tr>
+                    </tbody>
+                </table>
             </div>
+            <p class="util-mt-10" style="font-size:0.86rem; color:var(--text-muted); font-style:italic;">"La grasa bypass correcta no es la más barata ni la que más ácidos grasos esenciales declara — es la que más AGE funcionales entrega a la vaca." — Hernández, R. (2026), citando Guerrero et al. 2014 (Interciencia 39(6):404-409), Cappellozza et al. 2020/2021 y NASEM 2021.</p>
         </section>
 
         </section>
@@ -2908,7 +2928,9 @@ const GLOSARIO_TERMS = [
     { a: "EB", f: "Balance Energético (Energy Balance)", c: "Energía", d: "Mcal/día. La diferencia entre la energía neta que la vaca consume y la que necesita para mantenimiento, gestación y producción de leche. Un EB negativo sostenido se asocia a movilización de grasa corporal y riesgo de cetosis." },
     { a: "SARA", f: "Acidosis Ruminal Subaguda (Subacute Ruminal Acidosis)", c: "Fibra y carbohidratos", d: "Caída sostenida del pH ruminal por exceso de almidón de fermentación rápida y fibra efectiva insuficiente; se monitorea con consistencia del estiércol, grasa de leche, NUL, tiempo de rumia y vitreosidad del grano." },
     { a: "Mo", f: "Molibdeno", c: "Microminerales (ppm)", d: "En combinación con azufre alto en la dieta, puede formar tiotiomolibdatos en el rumen que bloquean la absorción de cobre, incluso cuando el cobre dietario cumple el requerimiento." },
-    { a: "Tiotiomolibdatos", f: "Thiomolybdates", c: "Microminerales (ppm)", d: "Compuestos que se forman en el rumen a partir de molibdeno y azufre; se unen al cobre y a proteínas, bloqueando su absorción intestinal y pudiendo inducir una deficiencia de cobre inducida." }
+    { a: "Tiotiomolibdatos", f: "Thiomolybdates", c: "Microminerales (ppm)", d: "Compuestos que se forman en el rumen a partir de molibdeno y azufre; se unen al cobre y a proteínas, bloqueando su absorción intestinal y pudiendo inducir una deficiencia de cobre inducida." },
+    { a: "MFD", f: "Depresión de Grasa Láctea (Milk Fat Depression)", c: "Grasas", d: "Caída del % de grasa en leche sin reducción del volumen, causada por el isómero trans-10,cis-12 CLA cuando el linoleico no protegido se desvía hacia la vía alterna de biohidrogenación ruminal. Se detecta en campo por la inversión de la relación proteína:grasa (P:G > 1) en el tanque." },
+    { a: "AGE", f: "Ácidos Grasos Esenciales", c: "Grasas", d: "Ácidos grasos que el animal no puede sintetizar y debe obtener de la dieta (ej. linoleico, linolénico). Solo cuentan como funcionales si sobrepasan el rumen intacto y se absorben en el intestino — el % declarado en el saco no es igual al AGE que realmente aprovecha la vaca." }
 ];
 
 function buildGlosarioHTML() {
@@ -4075,16 +4097,17 @@ const qaKnowledgeBase = [
         sources: "Boletín Técnico Tecnigras, junio 2025 (ISO/IEC 17025:2017)"
     },
     {
-        id: "efa_barrier",
-        keywords: ["barrera intestinal", "pufa", "omega 3 intestino", "cla", "acido linoleico conjugado"],
-        title: "🛡️ Ácidos Grasos Esenciales y Barrera Intestinal",
-        badge: "Liermann et al., J. Dairy Sci. 109(5) (2026)",
-        formula: "PUFA Omega-3: protector | PUFA Omega-6: proinflamatorio en exceso | CLA: efectos mixtos",
-        body: `<b>Rol de los PUFA en la Barrera Intestinal (módulo Ácidos Grasos/Tecnigrasas):</b>
-<br>• Los PUFA Omega-3 favorecen la integridad de las uniones estrechas (tight junctions) del intestino.
-<br>• Los PUFA Omega-6 pueden ser proinflamatorios cuando predominan en exceso sobre el Omega-3.
-<br>• El CLA (Ácido Linoleico Conjugado) tiene efectos mixtos documentados según el isómero específico — no todos actúan igual.`,
-        sources: "Liermann et al., J. Dairy Sci. 109(5) (2026)"
+        id: "calcium_soap_balance",
+        keywords: ["jabon calcico", "mas no siempre es mejor", "sobrepasancia", "biohidrogenacion", "mfd", "depresion grasa lactea", "energras", "tecnigras balance"],
+        title: "⚖️ Jabones Cálcicos: en Sobrepasancia Ruminal, Más No Siempre Es Mejor",
+        badge: "Dato original: MV MSc Rolando Hernández Mora",
+        formula: "Valor real = Estabilidad ruminal (Ca sol. pH 6.5) × Perfil de ácidos grasos — no el % de linoleico aislado",
+        body: `<b>Por qué un mayor % de linoleico declarado no siempre es mejor (módulo Ácidos Grasos/Tecnigrasas):</b>
+<br>• El 75-90% de los AGPI no protegidos se biohidrogenan en el rumen (Smith, 2024): el linoleico del saco no es el linoleico que llega a la vaca.
+<br>• Un jabón cálcico inestable a pH ruminal (ej. jabón de soya 100%, disociación 62.3±5.6% a pH 6.0) expone su linoleico a la vía alterna (trans-10,cis-12 CLA), que suprime la síntesis de grasa láctea (síndrome MFD).
+<br>• Energras®/Tecnigras® se ubica en el balance óptimo: 18.1% linoleico funcional, Ca soluble 1.7% (4.8× más estable que la palma africana), oleico 30.6% ≥ umbral NASEM 2021 para coeficiente de digestibilidad 0.76.
+<br>• Consulta la tabla comparativa completa (palma · Energras®/Tecnigras® · jabón de soya 100%) en el módulo Ácidos Grasos/Tecnigrasas.`,
+        sources: "Hernández, R. (2026). Jabones Cálcicos y Ácidos Grasos Esenciales — Resumen Técnico. Tecnigrasas S.A.S., mayo 2026 · Guerrero et al. 2014 (Interciencia 39(6):404-409) · Cappellozza et al. 2020/2021 · Smith 2024 · NASEM 2021"
     },
     {
         id: "nutraceutical_regulatory",
