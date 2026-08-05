@@ -1341,6 +1341,52 @@ body {
     line-height: 1.5;
 }
 
+/* ===== Fase 4.4 / 4.6: Checklists ===== */
+.step-badge {
+    background: #eff6ff;
+    color: #1d4ed8;
+    border: 1px solid #bfdbfe;
+    font-size: 0.72rem;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+.inflammation-checklist {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+.inflammation-checklist .checkbox-label {
+    align-items: flex-start;
+    background: #f8fafc;
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    padding: 12px 14px;
+    font-size: 0.88rem;
+    color: var(--text-secondary);
+}
+.inflammation-checklist .checkbox-label input[type="checkbox"] {
+    margin-top: 2px;
+}
+.attention-summary {
+    margin-top: 16px;
+    padding: 14px 16px;
+    border-radius: 12px;
+    border: 1.5px solid;
+    font-size: 0.88rem;
+    line-height: 1.5;
+}
+.attention-summary strong.attention-title {
+    display: block;
+    font-size: 1rem;
+    margin-bottom: 6px;
+}
+.attention-none { background: #f0fdf4; border-color: #a7f3d0; color: #065f46; }
+.attention-basic { background: #fffbeb; border-color: #fde68a; color: #92400e; }
+.attention-high { background: #fef2f2; border-color: #fecaca; color: #991b1b; }
+
 @media (max-width: 600px) {
     .app-container {
         padding: 0 8px 32px;
@@ -1920,6 +1966,13 @@ body {
 
         <section class="module-panel hidden" id="panel-transicion" data-module="transicion" role="tabpanel" aria-labelledby="tab-transicion" tabindex="0">
 
+        <!-- Fase 4.6: Checklist de Vaca Seca (2 pasos) - envuelve DCAD (paso 1) e Illinois/Goldilocks (paso 2) -->
+        <div class="practical-card dry-cow-checklist-intro" style="border-left-color: var(--accent-blue);">
+            <h4>✅ Checklist de Vaca Seca (2 Pasos)</h4>
+            <p>Secuencia recomendada de manejo nutricional preparto: primero el control aniónico-catiónico de la dieta, luego el control de energía y fibra ("Goldilocks").</p>
+            <span class="badge-source">Trevisi, Balchem Webinar 28/07/2026</span>
+        </div>
+
         <!-- DCAD / BAC Transition Protocol Module (NASEM 2026 Dr. Maiztegui) -->
         <section class="card table-card" id="dcad-section" aria-labelledby="dcad-title">
             <div class="card-header">
@@ -1928,6 +1981,7 @@ body {
                     <h3 id="dcad-title">Calculadora de Balance Anión-Catión (DCAD / BAC) en Preparto (NASEM 2026)</h3>
                 </div>
                 <span class="badge-source">Prevención de Hipocalcemia</span>
+                <span class="step-badge">Paso 1 de 2</span>
             </div>
             <div class="practical-card" style="border-left-color: var(--accent-amber);">
                 <h4>Ecuación Oficial de Balance Cationico-Aniónico (DCAD)</h4>
@@ -1948,6 +2002,7 @@ body {
                     <h3 id="illinois-title">Estimación de Consumo de Agua y Dieta de Energía Controlada (Univ. Illinois 2025)</h3>
                 </div>
                 <span class="badge-source">Drackley & Cardoso</span>
+                <span class="step-badge">Paso 2 de 2</span>
             </div>
             <div class="practical-card" style="border-left-color: var(--accent-blue);">
                 <h4>Ecuación Predicción de Consumo de Agua de Bebida (Wetherly & Cardoso)</h4>
@@ -1958,6 +2013,26 @@ body {
                     <div class="practical-stat-item">Fibra peNDF (Caja Penn State): <strong>>= 21% MS (10-15% en bandeja superior >19mm)</strong></div>
                 </div>
             </div>
+        </section>
+
+        <!-- Fase 4.4: Panel de riesgo de inflamación subclínica -->
+        <section class="card table-card" id="inflammation-risk-section" aria-labelledby="inflammation-risk-title">
+            <div class="card-header">
+                <div class="card-title">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                    <h3 id="inflammation-risk-title">🌡️ Panel de Riesgo de Inflamación Subclínica</h3>
+                </div>
+                <span class="badge-source">Orientación, no diagnóstico</span>
+            </div>
+            <p>Marca las señales que observas en la vaca. Esto es una guía de orientación para decidir si amerita seguimiento más cercano, no un diagnóstico clínico.</p>
+            <span class="badge-source">Delavaud et al., J. Dairy Sci. 109 (2026)</span>
+            <div class="inflammation-checklist util-mt-10" id="inflammation-checklist">
+                <label class="checkbox-label"><input type="checkbox" class="inflammation-check" id="inflam-check-dmi"> El consumo de materia seca (DMI) cayó más de 15% en la última semana</label>
+                <label class="checkbox-label"><input type="checkbox" class="inflammation-check" id="inflam-check-bcs"> La condición corporal (BCS) cayó más de 0.5 puntos en las primeras 3 semanas posparto</label>
+                <label class="checkbox-label"><input type="checkbox" class="inflammation-check" id="inflam-check-restriction"> Hubo restricción alimenticia previa (voluntaria o inducida) antes del parto</label>
+            </div>
+            <button type="button" id="btn-eval-inflammation" class="btn-primary">🐮 Evaluar Nivel de Atención (Muuu!)</button>
+            <div id="inflammation-result-content" aria-live="polite"></div>
         </section>
 
         </section>
@@ -2028,6 +2103,36 @@ body {
                 </div>
                 <button type="button" id="btn-calc-fe" class="btn-primary">🐮 Calcular FCM y Eficiencia (Muuu!)</button>
                 <div id="fe-results-container" class="results-container" aria-live="polite"></div>
+            </div>
+        </section>
+
+        <!-- Fase 4.5: Selector de riesgo de acidosis por almidón -->
+        <section class="card table-card" id="starch-acidosis-section" aria-labelledby="starch-acidosis-title">
+            <div class="card-header">
+                <div class="card-title">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                    <h3 id="starch-acidosis-title">🌾 Selector de Riesgo de Acidosis por Almidón</h3>
+                </div>
+                <span class="badge-source">NASEM (2021); Krogstad (Ohio State)</span>
+            </div>
+            <p>Selecciona el grano principal de la ración para ver su digestibilidad ruminal del almidón: a mayor digestibilidad, fermentación más rápida y mayor riesgo de acidosis subaguda (SARA) si no se maneja bien.</p>
+            <div class="form-group util-mt-10" style="max-width: 360px;">
+                <label for="grain-select">Grano Principal de la Ración:</label>
+                <select id="grain-select" class="form-control">
+                    <option value="trigo" data-digest="79">Trigo</option>
+                    <option value="cebada" data-digest="71">Cebada</option>
+                    <option value="maiz" data-digest="54">Maíz</option>
+                </select>
+            </div>
+            <div id="grain-digestibility-result"></div>
+            <h4 class="util-mt-10">Checklist de Monitoreo de Campo</h4>
+            <p style="font-size:0.82rem; color:var(--text-muted);">Esto es una guía de observación, no una fórmula de riesgo numérico.</p>
+            <div class="inflammation-checklist util-mt-10">
+                <label class="checkbox-label"><input type="checkbox"> Consistencia del estiércol (burbujas, fibra sin digerir, muy líquido)</label>
+                <label class="checkbox-label"><input type="checkbox"> Caída en el % de grasa de la leche</label>
+                <label class="checkbox-label"><input type="checkbox"> Nitrógeno Ureico en Leche (NUL/MUN) fuera de rango</label>
+                <label class="checkbox-label"><input type="checkbox"> Tiempo de rumia reducido (menos de 300-350 min/día)</label>
+                <label class="checkbox-label"><input type="checkbox"> Vitreosidad del grano (almidón muy expuesto o muy vítreo)</label>
             </div>
         </section>
 
@@ -3047,6 +3152,65 @@ function renderEnergyBalance(catId, dmi, milk, fat, protein, nemMaintenance) {
             ${summaryIcon} ${summaryText}
             ${riskNote}
         </div>
+    `;
+}
+
+function updateGrainDigestibility() {
+    const select = document.getElementById("grain-select");
+    const result = document.getElementById("grain-digestibility-result");
+    if (!select || !result) return;
+    const option = select.options[select.selectedIndex];
+    const digest = parseFloat(option.getAttribute("data-digest"));
+    const grainName = option.text;
+
+    let riskNote, riskClass;
+    if (digest >= 75) {
+        riskNote = "Alta digestibilidad ruminal: fermentación rápida, requiere manejo cuidadoso de fibra efectiva y una transición gradual al iniciar o cambiar la ración.";
+        riskClass = "attention-high";
+    } else if (digest >= 60) {
+        riskNote = "Digestibilidad ruminal intermedia.";
+        riskClass = "attention-basic";
+    } else {
+        riskNote = "Digestibilidad ruminal más lenta: menor riesgo relativo por este factor, pero vigila igual el procesamiento del grano (vitreosidad, tamaño de partícula).";
+        riskClass = "attention-none";
+    }
+
+    result.innerHTML = `
+        <div class="attention-summary ${riskClass}">
+            <strong class="attention-title">${grainName}: ${digest}% de digestibilidad ruminal del almidón</strong>
+            ${riskNote}
+        </div>
+    `;
+}
+
+function evaluateInflammationRisk() {
+    const content = document.getElementById("inflammation-result-content");
+    if (!content) return;
+    const checks = document.querySelectorAll(".inflammation-check");
+    let checkedCount = 0;
+    checks.forEach((c) => { if (c.checked) checkedCount++; });
+
+    let level, cssClass, explanation;
+    if (checkedCount === 0) {
+        level = "Sin señales de alerta";
+        cssClass = "attention-none";
+        explanation = "No se marcó ninguna señal de riesgo. Continúa el monitoreo de rutina en la transición.";
+    } else if (checkedCount === 1) {
+        level = "Atención básica";
+        cssClass = "attention-basic";
+        explanation = "Se marcó una señal de riesgo. La restricción de consumo, la pérdida rápida de condición corporal y la restricción alimenticia previa al parto se asocian a mayor lipólisis del tejido adiposo, liberando ácidos grasos no esterificados (NEFA) que pueden favorecer una respuesta inflamatoria subclínica. Vigila de cerca en los próximos días.";
+    } else {
+        level = "Atención alta";
+        cssClass = "attention-high";
+        explanation = "Se marcaron " + checkedCount + " señales de riesgo. La combinación de estos factores está asociada a mayor movilización de grasa corporal, aumento de NEFA circulantes y activación de una respuesta inflamatoria subclínica (citocinas proinflamatorias y proteínas de fase aguda), lo que puede comprometer la función inmune y hepática en el periparto. Considera una evaluación más cercana.";
+    }
+
+    content.innerHTML = `
+        <div class="attention-summary ${cssClass}">
+            <strong class="attention-title">${level}</strong>
+            ${explanation}
+        </div>
+        <p style="margin-top:8px; font-size:0.76rem; color:var(--text-muted);">Esto es una guía de orientación, no reemplaza el criterio clínico de un médico veterinario.</p>
     `;
 }
 
@@ -4264,6 +4428,13 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     const btnCalcAntagonism = document.getElementById("btn-calc-antagonism");
     if (btnCalcAntagonism) btnCalcAntagonism.addEventListener("click", () => { evaluateMineralAntagonism(); triggerMooAudio(); });
+
+    const btnEvalInflammation = document.getElementById("btn-eval-inflammation");
+    if (btnEvalInflammation) btnEvalInflammation.addEventListener("click", () => { evaluateInflammationRisk(); triggerMooAudio(); });
+
+    const grainSelectEl = document.getElementById("grain-select");
+    if (grainSelectEl) grainSelectEl.addEventListener("change", () => { updateGrainDigestibility(); triggerMooAudio(); });
+    updateGrainDigestibility();
 
     // Module Tabs Navigation (Fase 1)
     const moduleTablist = document.getElementById("module-tablist");
