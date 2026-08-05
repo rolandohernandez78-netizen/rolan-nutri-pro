@@ -2903,7 +2903,12 @@ const GLOSARIO_TERMS = [
     { a: "ATP", f: "Adenosín Trifosfato (Adenosine Triphosphate)", c: "Bioquímica", d: "La \"moneda energética\" de la célula. Toda la energía neta que aporta la dieta termina convirtiéndose en ATP para los procesos vitales del animal." },
 
     { a: "NASEM", f: "Academias Nacionales de Ciencias, Ingeniería y Medicina (EE. UU.)", c: "Sistemas y siglas institucionales", d: "Entidad que publica los estándares de referencia de requerimientos nutricionales del ganado. Esta app usa la edición 2021 (8ª ed.) para ganado lechero." },
-    { a: "CNCPS", f: "Sistema Cornell de Carbohidratos y Proteína Neta (Cornell Net Carbohydrate and Protein System)", c: "Sistemas y siglas institucionales", d: "Modelo desarrollado por la Universidad de Cornell para predecir con más detalle los requerimientos y el aporte real de proteína y energía de cada ingrediente." }
+    { a: "CNCPS", f: "Sistema Cornell de Carbohidratos y Proteína Neta (Cornell Net Carbohydrate and Protein System)", c: "Sistemas y siglas institucionales", d: "Modelo desarrollado por la Universidad de Cornell para predecir con más detalle los requerimientos y el aporte real de proteína y energía de cada ingrediente." },
+
+    { a: "EB", f: "Balance Energético (Energy Balance)", c: "Energía", d: "Mcal/día. La diferencia entre la energía neta que la vaca consume y la que necesita para mantenimiento, gestación y producción de leche. Un EB negativo sostenido se asocia a movilización de grasa corporal y riesgo de cetosis." },
+    { a: "SARA", f: "Acidosis Ruminal Subaguda (Subacute Ruminal Acidosis)", c: "Fibra y carbohidratos", d: "Caída sostenida del pH ruminal por exceso de almidón de fermentación rápida y fibra efectiva insuficiente; se monitorea con consistencia del estiércol, grasa de leche, NUL, tiempo de rumia y vitreosidad del grano." },
+    { a: "Mo", f: "Molibdeno", c: "Microminerales (ppm)", d: "En combinación con azufre alto en la dieta, puede formar tiotiomolibdatos en el rumen que bloquean la absorción de cobre, incluso cuando el cobre dietario cumple el requerimiento." },
+    { a: "Tiotiomolibdatos", f: "Thiomolybdates", c: "Microminerales (ppm)", d: "Compuestos que se forman en el rumen a partir de molibdeno y azufre; se unen al cobre y a proteínas, bloqueando su absorción intestinal y pudiendo inducir una deficiencia de cobre inducida." }
 ];
 
 function buildGlosarioHTML() {
@@ -3978,6 +3983,119 @@ const qaKnowledgeBase = [
 <br>• <b>Pico de Lactancia (30 - 90 DEL):</b> 1.60 - 1.85.
 <br>• <b>Rentabilidad:</b> Un incremento de +0.10 unidades en FE equivale a +1.5 a +2.0 kg de leche adicional por vaca/día sin gasto extra en forraje o concentrado.`,
         sources: "Penn State University Extension • Dr. Mike Hutjens Dairy Course"
+    },
+    {
+        id: "energy_balance",
+        keywords: ["balance energetico", "eb", "energia negativa", "gest_nel", "gestacion energia", "cetosis energia", "milk nel"],
+        title: "⚖️ Balance Energético (EB) y Energía de Gestación (NASEM 2021 Cap. 3)",
+        badge: "NASEM 2021 (Cap. 3)",
+        formula: "EB = NEL Consumida − (NEL Mantenimiento + NEL Gestación + NEL Producción)",
+        body: `<b>Balance Energético en Vacas Lecheras en Lactancia (NASEM 2021, Ecs. 3-15a a 3-18):</b>
+<br>• Compara la energía neta que la vaca consume contra lo que necesita para mantenimiento, gestación (si aplica) y producción de leche.
+<br>• <b>Milk NEL (Mcal/kg leche)</b> = 9.29×(%grasa/100) + 5.85×(%proteína/100) + 3.95×(%lactosa/100).
+<br>• Un EB negativo sostenido en el posparto se asocia a movilización de grasa corporal y riesgo de cetosis; calcúlalo en el módulo Inicio/Calculadora, activando "Vaca preñada" si corresponde para incluir la energía de gestación.`,
+        sources: "NASEM (2021) Cap. 3, Ecs. 3-15a a 3-18, pp. 31-32 • Cunha et al., J. Dairy Sci. 109 (2026)"
+    },
+    {
+        id: "mineral_risk",
+        keywords: ["riesgo mineral", "zinc cobre manganeso", "homeostatico", "limite superior mineral", "sobrecarga mineral", "zn cu mn"],
+        title: "🚦 Riesgo Homeostático de Zinc, Cobre y Manganeso",
+        badge: "Daniel & Martín-Tereso (2026)",
+        formula: "Límite Superior (mg/d) = BW (kg) × [Zn: 3.54 | Cu: 0.63 | Mn: 2.36] mg/kg BW/d",
+        body: `<b>Semáforo de Riesgo Homeostático (módulo Minerales):</b>
+<br>• Compara el aporte real de la dieta contra el rango entre el requerimiento neto NASEM (límite inferior) y el límite superior de seguridad calculado a partir del peso vivo.
+<br>• Tres zonas: <b>déficit</b> (por debajo del requerimiento), <b>adecuado</b> (dentro del rango) y <b>riesgo de sobrecarga</b> (por encima del límite superior).`,
+        sources: "Daniel & Martín-Tereso, J. Dairy Sci. 109:6239-6251 (2026)"
+    },
+    {
+        id: "mineral_antagonism",
+        keywords: ["antagonismo mineral", "molibdeno", "mo", "tiotiomolibdato", "cobre bloqueado", "hierro cobre"],
+        title: "⚔️ Antagonismos Minerales: Molibdeno, Azufre y Cobre",
+        badge: "Orientativo, no estándar NASEM",
+        formula: "Alerta si Mo ≥ 2 mg/kg MS Y S ≥ 0.15% MS",
+        body: `<b>Interpretador de Antagonismos Minerales (módulo Minerales):</b>
+<br>• Con Molibdeno ≥ 2 mg/kg MS y Azufre ≥ 0.15% MS, el rumen puede formar tiotiomolibdatos que bloquean la absorción de cobre, incluso si el Cu de la dieta cumple el requerimiento NASEM.
+<br>• Nota informativa: niveles altos de hierro se han asociado con depresión de cobre hepático en estudios en cabras; la extrapolación a bovinos debe hacerse con cautela.`,
+        sources: "Ashmead, Balchem Webinar, oct. 2025"
+    },
+    {
+        id: "inflammation",
+        keywords: ["inflamacion subclinica", "nefa", "lipolisis", "atencion posparto", "citocinas"],
+        title: "🌡️ Riesgo de Inflamación Subclínica en Transición",
+        badge: "Orientación, no diagnóstico",
+        formula: "Señales: caída de DMI > 15%/semana, caída de BCS > 0.5 en 3 semanas posparto, restricción alimenticia previa",
+        body: `<b>Panel de Riesgo de Inflamación Subclínica (módulo Transición y Vaca Seca):</b>
+<br>• La restricción de consumo, la pérdida rápida de condición corporal y la restricción alimenticia previa al parto se asocian a mayor lipólisis del tejido adiposo, liberando ácidos grasos no esterificados (NEFA).
+<br>• Esto puede favorecer una respuesta inflamatoria subclínica (citocinas proinflamatorias y proteínas de fase aguda) que compromete la función inmune y hepática en el periparto. Es una guía de orientación, no un diagnóstico clínico.`,
+        sources: "Delavaud et al., J. Dairy Sci. 109 (2026)"
+    },
+    {
+        id: "acidosis",
+        keywords: ["acidosis", "sara", "digestibilidad grano", "vitreosidad", "tiempo de rumia", "trigo cebada maiz"],
+        title: "🌾 Riesgo de Acidosis por Almidón (SARA)",
+        badge: "NASEM (2021); Krogstad (Ohio State)",
+        formula: "Digestibilidad Ruminal del Almidón: Trigo 79% | Cebada 71% | Maíz 54%",
+        body: `<b>Selector de Riesgo de Acidosis por Almidón (módulo Eficiencia y Ración):</b>
+<br>• A mayor digestibilidad ruminal del grano, fermentación más rápida y mayor riesgo de Acidosis Ruminal Subaguda (SARA) si no se maneja bien la transición y la fibra efectiva.
+<br>• Checklist de monitoreo de campo (no es una fórmula de riesgo numérico): consistencia del estiércol, caída de grasa en leche, Nitrógeno Ureico en Leche (NUL/MUN) fuera de rango, tiempo de rumia reducido, vitreosidad del grano.`,
+        sources: "NASEM (2021); Krogstad (Ohio State)"
+    },
+    {
+        id: "dry_cow_checklist",
+        keywords: ["vaca seca checklist", "2 pasos", "preparto secuencia", "trevisi"],
+        title: "✅ Checklist de Vaca Seca (2 Pasos)",
+        badge: "Trevisi, Balchem Webinar 28/07/2026",
+        formula: "Paso 1: DCAD preparto | Paso 2: Dieta Goldilocks",
+        body: `<b>Secuencia Recomendada de Manejo Nutricional Preparto (módulo Transición y Vaca Seca):</b>
+<br>• <b>Paso 1:</b> Control aniónico-catiónico de la dieta (DCAD) para prevenir hipocalcemia.
+<br>• <b>Paso 2:</b> Dieta "Goldilocks" de control de energía y fibra para evitar sobrecondición al parto.
+<br>Consulta los chips "DCAD" y "Goldilocks" para el detalle de cada paso.`,
+        sources: "Trevisi, Balchem Webinar 28/07/2026"
+    },
+    {
+        id: "fat_comparator",
+        keywords: ["comparador grasas", "fuentes de grasa", "aceite de soya", "sebo de res", "grasa amarilla", "indice de yodo"],
+        title: "🥑 Comparador de Fuentes de Grasa",
+        badge: "Dato original: MV MSc Rolando Hernández Mora",
+        formula: "Perfil de ácidos grasos, índice de yodo, Ca % BS y energía bruta por fuente",
+        body: `<b>Comparador de 6 Fuentes de Grasa Comunes (módulo Ácidos Grasos/Tecnigrasas):</b>
+<br>• Aceite de soya, aceite de palma africana, grasa de pollo, grasa amarilla, sebo de res y aceite de maíz, con su perfil de palmítico, esteárico, oleico, linoleico, índice de yodo, calcio y energía bruta.
+<br>• Consulta la tabla completa en el módulo Ácidos Grasos/Tecnigrasas.`,
+        sources: "Guerrero, J., Ojeda, A., Landinez, J., López, N. (2014). Interciencia 39(6):404-409"
+    },
+    {
+        id: "tecnigras_datasheet",
+        keywords: ["tecnigras", "ficha tecnica tecnigras", "oleico tecnigras", "iso 17025"],
+        title: "📋 Ficha Técnica TECNIGRAS®",
+        badge: "Dato original: MV MSc Rolando Hernández Mora",
+        formula: "Oleico (Ω-9) 30.6% | Linoleico (Ω-6) 18.1% | Linolénico (Ω-3) 1.36% | Palmítico 37.3% | Sat:Insat 1:0.9",
+        body: `<b>Perfil de Ácidos Grasos de TECNIGRAS® (módulo Ácidos Grasos/Tecnigrasas):</b>
+<br>• Analizado bajo ISO/IEC 17025:2017 (Boletín Técnico Tecnigras, junio 2025).
+<br>• Su relación Ω-6:Ω-3 interna (~13:1) no debe compararse directamente con la meta de 4:1 a 5:1 de la dieta TOTAL: son alcances distintos, ya que TECNIGRAS® es un ingrediente que aporta a esa mezcla total.`,
+        sources: "Boletín Técnico Tecnigras, junio 2025 (ISO/IEC 17025:2017)"
+    },
+    {
+        id: "efa_barrier",
+        keywords: ["barrera intestinal", "pufa", "omega 3 intestino", "cla", "acido linoleico conjugado"],
+        title: "🛡️ Ácidos Grasos Esenciales y Barrera Intestinal",
+        badge: "Liermann et al., J. Dairy Sci. 109(5) (2026)",
+        formula: "PUFA Omega-3: protector | PUFA Omega-6: proinflamatorio en exceso | CLA: efectos mixtos",
+        body: `<b>Rol de los PUFA en la Barrera Intestinal (módulo Ácidos Grasos/Tecnigrasas):</b>
+<br>• Los PUFA Omega-3 favorecen la integridad de las uniones estrechas (tight junctions) del intestino.
+<br>• Los PUFA Omega-6 pueden ser proinflamatorios cuando predominan en exceso sobre el Omega-3.
+<br>• El CLA (Ácido Linoleico Conjugado) tiene efectos mixtos documentados según el isómero específico — no todos actúan igual.`,
+        sources: "Liermann et al., J. Dairy Sci. 109(5) (2026)"
+    },
+    {
+        id: "nutraceutical_regulatory",
+        keywords: ["nutraceuticos regulacion", "fda dshea", "efsa", "fssai", "sfda", "marco regulatorio"],
+        title: "📜 Nota Regulatoria de Nutracéuticos (Marco Conceptual)",
+        badge: "Shirodkar, Khanchey & Babre (2025)",
+        formula: "FDA/DSHEA (EE. UU.) | EFSA (UE) | FSSAI (India) | SFDA (Arabia Saudita)",
+        body: `<b>Marco Conceptual de Nutracéuticos (módulo Referencia):</b>
+<br>• Estas agencias regulan suplementos/nutracéuticos <b>para consumo humano</b>, no insumos pecuarios.
+<br>• Se incluyen solo como contexto conceptual general y no sustituyen la normativa del Instituto Colombiano Agropecuario (ICA) u otra autoridad veterinaria/pecuaria vigente.`,
+        sources: "Shirodkar, Khanchey & Babre, Academia Nutrition and Dietetics 2 (2025)"
     }
 ];
 
