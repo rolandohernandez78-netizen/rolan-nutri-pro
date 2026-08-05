@@ -4327,12 +4327,21 @@ function triggerMooAudio() {
     if (speechBubble) {
         const moos = ["¡Muuuu! 🐮", "¡Muuu Rumiando! 🌾", "¡Muuuu NASEM 2021! 📊", "¡Muuuu Balanceado! 🧪"];
         const randomMoo = moos[Math.floor(Math.random() * moos.length)];
+        const defaultBubbleText = speechBubble.getAttribute("data-default-text") || speechBubble.innerText;
+        speechBubble.setAttribute("data-default-text", defaultBubbleText);
         speechBubble.innerText = randomMoo;
         speechBubble.style.opacity = "1";
         speechBubble.style.transform = "translateY(0)";
         setTimeout(() => {
             speechBubble.style.opacity = "0";
             speechBubble.style.transform = "translateY(6px)";
+            // Tras el fundido, restaura el texto original (ej. la invitación al Muu-siario)
+            // y vuelve a mostrarlo, para que la burbuja nunca quede vacía/invisible.
+            setTimeout(() => {
+                speechBubble.innerText = defaultBubbleText;
+                speechBubble.style.opacity = "1";
+                speechBubble.style.transform = "translateY(0)";
+            }, 400);
         }, 2200);
     }
 
