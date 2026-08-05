@@ -1192,6 +1192,75 @@ body {
     color: #92400e;
 }
 
+/* ===== Fase 4.1: Balance Energético ===== */
+.checkbox-label {
+    display: flex !important;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+}
+.checkbox-label input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    accent-color: var(--primary-emerald);
+    cursor: pointer;
+    flex-shrink: 0;
+}
+.energy-balance-panel .eb-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+    margin-top: 12px;
+}
+@media (min-width: 560px) {
+    .energy-balance-panel .eb-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+.eb-item {
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
+    border-radius: 10px;
+    padding: 10px 14px;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+.eb-item strong {
+    display: block;
+    font-size: 1.1rem;
+    color: var(--text-primary);
+    margin-top: 2px;
+}
+.eb-summary {
+    margin-top: 14px;
+    padding: 14px 16px;
+    border-radius: 12px;
+    font-size: 0.92rem;
+    font-weight: 700;
+    border: 1.5px solid;
+}
+.eb-summary.eb-positive {
+    background: #f0fdf4;
+    border-color: #a7f3d0;
+    color: #065f46;
+}
+.eb-summary.eb-negative {
+    background: #fef2f2;
+    border-color: #fecaca;
+    color: #991b1b;
+}
+.eb-summary-note {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: 500;
+    margin-top: 6px;
+}
+.eb-not-applicable {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-top: 12px;
+}
+
 @media (max-width: 600px) {
     .app-container {
         padding: 0 8px 32px;
@@ -1513,6 +1582,11 @@ body {
                             <input type="number" id="protein-input" class="form-control" value="3.2" min="2.0" max="5.0" step="0.1">
                         </div>
 
+                        <div class="form-group" id="group-lactose">
+                            <label for="lactose-input">Lactosa Leche (%):</label>
+                            <input type="number" id="lactose-input" class="form-control" value="4.85" min="3.5" max="5.5" step="0.05" inputmode="decimal">
+                        </div>
+
                         <div class="form-group" id="group-dim">
                             <label for="dim-input">Días en Leche (DIM):</label>
                             <input type="number" id="dim-input" class="form-control" value="60" min="1" max="500">
@@ -1526,6 +1600,22 @@ body {
                         <div class="form-group hidden" id="group-adg">
                             <label for="adg-input">Ganancia Diaria Peso (ADG - kg/día):</label>
                             <input type="number" id="adg-input" class="form-control" value="0.9" min="0.0" max="2.5" step="0.1">
+                        </div>
+
+                        <div class="form-group" id="group-gestation-toggle">
+                            <label class="checkbox-label" for="gestation-toggle">
+                                <input type="checkbox" id="gestation-toggle"> Vaca preñada (incluir energía de gestación)
+                            </label>
+                        </div>
+
+                        <div class="form-group hidden" id="group-gestation-days">
+                            <label for="gestation-days-input">Días de Gestación:</label>
+                            <input type="number" id="gestation-days-input" class="form-control" value="150" min="12" max="280" step="1" inputmode="numeric">
+                        </div>
+
+                        <div class="form-group hidden" id="group-birth-weight">
+                            <label for="birth-weight-input">Peso Ternero al Nacer (kg):</label>
+                            <input type="number" id="birth-weight-input" class="form-control" value="44" min="20" max="60" step="1" inputmode="numeric">
                         </div>
                     </div>
 
@@ -1577,6 +1667,18 @@ body {
                 </div>
             </section>
         </main>
+
+        <!-- Fase 4.1: Balance Energético -->
+        <div class="practical-card energy-balance-panel" id="energy-balance-panel" style="border-left-color: var(--accent-blue);">
+            <h4>⚖️ Balance Energético (EB)</h4>
+            <p>Compara la energía neta que la vaca consume contra lo que necesita para mantenimiento, gestación (si aplica) y producción de leche. Aplica a vacas en lactancia.</p>
+            <span class="badge-source">NASEM (2021) Cap. 3, Ec. 3-15a a 3-18, pp. 31-32; Cunha et al., J. Dairy Sci. 109 (2026)</span>
+            <div class="form-group util-mt-10" style="max-width: 360px;">
+                <label for="diet-nel-density-input">Densidad Energética de la Dieta (Mcal NEL/kg MS):</label>
+                <input type="number" id="diet-nel-density-input" class="form-control" value="1.63" min="1.2" max="2.0" step="0.01" inputmode="decimal">
+            </div>
+            <div id="energy-balance-content"></div>
+        </div>
 
         <!-- Aclaratorio: herramienta educativa, no prescriptiva -->
         <div class="edu-disclaimer" role="note">
@@ -2737,6 +2839,80 @@ function calculateFeedEfficiency() {
     `;
 }
 
+function renderEnergyBalance(catId, dmi, milk, fat, protein, nemMaintenance) {
+    const content = document.getElementById("energy-balance-content");
+    if (!content) return;
+
+    const isLactatingDairy = catId === "lactating_primiparous" || catId === "lactating_multiparous";
+    if (!isLactatingDairy) {
+        content.innerHTML = `<p class="eb-not-applicable">Este módulo aplica a vacas lecheras en lactancia (Primípara o Multípara). Selecciona una de esas categorías para ver el Balance Energético.</p>`;
+        return;
+    }
+
+    const lactoseInput = document.getElementById("lactose-input");
+    const dietDensityInput = document.getElementById("diet-nel-density-input");
+    const gestationToggle = document.getElementById("gestation-toggle");
+    const gestationDaysInput = document.getElementById("gestation-days-input");
+    const birthWeightInput = document.getElementById("birth-weight-input");
+
+    const lactose = parseFloat(lactoseInput ? lactoseInput.value : NaN) || 4.85;
+    const dietDensity = parseFloat(dietDensityInput ? dietDensityInput.value : NaN) || 1.63;
+
+    // Milk NEL (NASEM 2021 Cap. 3)
+    const milkNEL = 9.29 * (fat / 100) + 5.85 * (protein / 100) + 3.95 * (lactose / 100);
+    const nelProduccion = milkNEL * milk;
+    const nelConsumida = dmi * dietDensity;
+
+    // Gest_NEL (Ecs. 3-15a a 3-18), solo si el usuario activa el campo
+    let gestNEL = 0;
+    const gestationActive = !!(gestationToggle && gestationToggle.checked);
+    let dayGestDisplay = null;
+    if (gestationActive) {
+        let dayGest = parseFloat(gestationDaysInput ? gestationDaysInput.value : NaN) || 150;
+        dayGest = Math.min(280, Math.max(12, dayGest));
+        dayGestDisplay = dayGest;
+        const birthWeight = parseFloat(birthWeightInput ? birthWeightInput.value : NaN) || 44;
+
+        const grUterWtParturition = birthWeight * 1.825; // Eq. 3-15a
+        const rate = 0.0243 - 0.0000245 * dayGest;
+        const grUterWtT = grUterWtParturition * Math.exp(-rate * (280 - dayGest)); // Eq. 3-16a
+        const grUterWtGain = rate * grUterWtT; // Eq. 3-17a
+        gestNEL = grUterWtGain * 4.16; // Eq. 3-18
+    }
+
+    const eb = nelConsumida - (nemMaintenance + gestNEL + nelProduccion);
+    const isNegative = eb < 0;
+    const summaryClass = isNegative ? "eb-negative" : "eb-positive";
+    const summaryIcon = isNegative ? "⚠️" : "✅";
+    const summaryText = isNegative
+        ? `Balance Energético Negativo: ${eb.toFixed(2)} Mcal/día`
+        : `Balance Energético Positivo: +${eb.toFixed(2)} Mcal/día`;
+
+    let riskNote = "";
+    if (isNegative) {
+        const bcsInputEl = document.getElementById("bcs-input");
+        const bcsVal = bcsInputEl ? parseFloat(bcsInputEl.value) : NaN;
+        riskNote = "<span class=\"eb-summary-note\">Un EB negativo sostenido se asocia a movilización de grasa corporal y riesgo de cetosis";
+        riskNote += (!isNaN(bcsVal) && bcsVal < 2.75)
+            ? ` — la Condición Corporal actual (BCS ${bcsVal.toFixed(2)}) ya está en un rango bajo, lo que refuerza la señal de alerta.`
+            : (!isNaN(bcsVal) ? ` (vigila la tendencia del BCS, actualmente ${bcsVal.toFixed(2)}, en las próximas semanas).` : ".");
+        riskNote += "</span>";
+    }
+
+    content.innerHTML = `
+        <div class="eb-grid">
+            <div class="eb-item">NEL Consumida (DMI × densidad)<strong>${nelConsumida.toFixed(2)} Mcal/día</strong></div>
+            <div class="eb-item">NEL Mantenimiento<strong>${nemMaintenance.toFixed(2)} Mcal/día</strong></div>
+            <div class="eb-item">NEL Producción (leche)<strong>${nelProduccion.toFixed(2)} Mcal/día</strong></div>
+            <div class="eb-item">NEL Gestación${gestationActive ? " (día " + dayGestDisplay.toFixed(0) + ")" : " (inactiva)"}<strong>${gestNEL.toFixed(2)} Mcal/día</strong></div>
+        </div>
+        <div class="eb-summary ${summaryClass}">
+            ${summaryIcon} ${summaryText}
+            ${riskNote}
+        </div>
+    `;
+}
+
 function calculateRequirements() {
     speciesSelect = speciesSelect || document.getElementById("species-select");
     categorySelect = categorySelect || document.getElementById("category-select");
@@ -2771,6 +2947,7 @@ function calculateRequirements() {
 
     let dmi = 0, nel = 0, mp = 0, ca = 0, p = 0;
     let dmiNote = "";
+    let nemMaintenance = 0; // Fase 4.1: NEL de mantenimiento capturada para el Balance Energético
 
     if (catId === "lactating_primiparous") {
         // NASEM 2021 Ecuación 2-1 real (de Souza et al. 2019). Parity = 0 (primípara).
@@ -2784,6 +2961,7 @@ function calculateRequirements() {
         const nem = 0.10 * Math.pow(bw, 0.75);
         const neMilk = milkE;
         nel = nem + neMilk;
+        nemMaintenance = nem;
 
         const mpMaint = 3.8 * Math.pow(bw, 0.75);
         const mpMilk = milk * (protein / 100.0) * 1000.0 * 1.4;
@@ -2808,6 +2986,7 @@ function calculateRequirements() {
         const nem = 0.10 * Math.pow(bw, 0.75);
         const neMilk = milkE;
         nel = nem + neMilk;
+        nemMaintenance = nem;
 
         const mpMaint = 3.8 * Math.pow(bw, 0.75);
         const mpMilk = milk * (protein / 100.0) * 1000.0 * 1.4;
@@ -2945,6 +3124,7 @@ function calculateRequirements() {
     renderCornellModule(dmi, bw, milk, fat, protein);
     updateMineralTablesAndHighlight();
     renderResultsVisualization(dmi, bw, nel, mp, ca, p);
+    renderEnergyBalance(catId, dmi, milk, fat, protein, nemMaintenance);
     saveLastInputs();
 }
 
@@ -3594,7 +3774,7 @@ let activeSelectedMineral = "Ca"; // Default mineral selection
 
 // Global DOM Element References
 let speciesSelect, categorySelect, bwInput, milkInput, fatInput, proteinInput, dimInput, adgInput, bcsInput;
-let groupMilk, groupFat, groupProtein, groupDim, groupAdg, groupBcs;
+let groupMilk, groupFat, groupProtein, groupDim, groupAdg, groupBcs, groupLactose;
 let btnCalculate, btnTechView, btnPracticalView, bannerModeBadge, resultsContainer;
 let mineralTypeSelect, btnCalcMineral, mineralDetailsContainer, macroMineralTableBody, microMineralTableBody, mineralAnimalBadge;
 let cornellModuleContainer, presetTableHead, presetTableBody;
@@ -3615,6 +3795,7 @@ function updateFormFieldsAndDefaults() {
     groupMilk = groupMilk || document.getElementById("group-milk");
     groupFat = groupFat || document.getElementById("group-fat");
     groupProtein = groupProtein || document.getElementById("group-protein");
+    groupLactose = groupLactose || document.getElementById("group-lactose");
     groupDim = groupDim || document.getElementById("group-dim");
     groupAdg = groupAdg || document.getElementById("group-adg");
     groupBcs = groupBcs || document.getElementById("group-bcs");
@@ -3642,6 +3823,7 @@ function updateFormFieldsAndDefaults() {
             if (groupMilk) groupMilk.style.display = "none";
             if (groupFat) groupFat.style.display = "none";
             if (groupProtein) groupProtein.style.display = "none";
+            if (groupLactose) groupLactose.style.display = "none";
             if (groupDim) groupDim.style.display = "none";
             if (groupBcs) groupBcs.style.display = "none";
             if (groupAdg) groupAdg.style.display = "none";
@@ -3649,6 +3831,7 @@ function updateFormFieldsAndDefaults() {
             if (groupMilk) groupMilk.style.display = "none";
             if (groupFat) groupFat.style.display = "none";
             if (groupProtein) groupProtein.style.display = "none";
+            if (groupLactose) groupLactose.style.display = "none";
             if (groupDim) groupDim.style.display = "none";
             if (groupBcs) groupBcs.style.display = "none";
             if (groupAdg) groupAdg.style.display = "block";
@@ -3656,6 +3839,7 @@ function updateFormFieldsAndDefaults() {
             if (groupMilk) groupMilk.style.display = "block";
             if (groupFat) groupFat.style.display = "block";
             if (groupProtein) groupProtein.style.display = "block";
+            if (groupLactose) groupLactose.style.display = "block";
             if (groupDim) groupDim.style.display = "block";
             if (groupBcs) groupBcs.style.display = "block";
             if (groupAdg) groupAdg.style.display = "none";
@@ -3665,6 +3849,7 @@ function updateFormFieldsAndDefaults() {
             if (groupMilk) groupMilk.style.display = "block";
             if (groupFat) groupFat.style.display = "none";
             if (groupProtein) groupProtein.style.display = "none";
+            if (groupLactose) groupLactose.style.display = "none";
             if (groupDim) groupDim.style.display = "none";
             if (groupBcs) groupBcs.style.display = "none";
             if (groupAdg) groupAdg.style.display = "none";
@@ -3672,6 +3857,7 @@ function updateFormFieldsAndDefaults() {
             if (groupMilk) groupMilk.style.display = "none";
             if (groupFat) groupFat.style.display = "none";
             if (groupProtein) groupProtein.style.display = "none";
+            if (groupLactose) groupLactose.style.display = "none";
             if (groupDim) groupDim.style.display = "none";
             if (groupBcs) groupBcs.style.display = "none";
             if (groupAdg) groupAdg.style.display = "block";
@@ -3753,6 +3939,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     groupMilk = document.getElementById("group-milk");
     groupFat = document.getElementById("group-fat");
     groupProtein = document.getElementById("group-protein");
+    groupLactose = document.getElementById("group-lactose");
     groupDim = document.getElementById("group-dim");
     groupAdg = document.getElementById("group-adg");
     groupBcs = document.getElementById("group-bcs");
@@ -3860,6 +4047,16 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     const btnCalcFE = document.getElementById("btn-calc-fe");
     if (btnCalcFE) btnCalcFE.addEventListener("click", () => { calculateFeedEfficiency(); triggerMooAudio(); });
+
+    const gestationToggleEl = document.getElementById("gestation-toggle");
+    const groupGestationDays = document.getElementById("group-gestation-days");
+    const groupBirthWeight = document.getElementById("group-birth-weight");
+    if (gestationToggleEl) gestationToggleEl.addEventListener("change", () => {
+        const show = gestationToggleEl.checked ? "block" : "none";
+        if (groupGestationDays) groupGestationDays.style.display = show;
+        if (groupBirthWeight) groupBirthWeight.style.display = show;
+        calculateRequirements();
+    });
 
     // Module Tabs Navigation (Fase 1)
     const moduleTablist = document.getElementById("module-tablist");
