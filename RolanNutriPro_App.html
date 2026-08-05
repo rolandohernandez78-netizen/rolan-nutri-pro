@@ -1140,6 +1140,58 @@ body {
     line-height: 1.4;
 }
 
+/* ===== Calculadora de FCM / Eficiencia Alimenticia ===== */
+.fe-calculator #fe-results-container {
+    margin-top: 16px;
+    display: grid;
+    gap: 12px;
+    grid-template-columns: 1fr;
+}
+@media (min-width: 560px) {
+    .fe-calculator #fe-results-container {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+.fe-result-box {
+    background: #ffffff;
+    border: 2px solid #cbd5e1;
+    border-radius: 12px;
+    padding: 14px 16px;
+}
+.fe-result-label {
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+.fe-result-value {
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    margin-top: 4px;
+}
+.fe-result-note {
+    font-size: 0.78rem;
+    color: var(--text-secondary);
+    margin-top: 6px;
+}
+
+/* ===== Aclaratorio educativo (módulo Inicio) ===== */
+.edu-disclaimer {
+    background: #fffbeb;
+    border: 1.5px solid #fde68a;
+    border-radius: 14px;
+    padding: 16px 18px;
+    font-size: 0.82rem;
+    color: #78350f;
+    line-height: 1.5;
+    margin-bottom: 24px;
+}
+.edu-disclaimer strong {
+    color: #92400e;
+}
+
 @media (max-width: 600px) {
     .app-container {
         padding: 0 8px 32px;
@@ -1374,8 +1426,8 @@ body {
         </header>
 
         <!-- Realistic Holstein Cow Mascot Avatar (Fase 2: elemento flotante compacto) -->
-        <div class="holstein-mascot-wrapper mascot-floating" id="holstein-mascot-wrapper" role="button" tabindex="0" aria-label="Reproducir sonido de la vaca Holstein" title="¡Haz clic en la vaca Holstein para escucharla mugir!">
-            <div class="mascot-speech-bubble" id="mascot-speech-bubble">¡Hola! Soy la Vaca Holstein 🐮</div>
+        <div class="holstein-mascot-wrapper mascot-floating" id="holstein-mascot-wrapper" role="button" tabindex="0" aria-label="Abrir el Muu-siario: glosario de siglas y términos de la app" title="¡Haz clic para abrir el Muu-siario, el glosario de la app!">
+            <div class="mascot-speech-bubble" id="mascot-speech-bubble">📖 ¡Muu-siario! Toca para ver el glosario</div>
             <div class="holstein-cow-avatar realistic-avatar" id="holstein-cow-avatar">
                 <!-- High Resolution Photorealistic Holstein Cow Image -->
                 <img src="images/realistic_holstein.jpg" width="512" height="512" alt="Vaca Holstein Realista RolanNutriPro" class="cow-img-realistic" id="cow-img-element">
@@ -1525,6 +1577,11 @@ body {
                 </div>
             </section>
         </main>
+
+        <!-- Aclaratorio: herramienta educativa, no prescriptiva -->
+        <div class="edu-disclaimer" role="note">
+            <strong>Herramienta educativa, no prescriptiva.</strong> Las estimaciones de peso, energía, materia seca, agua y dosificación aplicadas a la nutrición de ganado de leche y carne no sustituyen la evaluación de un médico veterinario o nutricionista especializado en rumiantes. Valide la ración completa, el estado clínico del animal y la etiqueta vigente de cada insumo antes de tomar decisiones.
+        </div>
 
         </section>
 
@@ -1709,6 +1766,29 @@ body {
                     <div class="practical-stat-item">Meta Promedio del Hato: <strong>>= 1.50 kg Leche / kg MS</strong></div>
                     <div class="practical-stat-item">Regla de Oro Hutjens: <strong>+1 kg DMI en pico genera +2.0 a +2.5 kg de Leche adicional</strong></div>
                 </div>
+            </div>
+
+            <!-- Fase 4 (adicional): Calculadora de FCM 3.5% y Eficiencia Alimenticia -->
+            <div class="practical-card fe-calculator" id="fe-calculator" style="border-left-color: var(--accent-blue);">
+                <h4>🧮 Calculadora: Leche Corregida a 3.5% de Grasa (FCM) y Eficiencia (FE)</h4>
+                <p><strong>Paso 1 — FCM (Tyrrell &amp; Reid, 1965):</strong> FCM (kg/día) = 0.4324 × Leche(kg) + 16.216 × Grasa(kg), donde Grasa(kg) = Leche(kg) × %Grasa/100. <strong>Paso 2 — FE:</strong> FE = FCM / DMI.</p>
+                <span class="badge-source">Tyrrell &amp; Reid (1965) J. Dairy Sci. 48:1215</span>
+                <div class="form-grid util-mt-10">
+                    <div class="form-group">
+                        <label for="fe-milk-input">Producción de Leche (kg/día):</label>
+                        <input type="number" id="fe-milk-input" class="form-control" value="35" min="0" max="80" step="0.5" inputmode="decimal">
+                    </div>
+                    <div class="form-group">
+                        <label for="fe-fat-input">Grasa de Leche (%):</label>
+                        <input type="number" id="fe-fat-input" class="form-control" value="3.8" min="2.0" max="6.5" step="0.1" inputmode="decimal">
+                    </div>
+                    <div class="form-group">
+                        <label for="fe-dmi-input">Consumo de Materia Seca DMI (kg/día):</label>
+                        <input type="number" id="fe-dmi-input" class="form-control" value="23.5" min="5" max="40" step="0.1" inputmode="decimal">
+                    </div>
+                </div>
+                <button type="button" id="btn-calc-fe" class="btn-primary">🐮 Calcular FCM y Eficiencia (Muuu!)</button>
+                <div id="fe-results-container" class="results-container" aria-live="polite"></div>
             </div>
         </section>
 
@@ -2322,6 +2402,339 @@ function copyResultsToClipboard() {
     } else {
         legacyCopyFallback();
     }
+}
+
+/* === Muu-siario: glosario de siglas de la app (ventana nueva) === */
+const GLOSARIO_TERMS = [
+    { a: "BW", f: "Peso Vivo (Body Weight)", c: "Producción y consumo", d: "El peso corporal del animal, en kg. Es la base de casi todos los cálculos de requerimientos (ej. la energía de mantenimiento se estima como 0.10 × BW elevado a 0.75)." },
+    { a: "MS", f: "Materia Seca (Dry Matter, DM)", c: "Producción y consumo", d: "Lo que queda del alimento al eliminarle toda el agua. Casi todos los requerimientos se expresan \"por kg de MS\" para poder comparar alimentos con distinto contenido de agua en igualdad de condiciones." },
+    { a: "DMI", f: "Consumo de Materia Seca (Dry Matter Intake)", c: "Producción y consumo", d: "kg/día. Cuánta materia seca come el animal al día; es el punto de partida para saber si una ración realmente cubre los requerimientos calculados." },
+    { a: "TMR", f: "Ración Totalmente Mezclada (Total Mixed Ration)", c: "Producción y consumo", d: "Forraje, concentrado, minerales y aditivos mezclados en una sola ración homogénea antes de ofrecerse, para que la vaca no pueda \"seleccionar\" solo lo más sabroso." },
+
+    { a: "Mcal", f: "Megacaloría", c: "Energía", d: "Unidad de energía (1,000,000 de calorías) usada en nutrición animal. La densidad energética de un alimento se expresa en Mcal por kg de MS." },
+    { a: "NEL", f: "Energía Neta de Lactancia (Net Energy for Lactation)", c: "Energía", d: "Mcal/día. La energía que realmente queda disponible para mantenimiento y producción de leche, después de descontar las pérdidas digestivas y metabólicas de la energía bruta del alimento." },
+    { a: "TDN", f: "Nutrientes Digestibles Totales (Total Digestible Nutrients)", c: "Energía", d: "% de la MS. Estimación clásica (anterior a los sistemas de energía neta) de cuánta energía digestible aporta un alimento." },
+
+    { a: "MP", f: "Proteína Metabolizable (Metabolizable Protein)", c: "Proteína", d: "g/día. Los aminoácidos que realmente llegan al intestino delgado para absorberse, sumando la proteína microbiana producida en el rumen más la proteína del alimento que \"escapa\" sin degradarse." },
+    { a: "CP", f: "Proteína Cruda (Crude Protein)", c: "Proteína", d: "% de la MS. Estimación de la proteína total de un alimento a partir de su contenido de nitrógeno (N × 6.25); incluye proteína verdadera y nitrógeno no proteico." },
+    { a: "RUP", f: "Proteína No Degradable en Rumen (Rumen Undegradable Protein, \"bypass\")", c: "Proteína", d: "La fracción de proteína del alimento que pasa el rumen sin degradarse y llega intacta al intestino delgado." },
+    { a: "RDP", f: "Proteína Degradable en Rumen (Rumen Degradable Protein)", c: "Proteína", d: "La fracción de proteína que los microbios del rumen degradan y usan como materia prima para crecer y multiplicarse." },
+    { a: "MUN", f: "Nitrógeno Ureico en Leche (Milk Urea Nitrogen)", c: "Proteína", d: "mg/dL. Indicador indirecto del balance de proteína de la dieta; valores muy altos suelen indicar exceso de RDP o déficit de energía fermentable en el rumen." },
+    { a: "RPC", f: "Colina Protegida Ruminal (Rumen-Protected Choline)", c: "Proteína", d: "Colina \"encapsulada\" para que no se degrade en el rumen y llegue intacta al intestino; se usa en transición para ayudar a prevenir el hígado graso." },
+
+    { a: "NDF", f: "Fibra Detergente Neutro (Neutral Detergent Fiber)", c: "Fibra y carbohidratos", d: "% de la MS. Mide toda la pared celular de la planta (celulosa, hemicelulosa, lignina); es el indicador más usado del \"volumen\" total de fibra." },
+    { a: "ADF", f: "Fibra Detergente Ácido (Acid Detergent Fiber)", c: "Fibra y carbohidratos", d: "% de la MS. Mide la fracción menos digestible de la fibra (celulosa + lignina); se relaciona de forma inversa con la digestibilidad del forraje." },
+    { a: "peNDF", f: "Fibra Físicamente Efectiva (physically effective NDF)", c: "Fibra y carbohidratos", d: "La fibra con un tamaño de partícula suficiente para estimular la rumia y mantener un rumen sano, evitando la acidosis." },
+    { a: "uNDF240h", f: "Fibra Indigestible a 240 horas (undigested NDF at 240h)", c: "Fibra y carbohidratos", d: "% de la MS o % del peso vivo. La porción de fibra que prácticamente nunca se digiere, ni con fermentación muy prolongada; en exceso \"llena\" el rumen sin aportar energía." },
+    { a: "NFC", f: "Carbohidratos No Fibrosos (Non-Fibrous Carbohydrates)", c: "Fibra y carbohidratos", d: "% de la MS. Azúcares, almidones y pectinas; se calculan por diferencia: 100 − NDF% − CP% − EE% − Cenizas%." },
+    { a: "NSC", f: "Carbohidratos No Estructurales (Non-Structural Carbohydrates)", c: "Fibra y carbohidratos", d: "Similar a NFC pero típicamente sin contar la pectina: azúcares y almidón de fermentación ruminal rápida." },
+
+    { a: "EE", f: "Extracto Etéreo (Ether Extract)", c: "Grasas", d: "% de la MS. Medida analítica de \"grasa cruda\" de un alimento (incluye grasa verdadera, ceras y pigmentos)." },
+    { a: "PUFA", f: "Ácidos Grasos Poliinsaturados (Polyunsaturated Fatty Acids)", c: "Grasas", d: "Ácidos grasos con más de un doble enlace en su cadena (ej. Omega-3 y Omega-6); influyen en reproducción e inflamación." },
+    { a: "EPA / DHA", f: "Ácido Eicosapentaenoico / Docosahexaenoico", c: "Grasas", d: "Ácidos grasos Omega-3 de cadena larga, asociados a mejor sobrevivencia embrionaria y menor inflamación." },
+    { a: "CLA", f: "Ácido Linoleico Conjugado (Conjugated Linoleic Acid)", c: "Grasas", d: "Isómero del ácido linoleico con efectos mixtos documentados (según el isómero específico) sobre la síntesis de grasa láctea." },
+
+    { a: "Ca", f: "Calcio", c: "Macrominerales", d: "Estructura ósea, contracción muscular y coagulación. Su déficit repentino posparto causa hipocalcemia (\"fiebre de leche\")." },
+    { a: "P", f: "Fósforo", c: "Macrominerales", d: "Metabolismo energético y estructura ósea; trabaja en conjunto con el calcio en una relación Ca:P equilibrada." },
+    { a: "Mg", f: "Magnesio", c: "Macrominerales", d: "Función neuromuscular; su déficit puede causar tetania (\"hipomagnesemia de los pastos\")." },
+    { a: "K", f: "Potasio", c: "Macrominerales", d: "Balance de fluidos y función nerviosa; muy abundante en forrajes, clave en el cálculo del DCAD." },
+    { a: "Na", f: "Sodio", c: "Macrominerales", d: "Balance de fluidos, presión osmótica y palatabilidad de la ración (sal)." },
+    { a: "Cl", f: "Cloro", c: "Macrominerales", d: "Balance ácido-base y producción de ácido clorhídrico gástrico; junto al azufre, es aniónico en el cálculo del DCAD." },
+    { a: "S", f: "Azufre", c: "Macrominerales", d: "Componente de aminoácidos azufrados (metionina, cisteína); niveles altos junto a Mo pueden inducir deficiencia de cobre." },
+    { a: "DCAD / BAC", f: "Diferencia (Balance) Catión-Aniónica de la Dieta (Dietary Cation-Anion Difference)", c: "Macrominerales", d: "mEq/kg MS. Mide el equilibrio entre los minerales con carga positiva (Na, K) y negativa (Cl, S) de la dieta; se usa para prevenir la hipocalcemia en vacas preparto." },
+
+    { a: "Fe", f: "Hierro", c: "Microminerales (ppm)", d: "Componente de la hemoglobina; rara vez deficiente porque es muy abundante en el suelo y el agua." },
+    { a: "Zn", f: "Zinc / Cinc", c: "Microminerales (ppm)", d: "Salud de pezuñas y piel, función inmune y cicatrización." },
+    { a: "Cu", f: "Cobre", c: "Microminerales (ppm)", d: "Función inmune y pigmentación; su absorción se bloquea fácilmente con exceso de molibdeno (Mo) o azufre (S) en la dieta." },
+    { a: "Mn", f: "Manganeso", c: "Microminerales (ppm)", d: "Desarrollo óseo y reproducción; su deficiencia se asocia a fallas reproductivas." },
+    { a: "I", f: "Yodo", c: "Microminerales (ppm)", d: "Componente esencial de las hormonas tiroideas, que regulan el metabolismo." },
+    { a: "Se", f: "Selenio", c: "Microminerales (ppm)", d: "Antioxidante junto a la vitamina E; su deficiencia se asocia a retención de placenta y enfermedad del \"músculo blanco\" en terneros." },
+    { a: "Co", f: "Cobalto", c: "Microminerales (ppm)", d: "Necesario para que los microbios del rumen sinteticen vitamina B12." },
+    { a: "ppm", f: "Partes Por Millón", c: "Microminerales (ppm)", d: "Unidad de concentración muy pequeña: 1 ppm equivale a 1 mg de una sustancia por cada kg de alimento (1 mg/kg = 1 ppm)." },
+
+    { a: "BCS", f: "Condición Corporal (Body Condition Score)", c: "Reproducción y condición corporal", d: "Escala (usualmente de 1 a 5) que evalúa las reservas de grasa corporal de la vaca mediante palpación u observación visual." },
+    { a: "DIM / DEL", f: "Días en Leche (Days in Milk)", c: "Reproducción y condición corporal", d: "Días transcurridos desde el parto; determina en qué etapa de la curva de lactancia está la vaca." },
+    { a: "ADG", f: "Ganancia Diaria de Peso (Average Daily Gain)", c: "Reproducción y condición corporal", d: "kg/día. Cuánto peso gana el animal por día; clave en ganado de engorde y en recría de novillas." },
+    { a: "FIV", f: "Fertilización In Vitro", c: "Reproducción y condición corporal", d: "Técnica reproductiva donde el óvulo se fecunda fuera del útero; la calidad del embrión es sensible al perfil de ácidos grasos de la dieta de la donante." },
+    { a: "PTH", f: "Hormona Paratiroidea (Parathyroid Hormone)", c: "Reproducción y condición corporal", d: "Hormona que moviliza calcio óseo cuando el calcio en sangre baja; el manejo del DCAD preparto busca \"sensibilizar\" sus receptores antes del parto." },
+
+    { a: "FE", f: "Eficiencia Alimenticia (Feed Efficiency)", c: "Eficiencia", d: "kg de leche / kg de MS consumida. Cuánta leche produce la vaca por cada kg de materia seca que come." },
+    { a: "FCM", f: "Leche Corregida por Grasa (Fat-Corrected Milk)", c: "Eficiencia", d: "kg/día. Ajusta la producción de leche a un % de grasa estándar (habitualmente 3.5%) para poder comparar vacas con distinto % de grasa de forma justa." },
+
+    { a: "ATP", f: "Adenosín Trifosfato (Adenosine Triphosphate)", c: "Bioquímica", d: "La \"moneda energética\" de la célula. Toda la energía neta que aporta la dieta termina convirtiéndose en ATP para los procesos vitales del animal." },
+
+    { a: "NASEM", f: "Academias Nacionales de Ciencias, Ingeniería y Medicina (EE. UU.)", c: "Sistemas y siglas institucionales", d: "Entidad que publica los estándares de referencia de requerimientos nutricionales del ganado. Esta app usa la edición 2021 (8ª ed.) para ganado lechero." },
+    { a: "CNCPS", f: "Sistema Cornell de Carbohidratos y Proteína Neta (Cornell Net Carbohydrate and Protein System)", c: "Sistemas y siglas institucionales", d: "Modelo desarrollado por la Universidad de Cornell para predecir con más detalle los requerimientos y el aporte real de proteína y energía de cada ingrediente." }
+];
+
+function buildGlosarioHTML() {
+    const categories = [];
+    GLOSARIO_TERMS.forEach((t) => { if (categories.indexOf(t.c) === -1) categories.push(t.c); });
+
+    const sections = categories.map((cat) => {
+        const cards = GLOSARIO_TERMS.filter((t) => t.c === cat).map((t) => `
+            <article class="term-card" data-search="${escapeHtml((t.a + " " + t.f + " " + t.d).toLowerCase())}">
+                <div class="term-abbr">${escapeHtml(t.a)}</div>
+                <div class="term-full">${escapeHtml(t.f)}</div>
+                <p class="term-def">${escapeHtml(t.d)}</p>
+            </article>
+        `).join("");
+        return `
+            <section class="term-category">
+                <h2>${escapeHtml(cat)}</h2>
+                <div class="term-grid">${cards}</div>
+            </section>
+        `;
+    }).join("");
+
+    return `<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Muu-siario 🐮📖 | Glosario de RolanNutriPro</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fredoka:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+    --bg-main: #f8fafc;
+    --bg-card: #ffffff;
+    --primary-emerald: #059669;
+    --primary-emerald-hover: #047857;
+    --accent-blue: #0284c7;
+    --text-primary: #0f172a;
+    --text-secondary: #334155;
+    --text-muted: #64748b;
+    --border-color: #e2e8f0;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+    background: var(--bg-main);
+    color: var(--text-primary);
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    line-height: 1.5;
+    padding: 0 16px calc(32px + env(safe-area-inset-bottom, 0px)) 16px;
+    -webkit-font-smoothing: antialiased;
+}
+.glosario-header {
+    background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 50%, #7dd3fc 100%);
+    border-bottom: 3px solid #38bdf8;
+    border-radius: 0 0 20px 20px;
+    padding: calc(20px + env(safe-area-inset-top, 0px)) 20px 20px 20px;
+    margin: 0 -16px 20px -16px;
+    box-shadow: 0 6px 20px rgba(14, 116, 144, 0.15);
+}
+.glosario-header h1 {
+    font-family: 'Fredoka', 'Inter', sans-serif;
+    font-size: 1.7rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+.glosario-header h1 span { color: var(--primary-emerald); }
+.glosario-header p {
+    margin-top: 6px;
+    font-size: 0.92rem;
+    color: #0369a1;
+    font-weight: 600;
+    max-width: 640px;
+}
+.glosario-search {
+    width: 100%;
+    max-width: 640px;
+    margin-top: 14px;
+    background: #ffffff;
+    border: 1.5px solid #cbd5e1;
+    border-radius: 12px;
+    padding: 12px 16px;
+    font-size: 16px;
+    font-family: 'Inter', sans-serif;
+    color: var(--text-primary);
+}
+.glosario-search:focus {
+    outline: none;
+    border-color: var(--primary-emerald);
+    box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.15);
+}
+.term-category { max-width: 1100px; margin: 0 auto 28px auto; }
+.term-category h2 {
+    font-family: 'Fredoka', 'Inter', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--primary-emerald-hover);
+    margin-bottom: 12px;
+    padding-bottom: 6px;
+    border-bottom: 2px solid #d1fae5;
+}
+.term-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+}
+@media (min-width: 640px) {
+    .term-grid { grid-template-columns: 1fr 1fr; }
+}
+@media (min-width: 980px) {
+    .term-grid { grid-template-columns: 1fr 1fr 1fr; }
+}
+.term-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 14px;
+    padding: 16px;
+    box-shadow: 0 2px 10px rgba(15, 23, 42, 0.05);
+}
+.term-abbr {
+    display: inline-block;
+    font-family: 'Fredoka', 'Inter', sans-serif;
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: #ffffff;
+    background: linear-gradient(135deg, #059669, #047857);
+    padding: 3px 12px;
+    border-radius: 20px;
+    margin-bottom: 8px;
+}
+.term-full {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--text-secondary);
+    margin-bottom: 6px;
+}
+.term-def {
+    font-size: 0.86rem;
+    color: var(--text-secondary);
+    line-height: 1.5;
+}
+.term-card.term-hidden { display: none; }
+.glosario-empty {
+    display: none;
+    text-align: center;
+    color: var(--text-muted);
+    padding: 30px 0;
+    max-width: 640px;
+    margin: 0 auto;
+}
+.glosario-footer {
+    max-width: 1100px;
+    margin: 20px auto 0 auto;
+    padding-top: 16px;
+    border-top: 1px solid var(--border-color);
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    line-height: 1.5;
+    text-align: center;
+}
+.glosario-close {
+    display: block;
+    margin: 20px auto 0 auto;
+    background: linear-gradient(135deg, #059669, #047857);
+    color: #ffffff;
+    border: none;
+    border-radius: 12px;
+    padding: 14px 28px;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 700;
+    cursor: pointer;
+    min-height: 44px;
+}
+</style>
+</head>
+<body>
+    <div class="glosario-header">
+        <h1>🐮📖 Muu-<span>siario</span></h1>
+        <p>El glosario práctico de RolanNutriPro: qué significa cada sigla que ves en la app, explicado en lenguaje sencillo.</p>
+        <input type="text" id="glosario-search" class="glosario-search" placeholder="Busca una sigla (ej. BW, DMI, DCAD)..." autocomplete="off">
+    </div>
+    ${sections}
+    <p class="glosario-empty" id="glosario-empty">No encontramos ninguna sigla que coincida con tu búsqueda.</p>
+    <div class="glosario-footer">
+        Definiciones con fines educativos, basadas en NASEM (2021) <em>Nutrient Requirements of Dairy Cattle</em> (8ª ed.) y terminología estándar de nutrición de rumiantes (Cornell CNCPS, Penn State, Oklahoma State).<br>
+        RolanNutriPro • Elaborado por Rolando Hernández Mora, Médico Veterinario MSc en Nutrición Animal
+    </div>
+    <button type="button" class="glosario-close" onclick="window.close()">Cerrar Muu-siario</button>
+    <script>
+        var searchInput = document.getElementById("glosario-search");
+        var emptyMsg = document.getElementById("glosario-empty");
+        searchInput.addEventListener("input", function () {
+            var q = searchInput.value.trim().toLowerCase();
+            var cards = document.querySelectorAll(".term-card");
+            var visibleCount = 0;
+            cards.forEach(function (card) {
+                var match = !q || card.getAttribute("data-search").indexOf(q) !== -1;
+                card.classList.toggle("term-hidden", !match);
+                if (match) visibleCount++;
+            });
+            document.querySelectorAll(".term-category").forEach(function (section) {
+                var anyVisible = section.querySelectorAll(".term-card:not(.term-hidden)").length > 0;
+                section.style.display = anyVisible ? "" : "none";
+            });
+            emptyMsg.style.display = visibleCount === 0 ? "block" : "none";
+        });
+        searchInput.focus();
+    <\/script>
+</body>
+</html>`;
+}
+
+function openGlosario() {
+    try {
+        const win = window.open("", "muusiario");
+        if (!win) {
+            alert("Tu navegador bloqueó la ventana del Muu-siario. Permite ventanas emergentes para RolanNutriPro e inténtalo de nuevo.");
+            return;
+        }
+        win.document.open();
+        win.document.write(buildGlosarioHTML());
+        win.document.close();
+        win.focus();
+    } catch (e) {
+        alert("No se pudo abrir el Muu-siario en este navegador.");
+    }
+}
+
+function calculateFeedEfficiency() {
+    const milkInput = document.getElementById("fe-milk-input");
+    const fatInput = document.getElementById("fe-fat-input");
+    const dmiInput = document.getElementById("fe-dmi-input");
+    const container = document.getElementById("fe-results-container");
+    if (!milkInput || !fatInput || !dmiInput || !container) return;
+
+    const milk = parseFloat(milkInput.value) || 0;
+    const fat = parseFloat(fatInput.value) || 0;
+    const dmi = parseFloat(dmiInput.value) || 0;
+
+    if (milk <= 0 || dmi <= 0) {
+        container.innerHTML = `<p style="color:#b91c1c; font-size:0.85rem;">Ingresa una producción de leche y un DMI mayores a cero.</p>`;
+        return;
+    }
+
+    // FCM 3.5% (Tyrrell & Reid, 1965): FCM = 0.4324*Leche + 16.216*Grasa(kg)
+    const fatKg = milk * (fat / 100);
+    const fcm = (0.4324 * milk) + (16.216 * fatKg);
+    const fe = fcm / dmi;
+
+    let feNote, feColor;
+    if (fe >= 1.50) {
+        feNote = "Cumple la meta promedio del hato (≥ 1.50 kg leche/kg MS). Si esta vaca está en pico (30-90 DIM), la meta más exigente es 1.6-1.8.";
+        feColor = "#059669";
+    } else {
+        feNote = "Por debajo de la meta promedio del hato (≥ 1.50 kg leche/kg MS, Penn State/Hutjens).";
+        feColor = "#d97706";
+    }
+
+    container.innerHTML = `
+        <div class="fe-result-box">
+            <div class="fe-result-label">Leche Corregida a 3.5% de Grasa (FCM)</div>
+            <div class="fe-result-value">${fcm.toFixed(2)} kg/día</div>
+        </div>
+        <div class="fe-result-box" style="border-color:${feColor};">
+            <div class="fe-result-label">Eficiencia Alimenticia (FE)</div>
+            <div class="fe-result-value" style="color:${feColor};">${fe.toFixed(2)} kg leche / kg MS</div>
+            <div class="fe-result-note">${feNote}</div>
+        </div>
+    `;
 }
 
 function calculateRequirements() {
@@ -3394,20 +3807,22 @@ document.addEventListener("DOMContentLoaded", async () => {
         calculateRequirements();
     });
 
-    const enableKeyboardActivation = (element) => {
+    const enableKeyboardActivation = (element, callback) => {
         if (!element) return;
         element.addEventListener("keydown", (event) => {
             if (!event.repeat && (event.key === "Enter" || event.key === " ")) {
                 event.preventDefault();
-                triggerMooAudio();
+                callback();
             }
         });
     };
 
-    if (mascotWrapper) mascotWrapper.addEventListener("click", triggerMooAudio);
+    // La mascota flotante abre el Muu-siario (glosario); el ícono de la marca en el
+    // header sigue mugiendo, así que el sonido no se pierde.
+    if (mascotWrapper) mascotWrapper.addEventListener("click", openGlosario);
     if (cowIcon) cowIcon.addEventListener("click", triggerMooAudio);
-    enableKeyboardActivation(mascotWrapper);
-    enableKeyboardActivation(cowIcon);
+    enableKeyboardActivation(mascotWrapper, openGlosario);
+    enableKeyboardActivation(cowIcon, triggerMooAudio);
 
     if (qaBtn) qaBtn.addEventListener("click", () => { const val = qaInput ? qaInput.value : ""; searchNutritionQA(val); triggerMooAudio(); });
     if (qaInput) qaInput.addEventListener("keypress", (e) => { if (e.key === "Enter") { searchNutritionQA(qaInput.value); triggerMooAudio(); } });
@@ -3442,6 +3857,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     const btnPrintResults = document.getElementById("btn-print-results");
     if (btnCopyResults) btnCopyResults.addEventListener("click", copyResultsToClipboard);
     if (btnPrintResults) btnPrintResults.addEventListener("click", () => window.print());
+
+    const btnCalcFE = document.getElementById("btn-calc-fe");
+    if (btnCalcFE) btnCalcFE.addEventListener("click", () => { calculateFeedEfficiency(); triggerMooAudio(); });
 
     // Module Tabs Navigation (Fase 1)
     const moduleTablist = document.getElementById("module-tablist");
