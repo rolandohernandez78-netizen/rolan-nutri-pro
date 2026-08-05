@@ -1261,6 +1261,63 @@ body {
     margin-top: 12px;
 }
 
+/* ===== Fase 4.2 / 4.3: Riesgo mineral y antagonismos ===== */
+.mineral-risk-content {
+    margin-top: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.mineral-risk-row {
+    border-radius: 12px;
+    padding: 12px 16px;
+    border: 1.5px solid;
+}
+.mineral-risk-row-label {
+    font-weight: 700;
+    font-size: 0.95rem;
+}
+.mineral-risk-row-values {
+    font-size: 0.8rem;
+    margin-top: 4px;
+    color: var(--text-secondary);
+}
+.mineral-risk-row-zone {
+    font-weight: 700;
+    font-size: 0.82rem;
+    margin-top: 4px;
+}
+.risk-deficit { background: #fef2f2; border-color: #fecaca; }
+.risk-deficit .mineral-risk-row-zone { color: #991b1b; }
+.risk-ok { background: #f0fdf4; border-color: #a7f3d0; }
+.risk-ok .mineral-risk-row-zone { color: #065f46; }
+.risk-overload { background: #fff7ed; border-color: #fed7aa; }
+.risk-overload .mineral-risk-row-zone { color: #9a3412; }
+
+.antagonism-alert {
+    border-radius: 12px;
+    padding: 14px 16px;
+    font-size: 0.86rem;
+    line-height: 1.5;
+    border: 1.5px solid;
+}
+.antagonism-danger {
+    background: #fff7ed;
+    border-color: #fed7aa;
+    color: #9a3412;
+}
+.antagonism-ok {
+    background: #f0fdf4;
+    border-color: #a7f3d0;
+    color: #065f46;
+}
+.antagonism-note {
+    margin-top: 10px;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    line-height: 1.5;
+}
+
 @media (max-width: 600px) {
     .app-container {
         padding: 0 8px 32px;
@@ -1777,6 +1834,62 @@ body {
                     </div>
                 </div>
             </div>
+        </section>
+
+        <!-- Fase 4.2: Riesgo homeostático Zn/Cu/Mn -->
+        <section class="card table-card" id="mineral-risk-section" aria-labelledby="mineral-risk-title">
+            <div class="card-header">
+                <div class="card-title">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                    <h3 id="mineral-risk-title">🚦 Riesgo Homeostático: Zinc, Cobre y Manganeso</h3>
+                </div>
+                <span class="badge-source">Daniel &amp; Martín-Tereso, J. Dairy Sci. 109:6239-6251 (2026)</span>
+            </div>
+            <p>Compara el aporte real de la dieta contra el rango entre el requerimiento neto (NASEM, ya calculado arriba) y el límite superior de seguridad, para detectar déficit o riesgo de sobrecarga homeostática.</p>
+            <div class="form-grid util-mt-10">
+                <div class="form-group">
+                    <label for="risk-zn-input">Aporte Real de Zinc (mg/día):</label>
+                    <input type="number" id="risk-zn-input" class="form-control" value="0" min="0" step="10" inputmode="decimal">
+                </div>
+                <div class="form-group">
+                    <label for="risk-cu-input">Aporte Real de Cobre (mg/día):</label>
+                    <input type="number" id="risk-cu-input" class="form-control" value="0" min="0" step="5" inputmode="decimal">
+                </div>
+                <div class="form-group">
+                    <label for="risk-mn-input">Aporte Real de Manganeso (mg/día):</label>
+                    <input type="number" id="risk-mn-input" class="form-control" value="0" min="0" step="10" inputmode="decimal">
+                </div>
+            </div>
+            <button type="button" id="btn-calc-mineral-risk" class="btn-primary">🐮 Calcular Riesgo (Muuu!)</button>
+            <div id="mineral-risk-content" class="mineral-risk-content" aria-live="polite"></div>
+        </section>
+
+        <!-- Fase 4.3: Interpretador de antagonismos minerales -->
+        <section class="card table-card" id="mineral-antagonism-section" aria-labelledby="mineral-antagonism-title">
+            <div class="card-header">
+                <div class="card-title">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                    <h3 id="mineral-antagonism-title">⚔️ Interpretador de Antagonismos Minerales</h3>
+                </div>
+                <span class="badge-source">Orientativo, no estándar NASEM</span>
+            </div>
+            <p>Evalúa si la combinación de molibdeno y azufre de la dieta puede estar bloqueando la absorción de cobre.</p>
+            <div class="form-grid util-mt-10">
+                <div class="form-group">
+                    <label for="antag-mo-input">Molibdeno en la Dieta (mg/kg MS):</label>
+                    <input type="number" id="antag-mo-input" class="form-control" value="0" min="0" step="0.1" inputmode="decimal">
+                </div>
+                <div class="form-group">
+                    <label for="antag-s-input">Azufre en la Dieta (% MS):</label>
+                    <input type="number" id="antag-s-input" class="form-control" value="0.20" min="0" step="0.01" inputmode="decimal">
+                </div>
+                <div class="form-group">
+                    <label for="antag-fe-input">Hierro en la Dieta (mg/kg MS, opcional):</label>
+                    <input type="number" id="antag-fe-input" class="form-control" value="0" min="0" step="10" inputmode="decimal">
+                </div>
+            </div>
+            <button type="button" id="btn-calc-antagonism" class="btn-primary">🐮 Evaluar Antagonismos (Muuu!)</button>
+            <div id="mineral-antagonism-content" class="mineral-risk-content" aria-live="polite"></div>
         </section>
 
         </section>
@@ -3258,6 +3371,70 @@ function updateMineralTablesAndHighlight() {
             }
         });
     }
+
+    renderMineralRiskPanel(dmi, bw, catalog);
+}
+
+function renderMineralRiskPanel(dmi, bw, catalog) {
+    const content = document.getElementById("mineral-risk-content");
+    if (!content) return;
+
+    const upperCoeff = { Zn: 3.54, Cu: 0.63, Mn: 2.36 }; // mg/kg BW/d, límite superior de seguridad
+    const inputIds = { Zn: "risk-zn-input", Cu: "risk-cu-input", Mn: "risk-mn-input" };
+    const labels = { Zn: "Zinc (Zn)", Cu: "Cobre (Cu)", Mn: "Manganeso (Mn)" };
+
+    let rowsHtml = "";
+    ["Zn", "Cu", "Mn"].forEach((sym) => {
+        const min = catalog ? catalog[sym] : null;
+        const lowerLimit = min ? dmi * min.req_per_kg_dm : 0; // requerimiento neto NASEM ya calculado
+        const upperLimit = bw * upperCoeff[sym];
+        const inputEl = document.getElementById(inputIds[sym]);
+        const actual = parseFloat(inputEl ? inputEl.value : NaN) || 0;
+
+        let zone, zoneClass, zoneIcon;
+        if (actual < lowerLimit) {
+            zone = "Déficit"; zoneClass = "risk-deficit"; zoneIcon = "🔴";
+        } else if (actual > upperLimit) {
+            zone = "Riesgo de Sobrecarga"; zoneClass = "risk-overload"; zoneIcon = "🟠";
+        } else {
+            zone = "Adecuado"; zoneClass = "risk-ok"; zoneIcon = "🟢";
+        }
+
+        rowsHtml += `
+            <div class="mineral-risk-row ${zoneClass}">
+                <div class="mineral-risk-row-label">${zoneIcon} ${labels[sym]}</div>
+                <div class="mineral-risk-row-values">Requerimiento: <strong>${lowerLimit.toFixed(0)} mg/d</strong> · Límite superior: <strong>${upperLimit.toFixed(0)} mg/d</strong> · Aporte actual: <strong>${actual.toFixed(0)} mg/d</strong></div>
+                <div class="mineral-risk-row-zone">${zone}</div>
+            </div>
+        `;
+    });
+
+    content.innerHTML = rowsHtml;
+}
+
+function evaluateMineralAntagonism() {
+    const moInput = document.getElementById("antag-mo-input");
+    const sInput = document.getElementById("antag-s-input");
+    const feInput = document.getElementById("antag-fe-input");
+    const content = document.getElementById("mineral-antagonism-content");
+    if (!content) return;
+
+    const mo = parseFloat(moInput ? moInput.value : NaN) || 0;
+    const s = parseFloat(sInput ? sInput.value : NaN) || 0;
+    const fe = parseFloat(feInput ? feInput.value : NaN) || 0;
+
+    let html = "";
+    if (mo >= 2 && s >= 0.15) {
+        html += `<div class="antagonism-alert antagonism-danger">⚠️ <strong>Riesgo alto de deficiencia inducida de cobre.</strong> Con Mo ≥ 2 mg/kg MS y S ≥ 0.15% MS, el rumen puede formar tiotiomolibdatos que bloquean la absorción de cobre, incluso si el Cu de la dieta cumple el requerimiento NASEM.</div>`;
+    } else {
+        html += `<div class="antagonism-alert antagonism-ok">✅ Con los valores actuales de Mo (${mo} mg/kg MS) y S (${s}% MS), no se alcanza el umbral de alerta (Mo ≥ 2 mg/kg MS y S ≥ 0.15% MS) para el antagonismo Mo-S-Cu.</div>`;
+    }
+
+    if (fe > 0) {
+        html += `<div class="antagonism-note">ℹ️ Nota informativa: niveles altos de hierro en la dieta se han asociado con depresión de cobre hepático en estudios en cabras; la extrapolación a bovinos debe hacerse con cautela. <em>Esto es orientativo, no un estándar NASEM.</em></div>`;
+    }
+
+    content.innerHTML = html;
 }
 
 
@@ -4057,6 +4234,12 @@ document.addEventListener("DOMContentLoaded", async () => {
         if (groupBirthWeight) groupBirthWeight.style.display = show;
         calculateRequirements();
     });
+
+    const btnCalcMineralRisk = document.getElementById("btn-calc-mineral-risk");
+    if (btnCalcMineralRisk) btnCalcMineralRisk.addEventListener("click", () => { updateMineralTablesAndHighlight(); triggerMooAudio(); });
+
+    const btnCalcAntagonism = document.getElementById("btn-calc-antagonism");
+    if (btnCalcAntagonism) btnCalcAntagonism.addEventListener("click", () => { evaluateMineralAntagonism(); triggerMooAudio(); });
 
     // Module Tabs Navigation (Fase 1)
     const moduleTablist = document.getElementById("module-tablist");
