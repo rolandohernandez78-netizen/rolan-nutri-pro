@@ -727,6 +727,25 @@ body {
     50% { transform: translateX(4px); }
 }
 
+/* Aviso "desliza para ver más" sobre tablas anchas — solo en versión de teléfono,
+   no afecta tablet ni desktop donde las tablas ya caben o su propio scroll es evidente. */
+.table-scroll-hint {
+    display: none;
+}
+@media (max-width: 600px) {
+    .table-scroll-hint {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 4px;
+        font-size: 0.78rem;
+        font-weight: 600;
+        color: var(--text-muted);
+        text-align: right;
+        margin: 6px 4px 4px 4px;
+    }
+}
+
 .toggle-scope-hint {
     display: block;
     font-size: 0.72rem;
@@ -2171,6 +2190,7 @@ body {
             </div>
             <p>Perfil de ácidos grasos, índice de yodo, calcio y energía bruta de 6 fuentes de grasa comunes en raciones de rumiantes.</p>
             <span class="badge-source">Guerrero, J., Ojeda, A., Landinez, J., López, N. (2014). Interciencia 39(6):404-409.</span>
+            <p class="table-scroll-hint">Desliza para ver más <span class="tabs-scroll-hint-arrow" aria-hidden="true">→</span></p>
             <div class="table-responsive util-mt-10">
                 <table class="data-table" id="fat-source-table">
                     <thead>
@@ -2230,6 +2250,7 @@ body {
             </div>
             <p>Un mayor % de linoleico declarado en el saco no garantiza más ácido graso esencial (AGE) funcional para la vaca. Si el jabón cálcico se disocia en el rumen, ese linoleico se biohidrogena antes de llegar al intestino — o se desvía hacia la vía alterna (trans-10,cis-12 CLA) que suprime la síntesis de grasa láctea (MFD). Lo que define el valor real de una grasa sobrepasante es la combinación de <strong>estabilidad ruminal</strong> (Ca soluble a pH 6.5) y <strong>perfil de ácidos grasos</strong>, no el porcentaje de linoleico aislado.</p>
             <span class="badge-source">Hernández, R. (2026). Jabones Cálcicos y Ácidos Grasos Esenciales — Resumen Técnico. Tecnigrasas S.A.S., mayo 2026</span>
+            <p class="table-scroll-hint">Desliza para ver más <span class="tabs-scroll-hint-arrow" aria-hidden="true">→</span></p>
             <div class="table-responsive util-mt-10">
                 <table class="data-table" id="calcium-soap-comparison-table">
                     <thead>
