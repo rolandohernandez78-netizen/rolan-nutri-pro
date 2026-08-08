@@ -2084,6 +2084,112 @@ body {
             </div>
         </section>
 
+        <!-- Fase 5: Panel de Requerimientos de Proteína por Etapa Fisiológica -->
+        <section class="card table-card" id="protein-requirements-section" aria-labelledby="protein-requirements-title">
+            <div class="card-header">
+                <div class="card-title">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                    <h3 id="protein-requirements-title">🧬 Requerimientos de Proteína: CP, RDP, RUP y MP</h3>
+                </div>
+                <span class="badge-source">NASEM 2021 (Cap. 6)</span>
+            </div>
+            <p>Estimación de proteína cruda (CP), proteína degradable en rumen (RDP), proteína no degradable en rumen (RUP) y proteína metabolizable (MP), calculada con los datos que ingresaste en la Pestaña 1 (Calculadora).</p>
+            <div id="protein-requirements-container"></div>
+
+            <h4 class="util-mt-10">Tabla de Referencia por Etapa Fisiológica</h4>
+            <p style="font-size:0.85rem; color:var(--text-muted);">NASEM 2021 no publica un requerimiento fijo de RDP/RUP por etapa (depende de los ingredientes de la ración). Esta tabla usa un modelo anterior (NRC 2001) que sí desglosa CP/RDP/RUP/MP por etapa, incluida aquí como referencia complementaria — no reemplaza los valores NASEM 2021 calculados arriba.</p>
+            <span class="badge-source" style="background:#fef3c7; color:#92400e; border-color:#fde68a;">NRC (2001) • Univ. of Illinois — Dr. Mike Hutjens (Holstein, 680 kg PV)</span>
+            <p class="table-scroll-hint">Desliza para ver más <span class="tabs-scroll-hint-arrow" aria-hidden="true">→</span></p>
+            <div class="table-responsive util-mt-10">
+                <table class="data-table" id="protein-stage-table">
+                    <thead>
+                        <tr>
+                            <th>Etapa</th>
+                            <th>CMS kg/d</th>
+                            <th>Leche kg/d</th>
+                            <th>CP %MS</th>
+                            <th>RDP %MS</th>
+                            <th>RUP %MS</th>
+                            <th>MP %MS</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td><strong>Seca</strong></td><td>14</td><td>—</td><td>9.9</td><td>7.7</td><td>2.2</td><td>6.0</td></tr>
+                        <tr><td><strong>Preparto</strong></td><td>10</td><td>—</td><td>12.4</td><td>9.6</td><td>2.8</td><td>8.0</td></tr>
+                        <tr><td><strong>Postparto/Fresca</strong></td><td>15</td><td>35</td><td>19.5</td><td>10.5</td><td>9.0</td><td>13.8</td></tr>
+                        <tr><td><strong>Pico</strong></td><td>30</td><td>55</td><td>16.7</td><td>9.8</td><td>6.9</td><td>11.6</td></tr>
+                        <tr><td><strong>Promedio</strong></td><td>24</td><td>35</td><td>15.2</td><td>9.7</td><td>5.5</td><td>10.2</td></tr>
+                        <tr><td><strong>Final</strong></td><td>20</td><td>25</td><td>14.1</td><td>9.5</td><td>4.6</td><td>9.2</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Fase 5: Tabla de Nitrógeno Ureico en Leche (MUN/NUL) por metas -->
+        <section class="card table-card" id="mun-table-section" aria-labelledby="mun-table-title">
+            <div class="card-header">
+                <div class="card-title">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+                    <h3 id="mun-table-title">🥛 Nitrógeno Ureico en Leche (MUN/NUL): Metas e Interpretación</h3>
+                </div>
+                <span class="badge-source">NASEM 2021 • Penn State Extension • Univ. of Illinois</span>
+            </div>
+            <p style="font-size:0.85rem; color:var(--text-muted);">Ninguna fuente consultada (NASEM 2021, Penn State Extension, Jonker &amp; Kohn 2001, Univ. of Illinois/Hutjens) publica metas de MUN diferenciadas por etapa fisiológica: el MUN se interpreta a nivel de hato/individuo porque depende más del manejo (hora de muestreo, tipo de dieta, nivel de producción) que de la etapa en sí. Por eso se presentan los rangos generales validados, no una tabla inventada por etapa.</p>
+            <div class="practical-card util-mt-10" style="border-left-color: var(--primary-emerald);">
+                <h4>Metas Generales de MUN</h4>
+                <div class="practical-stats util-mt-10">
+                    <div class="practical-stat-item">Meta dietaria ideal (app, NASEM 2021 Cap. 6 y Penn State Extension): <strong>8.0 - 12.0 mg/dL</strong></div>
+                    <div class="practical-stat-item">Rango de literatura (Jonker &amp; Kohn, 2001): <strong>8.0 - 14.0 mg/dL</strong></div>
+                    <div class="practical-stat-item">Alerta por posible exceso de RDP o déficit de energía fermentable: <strong>&gt; 14.0 mg/dL</strong></div>
+                    <div class="practical-stat-item">Preocupación reproductiva (Univ. Illinois): <strong>&gt; 16.0 mg/dL</strong></div>
+                    <div class="practical-stat-item">Posible déficit de proteína si: <strong>&lt; 8.0 mg/dL</strong> (revisar puntuación fecal, % proteína láctea y balance de carbohidratos)</div>
+                </div>
+            </div>
+            <h4 class="util-mt-10">Guía de Interpretación por Nivel de MUN (Penn State Extension)</h4>
+            <p style="font-size:0.85rem; color:var(--text-muted);">La interpretación correcta también depende del nivel de producción y de si la ración fue formulada para proteína baja o alta — no es solo el número de MUN aislado.</p>
+            <p class="table-scroll-hint">Desliza para ver más <span class="tabs-scroll-hint-arrow" aria-hidden="true">→</span></p>
+            <div class="table-responsive util-mt-10">
+                <table class="data-table" id="mun-interpretation-table">
+                    <thead><tr><th>MUN (mg/dL)</th><th>Interpretación</th><th>Consideración</th></tr></thead>
+                    <tbody>
+                        <tr><td><strong>&lt; 8</strong></td><td>Baja</td><td>Aceptable solo si la producción es alta (&gt;70 lb/d ≈ 32 kg/d) y la ración fue formulada para proteína baja (~16%); si no, revisar fuentes de proteína y carbohidratos.</td></tr>
+                        <tr><td><strong>8 - 10</strong></td><td>Levemente baja / Aceptable</td><td>Aceptable si la producción es alta y la ración está bien balanceada.</td></tr>
+                        <tr><td><strong>10 - 12</strong></td><td>Ideal</td><td>Rango objetivo general.</td></tr>
+                        <tr><td><strong>12 - 14</strong></td><td>Levemente alta / Aceptable</td><td>Aceptable si la ración es de proteína alta (&gt;17%) y hay una sola fuente de grano; de lo contrario, evaluar proteína soluble y carbohidratos no estructurales.</td></tr>
+                        <tr><td><strong>&gt; 14</strong></td><td>Alta</td><td>Confirmar % de proteína de la ración; evaluar manejo de alimentación (ej. selección de alimento).</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <span class="badge-source">Ishler, V.A. (2023). Interpretation of Milk Urea Nitrogen (MUN) Values. Penn State Extension.</span>
+            <h4 class="util-mt-10">Evolución Histórica de las Metas (Univ. of Illinois)</h4>
+            <p class="table-scroll-hint">Desliza para ver más <span class="tabs-scroll-hint-arrow" aria-hidden="true">→</span></p>
+            <div class="table-responsive util-mt-10">
+                <table class="data-table" id="mun-history-table">
+                    <thead><tr><th>Período de la Meta</th><th>Rango MUN (mg/dL)</th></tr></thead>
+                    <tbody>
+                        <tr><td>Metas más antiguas</td><td>12 - 16</td></tr>
+                        <tr><td>Metas antiguas</td><td>10 - 14</td></tr>
+                        <tr><td><strong>Metas actuales</strong></td><td><strong>8 - 12</strong></td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <h4 class="util-mt-10">Comparación de Valores Reportados en la Literatura</h4>
+            <div class="table-responsive util-mt-10">
+                <table class="data-table" id="mun-authors-table">
+                    <thead><tr><th>Autor(es), Año</th><th>MUN (mg/dL)</th></tr></thead>
+                    <tbody>
+                        <tr><td>Roseler, 1993</td><td>11.6</td></tr>
+                        <tr><td>Hof, 2002</td><td>10.3</td></tr>
+                        <tr><td>Kohn, 2002</td><td>11.5</td></tr>
+                        <tr><td>Broderick, 2003</td><td>12.4</td></tr>
+                        <tr><td>Nousiainen, 2004</td><td>11.7</td></tr>
+                        <tr><td>Wattiaux, 2004</td><td>12.1</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <span class="badge-source">NASEM 2021 8ª Edición Cap. 6 • Jonker &amp; Kohn (2001) The Scientific World Journal 1:852-859 • Univ. of Illinois — Dr. Mike Hutjens</span>
+        </section>
+
         </section>
 
         <section class="module-panel hidden" id="panel-eficiencia" data-module="eficiencia" role="tabpanel" aria-labelledby="tab-eficiencia" tabindex="0">
@@ -3575,7 +3681,51 @@ function calculateRequirements() {
     updateMineralTablesAndHighlight();
     renderResultsVisualization(dmi, bw, nel, mp, ca, p);
     renderEnergyBalance(catId, dmi, milk, fat, protein, nemMaintenance);
+    renderProteinPanel(catId, dmi, mp);
     saveLastInputs();
+}
+
+/**
+ * Fase 5: Panel de Requerimientos de Proteína (CP, RDP, RUP, MP) por etapa fisiológica.
+ * MP es el valor calculado (NASEM 2021, misma fórmula que la Calculadora principal).
+ * CP/RDP/RUP se estiman aplicando los rangos generales ya auditados en la app
+ * (NASEM 2021 Cap. 6: CP 15.0-16.5%, RDP 9.5-10.5%, RUP 5.5-6.5% MS) al DMI calculado,
+ * solo para vacas en lactancia (NASEM/CNCPS no fija RDP/RUP por etapa: depende de ingredientes).
+ */
+function renderProteinPanel(catId, dmi, mp) {
+    const container = document.getElementById("protein-requirements-container");
+    if (!container) return;
+
+    const mpGd = mp * 1000.0;
+    const isLactatingDairy = catId === "lactating_primiparous" || catId === "lactating_multiparous";
+
+    if (isLactatingDairy && dmi > 0) {
+        const dmiG = dmi * 1000.0;
+        const cpLow = dmiG * 0.150, cpHigh = dmiG * 0.165;
+        const rdpLow = dmiG * 0.095, rdpHigh = dmiG * 0.105;
+        const rupLow = dmiG * 0.055, rupHigh = dmiG * 0.065;
+        container.innerHTML = `
+            <div class="practical-card" style="border-left-color: var(--primary-emerald); background:#f0fdf4; border:1.5px solid #a7f3d0; border-radius:16px; padding:20px;">
+                <h4 style="margin-top:0; color:#065f46;">Estimación para tu animal (según datos de la Pestaña 1)</h4>
+                <div class="practical-stats" style="display:grid; gap:10px; margin-top:10px;">
+                    <div class="practical-stat-item util-stat-box2">Proteína Metabolizable (MP) requerida: <strong style="color:#6d28d9;">${mpGd.toFixed(0)} g/día</strong> <span style="color:var(--text-muted); font-size:0.8rem;">(valor calculado, NASEM 2021)</span></div>
+                    <div class="practical-stat-item util-stat-box2">Proteína Cruda (CP) objetivo: <strong style="color:#047857;">${cpLow.toFixed(0)} - ${cpHigh.toFixed(0)} g/día</strong> <span style="color:var(--text-muted); font-size:0.8rem;">(15.0-16.5% MS × ${dmi.toFixed(1)} kg MS/día)</span></div>
+                    <div class="practical-stat-item util-stat-box2">Proteína Degradable en Rumen (RDP) objetivo: <strong style="color:#047857;">${rdpLow.toFixed(0)} - ${rdpHigh.toFixed(0)} g/día</strong> <span style="color:var(--text-muted); font-size:0.8rem;">(9.5-10.5% MS)</span></div>
+                    <div class="practical-stat-item util-stat-box2">Proteína No Degradable en Rumen (RUP) objetivo: <strong style="color:#047857;">${rupLow.toFixed(0)} - ${rupHigh.toFixed(0)} g/día</strong> <span style="color:var(--text-muted); font-size:0.8rem;">(5.5-6.5% MS)</span></div>
+                </div>
+                <p style="margin-top:12px; font-size:0.8rem; color:var(--text-muted); line-height:1.4;">MP es el requerimiento calculado directamente para tu animal (misma fórmula de la Calculadora). CP/RDP/RUP son metas dietarias generales (%MS) de NASEM 2021 aplicadas a tu Consumo de Materia Seca (DMI) estimado — el reparto real depende de los ingredientes específicos de tu ración, ya que NASEM/CNCPS no fija un requerimiento de RDP/RUP por vaca independiente de la dieta.</p>
+                <span class="badge-source">NASEM 2021 8ª Edición • Capítulo 6: Protein and Amino Acids</span>
+            </div>
+        `;
+    } else {
+        container.innerHTML = `
+            <div class="practical-card" style="border-left-color: var(--primary-emerald); background:#f0fdf4; border:1.5px solid #a7f3d0; border-radius:16px; padding:20px;">
+                <div class="practical-stat-item util-stat-box2">Proteína Metabolizable (MP) requerida: <strong style="color:#6d28d9;">${mpGd.toFixed(0)} g/día</strong> <span style="color:var(--text-muted); font-size:0.8rem;">(valor calculado, NASEM 2021)</span></div>
+                <p style="margin-top:12px; font-size:0.8rem; color:var(--text-muted); line-height:1.4;">Los rangos de CP/RDP/RUP como %MS que muestra esta app aplican a vacas en lactancia. Para esta categoría, consulta la tabla de referencia por etapa (NRC 2001, más abajo) para un estimado de CP/RDP/RUP.</p>
+                <span class="badge-source">NASEM 2021 8ª Edición • Capítulo 6: Protein and Amino Acids</span>
+            </div>
+        `;
+    }
 }
 
 
