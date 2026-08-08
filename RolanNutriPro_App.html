@@ -3610,54 +3610,54 @@ function calculateRequirements() {
         if (currentViewMode === "technical") {
             resultsContainer.innerHTML = `
                 <div class="results-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px;">
-                    <!-- CARD 1: CONSUMO DE MATERIA SECA (DMI) -->
-                    <div class="result-box" style="background: linear-gradient(135deg, #059669 0%, #047857 100%); border-left: 6px solid #10b981; padding: 18px; border-radius: 16px; box-shadow: 0 4px 14px rgba(5, 150, 105, 0.25); color: #ffffff;">
-                        <div style="font-size: 0.82rem; font-weight: 700; color: #ecfdf5; letter-spacing: 0.5px; text-transform: uppercase;">CONSUMO DE MATERIA SECA (DMI)</div>
+                    <!-- CARD 1: CONSUMO DE MATERIA SECA (DMI) — Tecnigrasas: Verde Oscuro -->
+                    <div class="result-box" style="background: linear-gradient(135deg, #3E8C4E 0%, #2F713C 100%); border-left: 6px solid #52A868; padding: 18px; border-radius: 16px; box-shadow: 0 4px 14px rgba(47, 113, 60, 0.30); color: #ffffff;">
+                        <div style="font-size: 0.82rem; font-weight: 700; color: #E8F5EA; letter-spacing: 0.5px; text-transform: uppercase;">CONSUMO DE MATERIA SECA (DMI)</div>
                         <div class="util-result-value">
                             ${dmi.toFixed(2)} kg MS/día <span class="util-text-suffix">(${((dmi / bw) * 100).toFixed(2)}% BW)</span>
                         </div>
                         <hr class="util-hr-light">
-                        <div style="font-size: 0.82rem; color: #d1fae5; line-height: 1.4;">${dmiNote}</div>
+                        <div style="font-size: 0.82rem; color: #D5EAD9; line-height: 1.4;">${dmiNote}</div>
                     </div>
 
-                    <!-- CARD 2: ENERGÍA NETA DE LACTANCIA (NEL) -->
-                    <div class="result-box" style="background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%); border-left: 6px solid #3b82f6; padding: 18px; border-radius: 16px; box-shadow: 0 4px 14px rgba(37, 99, 235, 0.25); color: #ffffff;">
-                        <div style="font-size: 0.82rem; font-weight: 700; color: #eff6ff; letter-spacing: 0.5px; text-transform: uppercase;">ENERGÍA NETA DE LACTANCIA (NEL)</div>
+                    <!-- CARD 2: ENERGÍA NETA DE LACTANCIA (NEL) — Tecnigrasas: Mostaza -->
+                    <div class="result-box" style="background: linear-gradient(135deg, #F4A924 0%, #D7852C 100%); border-left: 6px solid #F7BB4D; padding: 18px; border-radius: 16px; box-shadow: 0 4px 14px rgba(215, 133, 44, 0.30); color: #ffffff;">
+                        <div style="font-size: 0.82rem; font-weight: 700; color: #FEF6E7; letter-spacing: 0.5px; text-transform: uppercase;">ENERGÍA NETA DE LACTANCIA (NEL)</div>
                         <div class="util-result-value">
                             ${nel.toFixed(2)} Mcal/día <span class="util-text-suffix">(${(nel / dmi).toFixed(2)} Mcal/kg MS)</span>
                         </div>
                         <hr class="util-hr-light">
-                        <div style="font-size: 0.82rem; color: #dbeafe; line-height: 1.4;">Energía Neta NASEM 2021 para mantenimiento y producción.</div>
+                        <div style="font-size: 0.82rem; color: #FCE8C4; line-height: 1.4;">Energía Neta NASEM 2021 para mantenimiento y producción.</div>
                     </div>
 
-                    <!-- CARD 3: PROTEÍNA METABOLIZABLE (MP) -->
-                    <div class="result-box" style="background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%); border-left: 6px solid #8b5cf6; padding: 18px; border-radius: 16px; box-shadow: 0 4px 14px rgba(124, 58, 237, 0.25); color: #ffffff;">
-                        <div style="font-size: 0.82rem; font-weight: 700; color: #f5f3ff; letter-spacing: 0.5px; text-transform: uppercase;">PROTEÍNA METABOLIZABLE (MP)</div>
+                    <!-- CARD 3: PROTEÍNA METABOLIZABLE (MP) — Tecnigrasas: Marrón -->
+                    <div class="result-box" style="background: linear-gradient(135deg, #6B4423 0%, #593718 100%); border-left: 6px solid #8A5A2E; padding: 18px; border-radius: 16px; box-shadow: 0 4px 14px rgba(89, 55, 24, 0.35); color: #ffffff;">
+                        <div style="font-size: 0.82rem; font-weight: 700; color: #F0E6DC; letter-spacing: 0.5px; text-transform: uppercase;">PROTEÍNA METABOLIZABLE (MP)</div>
                         <div class="util-result-value">
                             ${(mp * 1000).toFixed(0)} g MP/día <span class="util-text-suffix">(${((mp / dmi) * 100).toFixed(2)}% MP en MS)</span>
                         </div>
                         <hr class="util-hr-light">
-                        <div style="font-size: 0.82rem; color: #ede9fe; line-height: 1.4;">Requerimiento de aminoácidos absorbidos en intestino delgado.</div>
+                        <div style="font-size: 0.82rem; color: #E4D2C0; line-height: 1.4;">Requerimiento de aminoácidos absorbidos en intestino delgado.</div>
                     </div>
 
-                    <!-- CARD 4: CALCIO (CA) -->
-                    <div class="result-box" style="background: linear-gradient(135deg, #d97706 0%, #b45309 100%); border-left: 6px solid #f59e0b; padding: 18px; border-radius: 16px; box-shadow: 0 4px 14px rgba(217, 119, 6, 0.25); color: #ffffff;">
-                        <div style="font-size: 0.82rem; font-weight: 700; color: #fffbeb; letter-spacing: 0.5px; text-transform: uppercase;">CALCIO (CA)</div>
+                    <!-- CARD 4: CALCIO (CA) — Tecnigrasas: Verde Claro -->
+                    <div class="result-box" style="background: linear-gradient(135deg, #93C25C 0%, #7DAE3F 100%); border-left: 6px solid #A9D178; padding: 18px; border-radius: 16px; box-shadow: 0 4px 14px rgba(125, 174, 63, 0.30); color: #ffffff;">
+                        <div style="font-size: 0.82rem; font-weight: 700; color: #F0F7E6; letter-spacing: 0.5px; text-transform: uppercase;">CALCIO (CA)</div>
                         <div class="util-result-value">
                             ${ca.toFixed(1)} g Ca/día <span class="util-text-suffix">(${(ca / dmi).toFixed(1)} g/kg MS)</span>
                         </div>
                         <hr class="util-hr-light">
-                        <div style="font-size: 0.82rem; color: #fef3c7; line-height: 1.4;">NASEM 2021 Cap. 7. Coeficiente de absorción ruminal/intestinal.</div>
+                        <div style="font-size: 0.82rem; color: #DFEFC9; line-height: 1.4;">NASEM 2021 Cap. 7. Coeficiente de absorción ruminal/intestinal.</div>
                     </div>
 
-                    <!-- CARD 5: FÓSFORO (P) -->
-                    <div class="result-box" style="background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%); border-left: 6px solid #0ea5e9; padding: 18px; border-radius: 16px; box-shadow: 0 4px 14px rgba(2, 132, 199, 0.25); color: #ffffff;">
-                        <div style="font-size: 0.82rem; font-weight: 700; color: #f0f9ff; letter-spacing: 0.5px; text-transform: uppercase;">FÓSFORO (P)</div>
+                    <!-- CARD 5: FÓSFORO (P) — Tecnigrasas: Negro 86% -->
+                    <div class="result-box" style="background: linear-gradient(135deg, #3D3D3D 0%, #262626 100%); border-left: 6px solid #565656; padding: 18px; border-radius: 16px; box-shadow: 0 4px 14px rgba(38, 38, 38, 0.35); color: #ffffff;">
+                        <div style="font-size: 0.82rem; font-weight: 700; color: #E8E8E8; letter-spacing: 0.5px; text-transform: uppercase;">FÓSFORO (P)</div>
                         <div class="util-result-value">
                             ${p.toFixed(1)} g P/día <span class="util-text-suffix">(${(p / dmi).toFixed(1)} g/kg MS)</span>
                         </div>
                         <hr class="util-hr-light">
-                        <div style="font-size: 0.82rem; color: #e0f2fe; line-height: 1.4;">Requerimiento esencial para metabolismo energético y mineral.</div>
+                        <div style="font-size: 0.82rem; color: #C9C9C9; line-height: 1.4;">Requerimiento esencial para metabolismo energético y mineral.</div>
                     </div>
                 </div>
             `;
