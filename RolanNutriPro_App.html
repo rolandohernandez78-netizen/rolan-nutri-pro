@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>RolanNutriPro | Nutrición de rumiantes NASEM 2021</title>
     <meta name="description" content="Calcula y consulta requerimientos nutricionales de ganado lechero y de carne con NASEM 2021 y Cornell CNCPS, en unidades métricas.">
     <meta name="robots" content="noindex, follow">
@@ -376,7 +376,10 @@ body {
     border-radius: 10px;
     padding: 10px 14px;
     font-family: 'Inter', sans-serif;
-    font-size: 0.95rem;
+    /* C14: 16px mínimo en toda condición (no solo el breakpoint <=600px) para que iOS Safari
+       no dispare zoom automático al enfocar un input, incluida orientación landscape de
+       celular (ej. 844x390), que cae fuera de ese breakpoint por ancho. */
+    font-size: 16px;
     color: #0f172a;
     transition: all 0.2s ease;
 }
@@ -603,6 +606,11 @@ body {
 }
 
 /* ===== Fase 3: Estilos de impresión ===== */
+/* C16: decisión documentada — se imprime solo el módulo activo (visible en pantalla), no un
+   "informe completo" de todas las pestañas. Es el comportamiento por defecto del botón
+   "Imprimir resultados": el usuario imprime lo que está viendo, sin forzar decenas de páginas
+   de tablas de referencia que no pidió. Los paneles inactivos ya tienen display:none via
+   .hidden, y esta hoja @media print no la anula a propósito. */
 @media print {
     .skip-link,
     .module-tabs-wrapper,
@@ -1395,6 +1403,8 @@ body {
 .risk-ok .mineral-risk-row-zone { color: #065f46; }
 .risk-overload { background: #fff7ed; border-color: #fed7aa; }
 .risk-overload .mineral-risk-row-zone { color: #9a3412; }
+.risk-neutral { background: #f8fafc; border-color: #e2e8f0; }
+.risk-neutral .mineral-risk-row-zone { color: #64748b; }
 
 .antagonism-alert {
     border-radius: 12px;
@@ -1606,6 +1616,34 @@ body {
     }
 }
 
+/* C13: breakpoint dedicado para teléfonos reales (360-430px): Android gama media (360px),
+   iPhone estándar (390/393px) e iPhone Pro Max (428/430px). El breakpoint de 600px ya cubre
+   este rango como subconjunto; aquí se afina lo que en pantallas angostas necesita más ajuste
+   (pestañas de módulos, tamaño de marca, separación de la mascota flotante y del footer). */
+@media (max-width: 430px) {
+    .module-tab {
+        font-size: 0.78rem;
+        padding: 9px 12px;
+    }
+
+    .brand-text h1 {
+        font-size: 1.5rem;
+    }
+
+    .mascot-floating {
+        right: 8px;
+        bottom: calc(8px + env(safe-area-inset-bottom, 0px));
+    }
+
+    .app-footer {
+        margin-bottom: 96px;
+    }
+
+    .util-result-value {
+        font-size: 1.45rem;
+    }
+}
+
 /* ===== Fase 3: Clases utilitarias (reemplazan patrones style="" repetidos 3+ veces) =====
    Colocadas al final de la hoja de estilos a propósito: en empates de especificidad,
    el orden en la fuente decide, y así estas reglas ganan sin tocar ninguna regla existente. */
@@ -1633,6 +1671,10 @@ body {
 }
 .util-mt-10 {
     margin-top: 10px;
+}
+.util-note-muted {
+    font-size: 0.85rem;
+    color: var(--text-muted);
 }
 .util-result-value {
     font-size: 1.65rem;
@@ -1884,6 +1926,10 @@ body {
                 <label for="diet-nel-density-input">Densidad Energética de la Dieta (Mcal NEL/kg MS):</label>
                 <input type="number" id="diet-nel-density-input" class="form-control" value="1.63" min="1.2" max="2.0" step="0.01" inputmode="decimal">
             </div>
+            <div class="form-group util-mt-10" style="max-width: 360px;">
+                <label for="measured-dmi-input">DMI Medido en Campo (kg MS/día) — opcional:</label>
+                <input type="number" id="measured-dmi-input" class="form-control" value="" placeholder="Vacío = usa el DMI estimado por la ecuación NASEM" min="5" max="40" step="0.1" inputmode="decimal">
+            </div>
             <button type="button" id="btn-recalc-eb" class="btn-primary" style="max-width: 360px;">🔄 Recalcular Balance Energético (Muuu!)</button>
             <div id="energy-balance-content"></div>
         </div>
@@ -1996,19 +2042,19 @@ body {
                 </div>
                 <span class="badge-source">Daniel &amp; Martín-Tereso, J. Dairy Sci. 109:6239-6251 (2026)</span>
             </div>
-            <p>Compara el aporte real de la dieta contra el rango entre el requerimiento neto (NASEM, ya calculado arriba) y el límite superior de seguridad, para detectar déficit o riesgo de sobrecarga homeostática.</p>
+            <p>Compara el aporte real de la dieta contra dos límites de naturaleza distinta: el <strong>requerimiento dietario NASEM 2021</strong> (piso) y el <strong>límite superior de homeostasis</strong> (Daniel y Martín-Tereso, 2026; techo). Provienen de marcos metodológicos diferentes — el requerimiento es la concentración dietaria NASEM, el límite superior es el máximo sin riesgo de sobrecarga observado en ese estudio — y la ventana entre ambos es especialmente estrecha para el cobre.</p>
             <div class="form-grid util-mt-10">
                 <div class="form-group">
                     <label for="risk-zn-input">Aporte Real de Zinc (mg/día):</label>
-                    <input type="number" id="risk-zn-input" class="form-control" value="0" min="0" step="10" inputmode="decimal">
+                    <input type="number" id="risk-zn-input" class="form-control" value="" placeholder="Sin dato" min="0" step="10" inputmode="decimal">
                 </div>
                 <div class="form-group">
                     <label for="risk-cu-input">Aporte Real de Cobre (mg/día):</label>
-                    <input type="number" id="risk-cu-input" class="form-control" value="0" min="0" step="5" inputmode="decimal">
+                    <input type="number" id="risk-cu-input" class="form-control" value="" placeholder="Sin dato" min="0" step="5" inputmode="decimal">
                 </div>
                 <div class="form-group">
                     <label for="risk-mn-input">Aporte Real de Manganeso (mg/día):</label>
-                    <input type="number" id="risk-mn-input" class="form-control" value="0" min="0" step="10" inputmode="decimal">
+                    <input type="number" id="risk-mn-input" class="form-control" value="" placeholder="Sin dato" min="0" step="10" inputmode="decimal">
                 </div>
             </div>
             <button type="button" id="btn-calc-mineral-risk" class="btn-primary">🐮 Calcular Riesgo (Muuu!)</button>
@@ -2059,40 +2105,108 @@ body {
             <div class="card-header">
                 <div class="card-title">
                     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-                    <h3 id="dcad-title">Calculadora de Balance Anión-Catión (DCAD / BAC) en Preparto (NASEM 2026)</h3>
+                    <h3 id="dcad-title">Calculadora de Balance Anión-Catión (DCAD / BAC) en Preparto</h3>
                 </div>
-                <span class="badge-source">Prevención de Hipocalcemia</span>
+                <span class="badge-source">NASEM 2021 Cap. 12 • Charbonneau et al. (2006)</span>
                 <span class="step-badge">Paso 1 de 2</span>
             </div>
             <div class="practical-card" style="border-left-color: var(--accent-amber);">
-                <h4>Ecuación Oficial de Balance Cationico-Aniónico (DCAD)</h4>
-                <p><strong>DCAD (mEq/kg MS)</strong> = [(%Na / 0.023 + %K / 0.039) - (%Cl / 0.0355 + 2 * %S / 0.016)] * 10</p>
+                <h4>Ecuación Oficial de Balance Catiónico-Aniónico (DCAD)</h4>
+                <p><strong>DCAD estándar (mEq/kg MS)</strong> = [(%Na / 0.023 + %K / 0.039) - (%Cl / 0.0355 + %S / 0.016)] * 10</p>
+                <p class="util-note-muted"><strong>Variante Charbonneau et al. (2006):</strong> sustituye %S por 0.6 × %S en el término aniónico — según NASEM 2021 es la que mejor predice el pH urinario y la más asociada a incidencia de fiebre de leche, aunque la fórmula estándar de 4 iones es la de uso más extendido (DeGaris y Lean, 2008).</p>
                 <div class="practical-stats util-mt-10">
-                    <div class="practical-stat-item">Meta Preparto: <strong>-50 a -150 mEq/kg MS</strong></div>
+                    <div class="practical-stat-item">Meta NASEM 2021 (estándar): <strong>~ -200 mEq/kg MS</strong> <span style="font-size:0.78rem; color:var(--text-muted);">(Cap. 12, para pH urinario ~6.5, meta-análisis Charbonneau et al. 2006)</span></div>
+                    <div class="practical-stat-item">Rango de manejo práctico de campo: <strong>-50 a -150 mEq/kg MS</strong> <span style="font-size:0.78rem; color:var(--text-muted);">(no es el estándar NASEM — muchos programas comerciales operan en este rango, más conservador)</span></div>
                     <div class="practical-stat-item">pH Urinario Objetivo: <strong>6.0 - 6.5 (vacas Holstein)</strong></div>
-                    <div class="practical-stat-item">Efecto Fisiológico: <strong>Induce acidosis metabólica transitoria para activar PTH y movilizar calcio óseo</strong></div>
+                    <div class="practical-stat-item">⚠️ Con pH urinario &lt; 6.3: <strong>la excreción neta de ácido deja de correlacionar bien con el DCAD (Constable et al., 2009)</strong> — valida siempre con pH urinario, no solo con el número de DCAD.</div>
                 </div>
+            </div>
+
+            <div class="practical-card util-mt-10" id="dcad-calculator" style="border-left-color: var(--accent-blue);">
+                <h4>🧮 Calculadora de DCAD</h4>
+                <p>Ingresa el perfil mineral de la dieta preparto (% base materia seca).</p>
+                <div class="form-grid util-mt-10">
+                    <div class="form-group">
+                        <label for="dcad-na-input">Sodio, Na (% MS):</label>
+                        <input type="number" id="dcad-na-input" class="form-control" value="0.10" min="0" max="2" step="0.01" inputmode="decimal">
+                    </div>
+                    <div class="form-group">
+                        <label for="dcad-k-input">Potasio, K (% MS):</label>
+                        <input type="number" id="dcad-k-input" class="form-control" value="1.50" min="0" max="4" step="0.05" inputmode="decimal">
+                    </div>
+                    <div class="form-group">
+                        <label for="dcad-cl-input">Cloro, Cl (% MS):</label>
+                        <input type="number" id="dcad-cl-input" class="form-control" value="0.80" min="0" max="3" step="0.05" inputmode="decimal">
+                    </div>
+                    <div class="form-group">
+                        <label for="dcad-s-input">Azufre, S (% MS):</label>
+                        <input type="number" id="dcad-s-input" class="form-control" value="0.40" min="0" max="1" step="0.01" inputmode="decimal">
+                    </div>
+                </div>
+                <button type="button" id="btn-calc-dcad" class="btn-primary">🐮 Calcular DCAD (Muuu!)</button>
+                <div id="dcad-results-container" class="results-container" aria-live="polite"></div>
             </div>
         </section>
 
-        <!-- Water & Goldilocks Dry Cow Module (Univ. Illinois 2025 - Drackley & Cardoso) -->
+        <!-- Water Module (NASEM 2021 Cap. 9, Tabla 9-1) -->
         <section class="card table-card" id="illinois-section" aria-labelledby="illinois-title">
             <div class="card-header">
                 <div class="card-title">
                     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-                    <h3 id="illinois-title">Estimación de Consumo de Agua y Dieta de Energía Controlada (Univ. Illinois 2025)</h3>
+                    <h3 id="illinois-title">Calculadora de Consumo de Agua de Bebida</h3>
                 </div>
-                <span class="badge-source">Drackley & Cardoso</span>
+                <span class="badge-source">NASEM 2021 Cap. 9, Tabla 9-1</span>
                 <span class="step-badge">Paso 2 de 2</span>
             </div>
             <div class="practical-card" style="border-left-color: var(--accent-blue);">
-                <h4>Ecuación Predicción de Consumo de Agua de Bebida (Wetherly & Cardoso)</h4>
-                <p><strong>Agua Requerida (L/día)</strong> = 15.99 + (1.58 * DMI_kg) + (0.90 * Leche_kg) + (0.05 * Na_g) + (1.20 * Temp_C)</p>
+                <h4>Ecuaciones de Predicción de Consumo de Agua</h4>
+                <p><strong>Ecuación 9-1 NASEM 2021 (recomendada, vacas en lactancia):</strong><br>Agua (kg/d) = -91.1 + (2.93 × DMI) + (0.61 × %MS dieta) + (0.062 × NaK, mEq/kg) + (2.49 × %CP) + (0.76 × Temperatura media °C). Fuente: Appuhamy et al. (2016).</p>
+                <p class="util-note-muted"><strong>Ecuación alternativa — Murphy et al. (1983):</strong> Agua (L/d) = 16.0 + (1.58 × DMI) + (0.90 × Leche) + (0.05 × Na, g/d) + (1.20 × Temperatura mínima diaria °C). NASEM 2021 la lista como ecuación alternativa, no como la recomendada para vacas en lactancia.</p>
                 <div class="practical-stats util-mt-10">
                     <div class="practical-stat-item">Consumo Típico Vaca Alta Producción (35 kg Leche): <strong>115 - 130 Litros/día</strong></div>
                     <div class="practical-stat-item">Dieta "Goldilocks" Vaca Seca (Drackley): <strong>1.30 - 1.35 Mcal/kg MS de NEL + 3.0 - 4.5 kg Paja Trigo</strong></div>
                     <div class="practical-stat-item">Fibra peNDF (Caja Penn State): <strong>>= 21% MS (10-15% en bandeja superior >19mm)</strong></div>
                 </div>
+            </div>
+
+            <div class="practical-card util-mt-10" id="water-calculator" style="border-left-color: var(--primary-emerald);">
+                <h4>🧮 Calculadora de Consumo de Agua</h4>
+                <div class="form-grid util-mt-10">
+                    <div class="form-group">
+                        <label for="water-dmi-input">DMI (kg MS/día):</label>
+                        <input type="number" id="water-dmi-input" class="form-control" value="23.5" min="5" max="40" step="0.1" inputmode="decimal">
+                    </div>
+                    <div class="form-group">
+                        <label for="water-dm-input">% Materia Seca de la Dieta:</label>
+                        <input type="number" id="water-dm-input" class="form-control" value="50" min="20" max="95" step="1" inputmode="decimal">
+                    </div>
+                    <div class="form-group">
+                        <label for="water-cp-input">% Proteína Cruda de la Dieta (MS):</label>
+                        <input type="number" id="water-cp-input" class="form-control" value="16" min="8" max="24" step="0.1" inputmode="decimal">
+                    </div>
+                    <div class="form-group">
+                        <label for="water-na-input">Sodio, Na (% MS):</label>
+                        <input type="number" id="water-na-input" class="form-control" value="0.40" min="0" max="2" step="0.01" inputmode="decimal">
+                    </div>
+                    <div class="form-group">
+                        <label for="water-k-input">Potasio, K (% MS):</label>
+                        <input type="number" id="water-k-input" class="form-control" value="1.50" min="0" max="4" step="0.05" inputmode="decimal">
+                    </div>
+                    <div class="form-group">
+                        <label for="water-milk-input">Producción de Leche (kg/día):</label>
+                        <input type="number" id="water-milk-input" class="form-control" value="35" min="0" max="80" step="0.5" inputmode="decimal">
+                    </div>
+                    <div class="form-group">
+                        <label for="water-tempavg-input">Temperatura Media Diaria (°C):</label>
+                        <input type="number" id="water-tempavg-input" class="form-control" value="20" min="-10" max="45" step="1" inputmode="decimal">
+                    </div>
+                    <div class="form-group">
+                        <label for="water-tempmin-input">Temperatura Mínima Diaria (°C):</label>
+                        <input type="number" id="water-tempmin-input" class="form-control" value="14" min="-15" max="35" step="1" inputmode="decimal">
+                    </div>
+                </div>
+                <button type="button" id="btn-calc-water" class="btn-primary">🐮 Calcular Consumo de Agua (Muuu!)</button>
+                <div id="water-results-container" class="results-container" aria-live="polite"></div>
             </div>
         </section>
 
@@ -2153,7 +2267,7 @@ body {
             <div id="protein-requirements-container"></div>
 
             <h4 class="util-mt-10">Tabla de Referencia por Etapa Fisiológica</h4>
-            <p style="font-size:0.85rem; color:var(--text-muted);">NASEM 2021 no publica un requerimiento fijo de RDP/RUP por etapa (depende de los ingredientes de la ración). Esta tabla usa un modelo anterior (NRC 2001) que sí desglosa CP/RDP/RUP/MP por etapa, incluida aquí como referencia complementaria — no reemplaza los valores NASEM 2021 calculados arriba.</p>
+            <p class="util-note-muted">NASEM 2021 no publica un requerimiento fijo de RDP/RUP por etapa (depende de los ingredientes de la ración). Esta tabla usa un modelo anterior (NRC 2001) que sí desglosa CP/RDP/RUP/MP por etapa, incluida aquí como referencia complementaria — no reemplaza los valores NASEM 2021 calculados arriba.</p>
             <span class="badge-source" style="background:#fef3c7; color:#92400e; border-color:#fde68a;">NRC (2001) • Univ. of Illinois — Dr. Mike Hutjens (Holstein, 680 kg PV)</span>
             <p class="table-scroll-hint">Desliza para ver más <span class="tabs-scroll-hint-arrow" aria-hidden="true">→</span></p>
             <div class="table-responsive util-mt-10">
@@ -2190,7 +2304,7 @@ body {
                 </div>
                 <span class="badge-source">NASEM 2021 • Penn State Extension • Univ. of Illinois</span>
             </div>
-            <p style="font-size:0.85rem; color:var(--text-muted);">Ninguna fuente consultada (NASEM 2021, Penn State Extension, Jonker &amp; Kohn 2001, Univ. of Illinois/Hutjens) publica metas de MUN diferenciadas por etapa fisiológica: el MUN se interpreta a nivel de hato/individuo porque depende más del manejo (hora de muestreo, tipo de dieta, nivel de producción) que de la etapa en sí. Por eso se presentan los rangos generales validados, no una tabla inventada por etapa.</p>
+            <p class="util-note-muted">Ninguna fuente consultada (NASEM 2021, Penn State Extension, Jonker &amp; Kohn 2001, Univ. of Illinois/Hutjens) publica metas de MUN diferenciadas por etapa fisiológica: el MUN se interpreta a nivel de hato/individuo porque depende más del manejo (hora de muestreo, tipo de dieta, nivel de producción) que de la etapa en sí. Por eso se presentan los rangos generales validados, no una tabla inventada por etapa.</p>
             <div class="practical-card util-mt-10" style="border-left-color: var(--primary-emerald);">
                 <h4>Metas Generales de MUN</h4>
                 <div class="practical-stats util-mt-10">
@@ -2202,7 +2316,7 @@ body {
                 </div>
             </div>
             <h4 class="util-mt-10">Guía de Interpretación por Nivel de MUN (Penn State Extension)</h4>
-            <p style="font-size:0.85rem; color:var(--text-muted);">La interpretación correcta también depende del nivel de producción y de si la ración fue formulada para proteína baja o alta — no es solo el número de MUN aislado.</p>
+            <p class="util-note-muted">La interpretación correcta también depende del nivel de producción y de si la ración fue formulada para proteína baja o alta — no es solo el número de MUN aislado.</p>
             <p class="table-scroll-hint">Desliza para ver más <span class="tabs-scroll-hint-arrow" aria-hidden="true">→</span></p>
             <div class="table-responsive util-mt-10">
                 <table class="data-table" id="mun-interpretation-table">
@@ -2357,6 +2471,7 @@ body {
                 <span class="badge-source">Dato original: MV Máster Rolando Hernández Mora</span>
             </div>
             <p>Perfil de ácidos grasos, índice de yodo, calcio y energía bruta de 6 fuentes de grasa comunes en raciones de rumiantes.</p>
+            <p class="util-note-muted"><strong>Alcance:</strong> perfil de sales cálcicas <em>experimentales</em>, elaboradas y caracterizadas por los propios autores para el estudio in vitro publicado en Interciencia (2014) — no son productos comerciales disponibles en el mercado.</p>
             <span class="badge-source">Guerrero, J., Ojeda, A., Landinez, J., López, N. (2014). Interciencia 39(6):404-409.</span>
             <p class="table-scroll-hint">Desliza para ver más <span class="tabs-scroll-hint-arrow" aria-hidden="true">→</span></p>
             <div class="table-responsive util-mt-10">
@@ -2407,7 +2522,6 @@ body {
             </div>
         </section>
 
-        <!-- Fase 4.9: Ampliación EFA - barrera intestinal -->
         <section class="card table-card" id="calcium-soap-balance-section" aria-labelledby="calcium-soap-balance-title">
             <div class="card-header">
                 <div class="card-title">
@@ -2417,6 +2531,7 @@ body {
                 <span class="badge-source">Dato original: MV Máster Rolando Hernández Mora</span>
             </div>
             <p>Un mayor % de linoleico declarado en el saco no garantiza más ácido graso esencial (AGE) funcional para la vaca. Si el jabón cálcico se disocia en el rumen, ese linoleico se biohidrogena antes de llegar al intestino — o se desvía hacia la vía alterna (trans-10,cis-12 CLA) que suprime la síntesis de grasa láctea (MFD). Lo que define el valor real de una grasa sobrepasante es la combinación de <strong>estabilidad ruminal</strong> (Ca soluble a pH 6.5) y <strong>perfil de ácidos grasos</strong>, no el porcentaje de linoleico aislado.</p>
+            <p class="util-note-muted"><strong>Alcance:</strong> comparación de productos <em>comerciales</em> de jabones cálcicos disponibles en el mercado — a diferencia del Comparador de Fuentes de Grasa de más arriba, que usa sales cálcicas experimentales de un estudio in vitro. Son materiales distintos: los perfiles de ácidos grasos difieren entre ambas tablas porque corresponden a productos diferentes, no porque haya una inconsistencia entre ellas.</p>
             <span class="badge-source">Hernández, R. (2026). Jabones Cálcicos y Ácidos Grasos Esenciales — Resumen Técnico. Tecnigrasas S.A.S., mayo 2026</span>
             <p class="table-scroll-hint">Desliza para ver más <span class="tabs-scroll-hint-arrow" aria-hidden="true">→</span></p>
             <div class="table-responsive util-mt-10">
@@ -3392,6 +3507,106 @@ function calculateFeedEfficiency() {
     `;
 }
 
+/**
+ * Calculadora de DCAD (NASEM 2021 Cap. 12). Fórmula estándar de 4 iones sin
+ * duplicar la valencia del azufre (el divisor 0.016 ya es su peso miliequivalente),
+ * más la variante Charbonneau et al. (2006) que usa 0.6 x %S.
+ */
+function calculateDCAD() {
+    const naInput = document.getElementById("dcad-na-input");
+    const kInput = document.getElementById("dcad-k-input");
+    const clInput = document.getElementById("dcad-cl-input");
+    const sInput = document.getElementById("dcad-s-input");
+    const container = document.getElementById("dcad-results-container");
+    if (!naInput || !kInput || !clInput || !sInput || !container) return;
+
+    const na = parseFloat(naInput.value) || 0;
+    const k = parseFloat(kInput.value) || 0;
+    const cl = parseFloat(clInput.value) || 0;
+    const s = parseFloat(sInput.value) || 0;
+
+    const cations = (na / 0.023) + (k / 0.039);
+    const anionsStandard = (cl / 0.0355) + (s / 0.016);
+    const anionsCharbonneau = (cl / 0.0355) + (0.6 * s / 0.016);
+
+    const dcadStandard = (cations - anionsStandard) * 10;
+    const dcadCharbonneau = (cations - anionsCharbonneau) * 10;
+
+    let statusNote, statusColor;
+    if (dcadStandard <= -150) {
+        statusNote = "Cerca o dentro del rango de fuerte acidificación (meta NASEM ~-200 mEq/kg).";
+        statusColor = "#059669";
+    } else if (dcadStandard <= -50) {
+        statusNote = "Dentro del rango práctico de campo (-50 a -150 mEq/kg), pero por encima (menos negativo) de la meta NASEM de ~-200 mEq/kg.";
+        statusColor = "#d97706";
+    } else {
+        statusNote = "Por encima del rango recomendado — dieta insuficientemente acidificada para preparto.";
+        statusColor = "#b91c1c";
+    }
+
+    container.innerHTML = `
+        <div class="fe-result-box" style="border-color:${statusColor};">
+            <div class="fe-result-label">DCAD Estándar (4 iones, NASEM 2021)</div>
+            <div class="fe-result-value" style="color:${statusColor};">${dcadStandard.toFixed(0)} mEq/kg MS</div>
+            <div class="fe-result-note">${statusNote}</div>
+        </div>
+        <div class="fe-result-box">
+            <div class="fe-result-label">DCAD Variante Charbonneau et al. (2006)</div>
+            <div class="fe-result-value">${dcadCharbonneau.toFixed(0)} mEq/kg MS</div>
+            <div class="fe-result-note">Mejor predictor de pH urinario según NASEM 2021 (usa 0.6 × %S en vez de %S).</div>
+        </div>
+    `;
+}
+
+/**
+ * Calculadora de consumo de agua (NASEM 2021 Cap. 9, Tabla 9-1). Ecuación 9-1
+ * (Appuhamy et al., 2016) como recomendada para lactancia; Murphy et al. (1983)
+ * como alternativa, usando temperatura MÍNIMA diaria (no la media).
+ */
+function calculateWaterIntake() {
+    const dmiInput = document.getElementById("water-dmi-input");
+    const dmInput = document.getElementById("water-dm-input");
+    const cpInput = document.getElementById("water-cp-input");
+    const naInput = document.getElementById("water-na-input");
+    const kInput = document.getElementById("water-k-input");
+    const milkInput = document.getElementById("water-milk-input");
+    const tempAvgInput = document.getElementById("water-tempavg-input");
+    const tempMinInput = document.getElementById("water-tempmin-input");
+    const container = document.getElementById("water-results-container");
+    if (!dmiInput || !dmInput || !cpInput || !naInput || !kInput || !milkInput || !tempAvgInput || !tempMinInput || !container) return;
+
+    const dmi = parseFloat(dmiInput.value) || 0;
+    const dmPct = parseFloat(dmInput.value) || 0;
+    const cpPct = parseFloat(cpInput.value) || 0;
+    const na = parseFloat(naInput.value) || 0;
+    const k = parseFloat(kInput.value) || 0;
+    const milk = parseFloat(milkInput.value) || 0;
+    const tempAvg = parseFloat(tempAvgInput.value) || 0;
+    const tempMin = parseFloat(tempMinInput.value) || 0;
+
+    const naK = ((na / 0.023) + (k / 0.039)) * 10;
+
+    // Ecuación 9-1 NASEM 2021 (recomendada, Appuhamy et al. 2016)
+    const waterNasem = -91.1 + (2.93 * dmi) + (0.61 * dmPct) + (0.062 * naK) + (2.49 * cpPct) + (0.76 * tempAvg);
+
+    // Ecuación alternativa, Murphy et al. (1983); Na en g/día = %Na (de MS) x DMI(kg) x 10
+    const naGramsPerDay = na * dmi * 10;
+    const waterMurphy = 16.0 + (1.58 * dmi) + (0.90 * milk) + (0.05 * naGramsPerDay) + (1.20 * tempMin);
+
+    container.innerHTML = `
+        <div class="fe-result-box" style="border-color:#059669;">
+            <div class="fe-result-label">Ecuación 9-1 NASEM 2021 (recomendada)</div>
+            <div class="fe-result-value" style="color:#059669;">${waterNasem.toFixed(1)} kg agua/día</div>
+            <div class="fe-result-note">Appuhamy et al. (2016). NaK dietario = ${naK.toFixed(0)} mEq/kg MS.</div>
+        </div>
+        <div class="fe-result-box">
+            <div class="fe-result-label">Ecuación Alternativa — Murphy et al. (1983)</div>
+            <div class="fe-result-value">${waterMurphy.toFixed(1)} L agua/día</div>
+            <div class="fe-result-note">Ecuación alternativa según NASEM 2021, Tabla 9-1. Usa temperatura mínima diaria (no la media).</div>
+        </div>
+    `;
+}
+
 function renderEnergyBalance(catId, dmi, milk, fat, protein, nemMaintenance) {
     const content = document.getElementById("energy-balance-content");
     if (!content) return;
@@ -3404,6 +3619,7 @@ function renderEnergyBalance(catId, dmi, milk, fat, protein, nemMaintenance) {
 
     const lactoseInput = document.getElementById("lactose-input");
     const dietDensityInput = document.getElementById("diet-nel-density-input");
+    const measuredDmiInput = document.getElementById("measured-dmi-input");
     const gestationToggle = document.getElementById("gestation-toggle");
     const gestationDaysInput = document.getElementById("gestation-days-input");
     const birthWeightInput = document.getElementById("birth-weight-input");
@@ -3411,10 +3627,17 @@ function renderEnergyBalance(catId, dmi, milk, fat, protein, nemMaintenance) {
     const lactose = parseFloat(lactoseInput ? lactoseInput.value : NaN) || 4.85;
     const dietDensity = parseFloat(dietDensityInput ? dietDensityInput.value : NaN) || 1.63;
 
+    // C5: si el usuario ingresa DMI medido en campo, se usa para el Balance Energético en vez del
+    // DMI predicho por la ecuación NASEM (que, al derivarse de la misma producción de leche, no
+    // puede detectar un balance negativo real causado por bajo consumo).
+    const measuredDmiRaw = measuredDmiInput ? parseFloat(measuredDmiInput.value) : NaN;
+    const usingMeasuredDmi = !isNaN(measuredDmiRaw) && measuredDmiRaw > 0;
+    const dmiForEB = usingMeasuredDmi ? measuredDmiRaw : dmi;
+
     // Milk NEL (NASEM 2021 Cap. 3)
     const milkNEL = 9.29 * (fat / 100) + 5.85 * (protein / 100) + 3.95 * (lactose / 100);
     const nelProduccion = milkNEL * milk;
-    const nelConsumida = dmi * dietDensity;
+    const nelConsumida = dmiForEB * dietDensity;
 
     // Gest_NEL (Ecs. 3-15a a 3-18), solo si el usuario activa el campo
     let gestNEL = 0;
@@ -3452,6 +3675,10 @@ function renderEnergyBalance(catId, dmi, milk, fat, protein, nemMaintenance) {
         riskNote += "</span>";
     }
 
+    const dmiSourceNote = usingMeasuredDmi
+        ? `<span class="eb-summary-note">✅ Calculado con DMI medido en campo (${dmiForEB.toFixed(1)} kg MS/día). Este balance refleja el consumo real ingresado.</span>`
+        : `<span class="eb-summary-note">⚠️ Calculado con DMI estimado por la ecuación NASEM (${dmiForEB.toFixed(2)} kg MS/día), no con consumo medido. Con DMI estimado, este balance refleja el equilibrio teórico de la ecuación y no detecta un balance negativo causado por bajo consumo real. Para un diagnóstico útil en vacas de transición, ingresa el DMI medido en el comedero.</span>`;
+
     content.innerHTML = `
         <div class="eb-grid">
             <div class="eb-item">NEL Consumida (DMI × densidad)<strong>${nelConsumida.toFixed(2)} Mcal/día</strong></div>
@@ -3463,6 +3690,7 @@ function renderEnergyBalance(catId, dmi, milk, fat, protein, nemMaintenance) {
             ${summaryIcon} ${summaryText}
             ${riskNote}
         </div>
+        ${dmiSourceNote}
     `;
 }
 
@@ -3556,6 +3784,11 @@ function calculateRequirements() {
     const dim = parseFloat(dimInput.value) || cat.dim || 60;
     const adg = parseFloat(adgInput.value) || cat.adg_kg || 1.20;
     const bcs = parseFloat(bcsInput ? bcsInput.value : NaN) || cat.bcs || 3.0;
+    // C9: misma fuente de lactosa que usa el Balance Energético (input lactose-input, default 4.85%),
+    // en vez de la constante fija 0.192 (que corresponde a 3.95 * 0.0485), para que ambos módulos coincidan.
+    const lactoseInputEl = document.getElementById("lactose-input");
+    const lactosePct = parseFloat(lactoseInputEl ? lactoseInputEl.value : NaN) || 4.85;
+    const lactoseFactor = 3.95 * (lactosePct / 100.0);
 
     let dmi = 0, nel = 0, mp = 0, ca = 0, p = 0;
     let dmiNote = "";
@@ -3564,7 +3797,7 @@ function calculateRequirements() {
     if (catId === "lactating_primiparous") {
         // NASEM 2021 Ecuación 2-1 real (de Souza et al. 2019). Parity = 0 (primípara).
         // DMI = [3.7 + 0.305*MilkE + 0.022*BW - 0.689*BCS] * [1 - 0.212*e^(-0.053*DIM)]
-        const milkE = milk * (0.0929 * fat + 0.0585 * protein + 0.192); // MilkE, Mcal/d
+        const milkE = milk * (0.0929 * fat + 0.0585 * protein + lactoseFactor); // MilkE, Mcal/d
         const dmiBase = 3.7 + (0.305 * milkE) + (0.022 * bw) - (0.689 * bcs);
         const lag = 1.0 - (0.212 * Math.exp(-0.053 * dim));
         dmi = Math.max(12.0, dmiBase * lag); // piso de seguridad defensivo, no forma parte de la ecuación NASEM
@@ -3589,7 +3822,7 @@ function calculateRequirements() {
     } else if (catId === "lactating_multiparous") {
         // NASEM 2021 Ecuación 2-1 real (de Souza et al. 2019). Parity = 1 (multípara).
         // DMI = [9.4 + 0.305*MilkE + 0.022*BW - 2.559*BCS] * [1 - 0.348*e^(-0.053*DIM)]
-        const milkE = milk * (0.0929 * fat + 0.0585 * protein + 0.192); // MilkE, Mcal/d
+        const milkE = milk * (0.0929 * fat + 0.0585 * protein + lactoseFactor); // MilkE, Mcal/d
         const dmiBase = 9.4 + (0.305 * milkE) + (0.022 * bw) - (2.559 * bcs);
         const lag = 1.0 - (0.348 * Math.exp(-0.053 * dim));
         dmi = Math.max(14.0, dmiBase * lag); // piso de seguridad defensivo, no forma parte de la ecuación NASEM
@@ -3662,6 +3895,29 @@ function calculateRequirements() {
         p = (0.018 * bw) / 0.70;
     }
 
+    // C10: suma Gest_NEL a la tarjeta principal de NEL cuando el usuario activa gestación
+    // (mismas Ecs. 3-15a a 3-18 NASEM 2021 que usa el módulo de Balance Energético).
+    // Con gestación desactivada, gestNELMain queda en 0 y no altera el caso de prueba fijo.
+    let gestNELMain = 0;
+    let gestationDayMain = null;
+    const gestationToggleMain = document.getElementById("gestation-toggle");
+    const isLactatingForGest = (catId === "lactating_primiparous" || catId === "lactating_multiparous");
+    if (isLactatingForGest && gestationToggleMain && gestationToggleMain.checked) {
+        const gestationDaysInputMain = document.getElementById("gestation-days-input");
+        const birthWeightInputMain = document.getElementById("birth-weight-input");
+        let dayGestMain = parseFloat(gestationDaysInputMain ? gestationDaysInputMain.value : NaN) || 150;
+        dayGestMain = Math.min(280, Math.max(12, dayGestMain));
+        gestationDayMain = dayGestMain;
+        const birthWeightMain = parseFloat(birthWeightInputMain ? birthWeightInputMain.value : NaN) || 44;
+
+        const grUterWtParturitionMain = birthWeightMain * 1.825; // Eq. 3-15a
+        const rateMain = 0.0243 - 0.0000245 * dayGestMain;
+        const grUterWtTMain = grUterWtParturitionMain * Math.exp(-rateMain * (280 - dayGestMain)); // Eq. 3-16a
+        const grUterWtGainMain = rateMain * grUterWtTMain; // Eq. 3-17a
+        gestNELMain = grUterWtGainMain * 4.16; // Eq. 3-18
+        nel += gestNELMain;
+    }
+
     if (resultsContainer) {
         if (currentViewMode === "technical") {
             resultsContainer.innerHTML = `
@@ -3683,7 +3939,7 @@ function calculateRequirements() {
                             ${nel.toFixed(2)} Mcal/día <span class="util-text-suffix">(${(nel / dmi).toFixed(2)} Mcal/kg MS)</span>
                         </div>
                         <hr class="util-hr-light">
-                        <div style="font-size: 0.82rem; color: #FCE8C4; line-height: 1.4;">Energía Neta NASEM 2021 para mantenimiento y producción.</div>
+                        <div style="font-size: 0.82rem; color: #FCE8C4; line-height: 1.4;">${gestNELMain > 0 ? `Incluye ${gestNELMain.toFixed(2)} Mcal/día de gestación (día ${gestationDayMain.toFixed(0)}). ` : ""}Energía Neta NASEM 2021 para mantenimiento y producción.</div>
                     </div>
 
                     <!-- CARD 3: PROTEÍNA METABOLIZABLE (MP) — Tecnigrasas: Marrón -->
@@ -3922,18 +4178,34 @@ function renderMineralRiskPanel(dmi, bw, catalog) {
     const content = document.getElementById("mineral-risk-content");
     if (!content) return;
 
-    const upperCoeff = { Zn: 3.54, Cu: 0.63, Mn: 2.36 }; // mg/kg BW/d, límite superior de seguridad
+    // Límite superior de homeostasis (mg/kg PV/d), Daniel y Martín-Tereso, J. Dairy Sci. 109:6239-6251 (2026).
+    // Mn revisado al alza (2.36 -> 2.92): los autores no observaron aumento de Mn urinario a 2.92 mg/d/kg PV,
+    // pese a superar el límite teórico inicial de 2.36 (la retención no regulada de Mn se asocia principalmente
+    // a acumulación en tejido intestinal, no a sobrecarga sistémica). Zn y Cu sin cambios.
+    const upperCoeff = { Zn: 3.54, Cu: 0.63, Mn: 2.92 };
     const inputIds = { Zn: "risk-zn-input", Cu: "risk-cu-input", Mn: "risk-mn-input" };
     const labels = { Zn: "Zinc (Zn)", Cu: "Cobre (Cu)", Mn: "Manganeso (Mn)" };
 
     let rowsHtml = "";
     ["Zn", "Cu", "Mn"].forEach((sym) => {
         const min = catalog ? catalog[sym] : null;
-        const lowerLimit = min ? dmi * min.req_per_kg_dm : 0; // requerimiento neto NASEM ya calculado
+        const lowerLimit = min ? dmi * min.req_per_kg_dm : 0; // requerimiento dietario NASEM 2021 ya calculado
         const upperLimit = bw * upperCoeff[sym];
         const inputEl = document.getElementById(inputIds[sym]);
-        const actual = parseFloat(inputEl ? inputEl.value : NaN) || 0;
+        const rawValue = inputEl ? inputEl.value : "";
 
+        if (rawValue === "" || rawValue === null) {
+            rowsHtml += `
+                <div class="mineral-risk-row risk-neutral">
+                    <div class="mineral-risk-row-label">⚪ ${labels[sym]}</div>
+                    <div class="mineral-risk-row-values">Requerimiento dietario NASEM 2021: <strong>${lowerLimit.toFixed(0)} mg/d</strong> · Límite superior de homeostasis: <strong>${upperLimit.toFixed(0)} mg/d</strong></div>
+                    <div class="mineral-risk-row-zone">Sin dato ingresado</div>
+                </div>
+            `;
+            return;
+        }
+
+        const actual = parseFloat(rawValue) || 0;
         let zone, zoneClass, zoneIcon;
         if (actual < lowerLimit) {
             zone = "Déficit"; zoneClass = "risk-deficit"; zoneIcon = "🔴";
@@ -3946,7 +4218,7 @@ function renderMineralRiskPanel(dmi, bw, catalog) {
         rowsHtml += `
             <div class="mineral-risk-row ${zoneClass}">
                 <div class="mineral-risk-row-label">${zoneIcon} ${labels[sym]}</div>
-                <div class="mineral-risk-row-values">Requerimiento: <strong>${lowerLimit.toFixed(0)} mg/d</strong> · Límite superior: <strong>${upperLimit.toFixed(0)} mg/d</strong> · Aporte actual: <strong>${actual.toFixed(0)} mg/d</strong></div>
+                <div class="mineral-risk-row-values">Requerimiento dietario NASEM 2021: <strong>${lowerLimit.toFixed(0)} mg/d</strong> · Límite superior de homeostasis: <strong>${upperLimit.toFixed(0)} mg/d</strong> · Aporte actual: <strong>${actual.toFixed(0)} mg/d</strong></div>
                 <div class="mineral-risk-row-zone">${zone}</div>
             </div>
         `;
@@ -4195,12 +4467,14 @@ const qaKnowledgeBase = [
         keywords: ["dcad", "bac", "preparto", "hipocalcemia", "fiebre de leche", "aniones", "cationes", "cloruro", "sulfato", "amonio"],
         title: "⚡ Balance Catiónico-Aniónico Dietario (DCAD / BAC) en Preparto",
         badge: "NASEM 2021 (Cap. 12)",
-        formula: "DCAD (mEq/100g MS) = (Na + K) - (Cl + S) | Meta Preparto: -10 a -15 mEq/100g MS",
+        formula: "DCAD (mEq/kg MS) = [(%Na/0.023 + %K/0.039) - (%Cl/0.0355 + %S/0.016)] x 10 | Meta NASEM: ~ -200 mEq/kg MS",
         body: `<b>Estrategia de Acidificación Preparto para Prevención de Hipocalcemia Subclínica:</b>
-<br>• Al reducir el DCAD a <b>-10 a -15 mEq/100g MS</b> durante los últimos 21 días de gestación, se induce una acidosis metabólica compensada.
+<br>• NASEM 2021 (Cap. 12) indica un DCAD de <b>~ -200 mEq/kg MS</b> para alcanzar un pH urinario objetivo de ~6.5 (meta-análisis de Charbonneau et al., 2006).
+<br>• Muchos programas comerciales operan en un <b>rango práctico de campo de -50 a -150 mEq/kg MS</b>, más conservador que la meta NASEM — no son la misma recomendación, así que no deben confundirse.
+<br>• La variante <b>(Na+K) - (Cl + 0.6xS)</b> de Charbonneau et al. (2006) fue la que mejor predijo el pH urinario y la más asociada a menor incidencia de fiebre de leche, aunque la fórmula estándar de 4 iones (sin el factor 0.6) es la de uso más extendido (DeGaris y Lean, 2008).
 <br>• Esto sensibiliza los receptores tisulares a la PTH (Paratohormona), estimulando la resorción ósea de Calcio y la síntesis renal de 1,25-(OH)2 Vitamina D3.
-<br>• <b>Monitoreo Práctico:</b> El pH urinario de las vacas preparto debe ubicarse entre <b>6.0 y 6.5</b> (Holsteins) o <b>5.8 y 6.2</b> (Jerseys).`,
-        sources: "NASEM 2021 8ª Edición • Capítulo 12: Transition Cows • Dr. Jesse Goff DCAD Protocol"
+<br>• <b>Monitoreo Práctico:</b> El pH urinario de las vacas preparto debe ubicarse entre <b>6.0 y 6.5</b> (Holsteins) o <b>5.8 y 6.2</b> (Jerseys). Por debajo de <b>pH 6.3</b>, la excreción neta de ácido deja de correlacionar bien con el DCAD (Constable et al., 2009) — usa el pH urinario, no solo el número de DCAD, para validar en campo.`,
+        sources: "NASEM 2021 8ª Edición • Capítulo 12: Transition Cows • Charbonneau et al. (2006) • Constable et al. (2009) • Dr. Jesse Goff DCAD Protocol"
     },
     {
         id: "aminoacids",
@@ -4891,6 +5165,12 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     const btnCalcFE = document.getElementById("btn-calc-fe");
     if (btnCalcFE) btnCalcFE.addEventListener("click", () => { calculateFeedEfficiency(); triggerMooAudio(); });
+
+    const btnCalcDCAD = document.getElementById("btn-calc-dcad");
+    if (btnCalcDCAD) btnCalcDCAD.addEventListener("click", () => { calculateDCAD(); triggerMooAudio(); });
+
+    const btnCalcWater = document.getElementById("btn-calc-water");
+    if (btnCalcWater) btnCalcWater.addEventListener("click", () => { calculateWaterIntake(); triggerMooAudio(); });
 
     const gestationToggleEl = document.getElementById("gestation-toggle");
     const groupGestationDays = document.getElementById("group-gestation-days");
