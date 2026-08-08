@@ -16,8 +16,8 @@
 :root {
     --bg-main: #f8fafc;
     --bg-card: #ffffff;
-    --header-bg: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 50%, #7dd3fc 100%);
-    --header-border: #38bdf8;
+    --header-bg: linear-gradient(135deg, #ACD481 0%, #7DAE3F 55%, #4C8A34 100%);
+    --header-border: #2F713C;
     --text-primary: #0f172a;
     --text-secondary: #334155;
     --text-muted: #64748b;
@@ -26,6 +26,13 @@
     --accent-blue: #0284c7;
     --accent-amber: #d97706;
     --border-color: #e2e8f0;
+    /* Paleta Tecnigrasas (Manual de Identidad Corporativa) para banner/footer */
+    --tg-green-light: #7DAE3F;
+    --tg-green-dark: #2F713C;
+    --tg-gold: #F4A924;
+    --tg-brown: #593718;
+    --tg-black: #262626;
+    --tg-pattern: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='40' height='60' viewBox='0 0 40 60'><path d='M8 60 C4 48 14 42 9 30 C5 20 13 14 9 0' stroke='rgba(255,255,255,0.16)' stroke-width='2.5' fill='none' stroke-linecap='round'/><path d='M28 60 C24 50 33 44 27 32 C24 22 31 16 26 2' stroke='rgba(255,255,255,0.11)' stroke-width='2' fill='none' stroke-linecap='round'/></svg>");
 }
 
 * {
@@ -49,9 +56,11 @@ body {
     background-color: var(--bg-main);
 }
 
-/* App Header - Light Blue Top Banner */
+/* App Header - Pasture Green Top Banner (Paleta Tecnigrasas) */
 .app-header {
-    background: var(--header-bg);
+    background: var(--header-bg), var(--tg-pattern);
+    background-repeat: no-repeat, repeat;
+    background-size: cover, 40px 60px;
     border-bottom: 3px solid var(--header-border);
     border-radius: 0 0 20px 20px;
     padding: 20px 24px;
@@ -60,8 +69,10 @@ body {
     justify-content: space-between;
     gap: 20px;
     flex-wrap: wrap;
-    box-shadow: 0 6px 20px rgba(14, 116, 144, 0.15);
+    box-shadow: 0 6px 20px rgba(47, 113, 60, 0.25);
     margin-bottom: 24px;
+    position: relative;
+    overflow: hidden;
 }
 
 .brand {
@@ -74,17 +85,28 @@ body {
     width: 48px;
     height: 48px;
     background: #ffffff;
-    border: 2px solid var(--primary-emerald);
+    border: 2px solid var(--tg-green-dark);
     border-radius: 14px;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 4px 12px rgba(5, 150, 105, 0.2);
+    box-shadow: 0 4px 12px rgba(47, 113, 60, 0.25);
     cursor: pointer;
     transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    position: relative;
+    z-index: 1;
 }
 .brand-icon:hover {
     transform: scale(1.1) rotate(-5deg);
+}
+
+.brand-text {
+    position: relative;
+    z-index: 1;
+    background: rgba(255, 255, 255, 0.95);
+    padding: 8px 18px;
+    border-radius: 14px;
+    box-shadow: 0 4px 14px rgba(38, 38, 38, 0.18);
 }
 
 .brand-text h1 {
@@ -96,13 +118,13 @@ body {
 }
 
 .brand-text h1 span {
-    color: var(--primary-emerald);
+    color: var(--tg-gold);
 }
 
 .subtitle {
     font-size: 0.85rem;
-    font-weight: 600;
-    color: #0369a1;
+    font-weight: 700;
+    color: var(--tg-green-dark);
     margin-top: 2px;
 }
 
@@ -196,8 +218,9 @@ body {
 
 .toggle-label {
     font-size: 0.85rem;
-    font-weight: 600;
-    color: #0f172a;
+    font-weight: 700;
+    color: #ffffff;
+    text-shadow: 0 1px 3px rgba(38, 38, 38, 0.4);
 }
 
 .toggle-switch {
@@ -226,9 +249,9 @@ body {
 }
 
 .toggle-btn.active {
-    background: var(--primary-emerald);
+    background: var(--tg-green-dark);
     color: #ffffff;
-    box-shadow: 0 4px 12px rgba(5, 150, 105, 0.25);
+    box-shadow: 0 4px 12px rgba(47, 113, 60, 0.3);
 }
 
 /* Main Banner Info */
@@ -754,8 +777,9 @@ body {
 .toggle-scope-hint {
     display: block;
     font-size: 0.72rem;
-    font-weight: 500;
-    color: var(--text-muted);
+    font-weight: 600;
+    color: #F0F7E6;
+    text-shadow: 0 1px 3px rgba(38, 38, 38, 0.35);
     margin-top: 2px;
 }
 
@@ -948,40 +972,58 @@ body {
     color: #64748b;
 }
 
-/* Footer Author Credits */
+/* Footer Author Credits - Pasture Green (Paleta Tecnigrasas), simétrico con el header */
 .app-footer {
-    background: #ffffff;
-    border: 1px solid var(--border-color);
+    background: linear-gradient(135deg, #4C8A34 0%, #7DAE3F 55%, #ACD481 100%), var(--tg-pattern);
+    background-repeat: no-repeat, repeat;
+    background-size: cover, 40px 60px;
+    border: none;
+    border-top: 3px solid var(--tg-green-dark);
     border-radius: 18px;
     padding: 24px;
     text-align: center;
     margin-top: 32px;
-    box-shadow: 0 4px 16px rgba(15, 23, 42, 0.04);
+    box-shadow: 0 4px 16px rgba(47, 113, 60, 0.2);
+    position: relative;
+    overflow: hidden;
+}
+
+.author-credits {
+    position: relative;
+    z-index: 1;
 }
 
 .credits-badge {
     display: inline-block;
-    background: #ecfdf5;
-    color: #047857;
-    border: 1px solid #a7f3d0;
+    background: #ffffff;
+    color: var(--tg-green-dark);
+    border: 1px solid rgba(255, 255, 255, 0.6);
     font-size: 0.78rem;
     font-weight: 700;
     padding: 4px 12px;
     border-radius: 20px;
     margin-bottom: 8px;
+    box-shadow: 0 2px 8px rgba(38, 38, 38, 0.15);
 }
 
 .credits-name {
     font-family: 'Outfit', sans-serif;
     font-size: 1.15rem;
     font-weight: 700;
-    color: #0f172a;
+    color: #ffffff;
+    text-shadow: 0 1px 3px rgba(38, 38, 38, 0.35);
     margin-bottom: 4px;
+}
+
+.credits-name strong {
+    color: var(--tg-gold);
 }
 
 .credits-sub {
     font-size: 0.85rem;
-    color: #64748b;
+    font-weight: 500;
+    color: #ffffff;
+    text-shadow: 0 1px 3px rgba(38, 38, 38, 0.35);
 }
 
 
@@ -1624,7 +1666,7 @@ body {
                 </div>
                 <div class="brand-text">
                     <h1>RolanNutri<span>Pro</span></h1>
-                    <p class="subtitle">Motor de Requerimientos Nutricionales • Sistema Métrico (kg) • NASEM 2021</p>
+                    <p class="subtitle">Motor de Requerimientos Nutricionales • Sistema Métrico (kg) • Ciencia Multimodelo, Siempre Actualizada</p>
                 </div>
             </div>
 
@@ -2488,7 +2530,7 @@ body {
             <div class="author-credits">
                 <div class="credits-badge">👨‍⚕️ AUTORÍA Y CRÉDITOS ACADÉMICOS</div>
                 <p class="credits-name">Elaborado por <strong>Rolando Hernández Mora</strong>, Médico Veterinario Máster en Nutrición Animal</p>
-                <p class="credits-sub">Plataforma de Consulta y Formulación • Basado estrictamente en NASEM 2021, Cornell CNCPS 2023 y Oklahoma Beef Cattle Standards en Unidades Métricas (kg).</p>
+                <p class="credits-sub">Plataforma de Consulta y Formulación • Basado principalmente en NASEM 2021, Cornell CNCPS 2023 y Oklahoma Beef Cattle Standards en Unidades Métricas (kg).</p>
             </div>
         </footer>
     </div>
