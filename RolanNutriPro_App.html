@@ -3596,16 +3596,28 @@ function calculateWaterIntake() {
     const naGramsPerDay = na * dmi * 10;
     const waterMurphy = 16.0 + (1.58 * dmi) + (0.90 * milk) + (0.05 * naGramsPerDay) + (1.20 * tempMin);
 
+    // R3: Ecuación 9-3 NASEM 2021 (Appuhamy et al., 2016), recomendada para VACA SECA.
+    // No lleva intercepto — es correcto que no lo tenga. Reutiliza los mismos inputs
+    // de DMI, %MS y temperatura media que las ecuaciones de lactancia de arriba.
+    const tmpc2 = Math.pow(tempAvg - 16.4, 2);
+    const waterDryCow = (1.16 * dmi) + (0.23 * dmPct) + (0.44 * tempAvg) + (0.061 * tmpc2);
+
     container.innerHTML = `
+        <p class="util-note-muted" style="margin-bottom:6px;">Las Ecs. 9-1 y Murphy (1983) aplican a <strong>vacas en lactancia</strong>. La Ec. 9-3 aplica a <strong>vaca seca</strong>.</p>
         <div class="fe-result-box" style="border-color:#059669;">
-            <div class="fe-result-label">Ecuación 9-1 NASEM 2021 (recomendada)</div>
+            <div class="fe-result-label">Ecuación 9-1 NASEM 2021 (recomendada, lactancia)</div>
             <div class="fe-result-value" style="color:#059669;">${waterNasem.toFixed(1)} kg agua/día</div>
             <div class="fe-result-note">Appuhamy et al. (2016). NaK dietario = ${naK.toFixed(0)} mEq/kg MS.</div>
         </div>
         <div class="fe-result-box">
-            <div class="fe-result-label">Ecuación Alternativa — Murphy et al. (1983)</div>
+            <div class="fe-result-label">Ecuación Alternativa — Murphy et al. (1983), lactancia</div>
             <div class="fe-result-value">${waterMurphy.toFixed(1)} L agua/día</div>
             <div class="fe-result-note">Ecuación alternativa según NASEM 2021, Tabla 9-1. Usa temperatura mínima diaria (no la media).</div>
+        </div>
+        <div class="fe-result-box" style="border-color:#2F713C;">
+            <div class="fe-result-label">Ecuación 9-3 NASEM 2021 — recomendada para VACA SECA</div>
+            <div class="fe-result-value" style="color:#2F713C;">${waterDryCow.toFixed(1)} kg agua/día</div>
+            <div class="fe-result-note">Appuhamy et al. (2016). No lleva intercepto (correcto). Usa DMI, %MS de la dieta y temperatura media diaria.</div>
         </div>
     `;
 }
