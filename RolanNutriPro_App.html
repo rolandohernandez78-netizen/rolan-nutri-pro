@@ -2970,12 +2970,15 @@ function renderResultsVisualization(dmi, bw, nel, mp, ca, p) {
 
     // Cada barra usa su propio techo de escala solo para poder dibujarse en el mismo
     // ancho; no representa una meta clínica ni un valor de tabla NASEM independiente.
+    // Mismos colores Tecnigrasas que las 5 tarjetas de "Requerimientos Calculados"
+    // (DMI verde oscuro, NEL mostaza, MP marrón, Ca verde claro, P negro), para que el
+    // usuario asocie de un vistazo cada barra con su tarjeta correspondiente.
     const rows = [
-        { label: "DMI", value: (dmi / bw) * 100, unit: "% BW", scaleMax: Math.max(5.5, ((dmi / bw) * 100) * 1.15), color: "#059669" },
-        { label: "NEL", value: nel / dmi, unit: "Mcal/kg MS", scaleMax: Math.max(2.3, (nel / dmi) * 1.15), color: "#2563eb" },
-        { label: "MP", value: (mp / dmi) * 100, unit: "% MS", scaleMax: Math.max(14, ((mp / dmi) * 100) * 1.15), color: "#7c3aed" },
-        { label: "Ca", value: ca / dmi, unit: "g/kg MS", scaleMax: Math.max(11, (ca / dmi) * 1.15), color: "#d97706" },
-        { label: "P", value: p / dmi, unit: "g/kg MS", scaleMax: Math.max(6, (p / dmi) * 1.15), color: "#0284c7" }
+        { label: "DMI", value: (dmi / bw) * 100, unit: "% BW", scaleMax: Math.max(5.5, ((dmi / bw) * 100) * 1.15), color: "#2F713C" },
+        { label: "NEL", value: nel / dmi, unit: "Mcal/kg MS", scaleMax: Math.max(2.3, (nel / dmi) * 1.15), color: "#F4A924" },
+        { label: "MP", value: (mp / dmi) * 100, unit: "% MS", scaleMax: Math.max(14, ((mp / dmi) * 100) * 1.15), color: "#593718" },
+        { label: "Ca", value: ca / dmi, unit: "g/kg MS", scaleMax: Math.max(11, (ca / dmi) * 1.15), color: "#7DAE3F" },
+        { label: "P", value: p / dmi, unit: "g/kg MS", scaleMax: Math.max(6, (p / dmi) * 1.15), color: "#262626" }
     ];
 
     const clamp = (n) => Math.max(0, Math.min(100, n));
