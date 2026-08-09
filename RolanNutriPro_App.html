@@ -4461,7 +4461,7 @@ const qaKnowledgeBase = [
         keywords: ["energia", "nel", "nem", "neg", "tdn", "mcal", "energia neta"],
         title: "⚡ Energía Neta de Lactancia (NEL) y Carbohidratos (NASEM 2021 Cap. 3)",
         badge: "NASEM 2021 (Cap. 3)",
-        formula: "NEL Total (Mcal/d) = NEm (0.10 * BW^0.75) + NE Milk (Leche * [0.0929*Fat% + 0.0585*Prot% + 0.192])",
+        formula: "NEL Total (Mcal/d) = NEm (0.10 * BW^0.75) + NE Milk (Leche * [0.0929*Fat% + 0.0585*Prot% + 3.95*Lactosa%/100])",
         body: `<b>Sistema de Energía Neta NASEM 2021:</b>
 <br>• <b>Densidad Energética Dietaria:</b> 1.65 - 1.75 Mcal NEL/kg MS en lactancia alta.
 <br>• <b>Almidón Ruminal:</b> Meta de <b>24.0% - 28.0% de la MS</b>. Nivel máximo de 30.0% para prevenir Acidosis Ruminal Subaguda (SARA).
@@ -4473,27 +4473,27 @@ const qaKnowledgeBase = [
         keywords: ["dmi", "materia seca", "consumo", "alimento", "cuanto come", "ingesta", "kg ms", "2-1", "souza"],
         title: "🌾 Consumo de Materia Seca (DMI) en Ganado Lechero (NASEM 2021 Ecuación 2-1)",
         badge: "NASEM 2021 (Cap. 2)",
-        formula: "DMI (kg/d) = [3.75 + (0.022 * BW) + (0.305 * FCM 4.0%)] * Factor Lag DIM",
-        body: `<b>Fórmula NASEM 2021 (Capítulo 2, Ecuación 2-1 de Souza et al., 2019):</b>
-<br>• <b>4.0% FCM:</b> Leche Corregida por Grasa al 4.0% = <code>Leche * (0.4 + 0.15 * Grasa%)</code>.
-<br>• <b>Factor Lag Lactancia:</b> <code>1 - exp(-0.192 * (WOL + 3.67))</code>.
-<br>• <b>DMI Multíparas (2+ partos):</b> Base completa de 3.75 kg/d + 0.022*BW + 0.305*FCM4.0 (~4.20% Peso Vivo en pico).
-<br>• <b>DMI Primíparas (1er parto):</b> Factor de ajuste del 88% (~3.43% Peso Vivo en pico) por menor capacidad de rumen.
-<br>• <b>Vacas Secas Lejanas:</b> 1.97% del Peso Vivo (~12.8 - 13.4 kg MS/d).
-<br>• <b>Vacas Preparto (Close-Up):</b> 1.70% del Peso Vivo (~11.0 - 11.5 kg MS/d).`,
+        formula: "DMI (kg/d) = [Intercepto + 0.305*MilkE + 0.022*BW - Coef.BCS*BCS] * [1 - Coef.Lag*e^(-0.053*DIM)]",
+        body: `<b>Fórmula NASEM 2021 real implementada (Capítulo 2, Ecuación 2-1 de Souza et al., 2019):</b>
+<br>• <b>MilkE (Mcal/d)</b> = Leche * (0.0929*Grasa% + 0.0585*Proteína% + 3.95*Lactosa%/100).
+<br>• <b>DMI Multíparas (2+ partos):</b> [9.4 + 0.305*MilkE + 0.022*BW − 2.559*BCS] * [1 − 0.348*e^(−0.053*DIM)].
+<br>• <b>DMI Primíparas (1er parto):</b> [3.7 + 0.305*MilkE + 0.022*BW − 0.689*BCS] * [1 − 0.212*e^(−0.053*DIM)].
+<br>• <b>Vacas Secas Lejanas:</b> 1.97% del Peso Vivo (NASEM 2021 Cap. 12).
+<br>• <b>Vacas Preparto (Close-Up):</b> 1.70% del Peso Vivo (NASEM 2021 Cap. 12).`,
         sources: "NASEM 2021 8ª Edición • Capítulo 2 (Pág. 24) • de Souza et al. (2019)"
     },
     {
         id: "water",
-        keywords: ["agua", "bebida", "beber", "consumo de agua", "litros", "hidratacion", "illinois", "cardoso", "wetherly"],
-        title: "💧 Consumo de Agua de Bebida (Ecuación Universidad de Illinois 2025)",
-        badge: "Univ. Illinois (Cardoso et al.)",
-        formula: "Consumo Agua (L/día) = (DMI * 1.58) + (Leche kg * 0.90) + (Sodio g * 0.05) + (Temp °C * 1.20) + 15.6",
-        body: `<b>Ecuación Científica de Predicción de Agua (Cardoso & Wetherly, Univ. Illinois 2025):</b>
-<br>• Una vaca lechera de alta producción (35 kg leche, 24 kg DMI) consume entre <b>115 y 145 Litros de agua limpia al día</b>.
-<br>• El consumo de agua aumenta en un <b>1.2 Litros por cada °C adicional</b> por encima de los 20°C de temperatura ambiente.
-<br>• Debe garantizarse al menos <b>10 cm de espacio lineal de bebedero por vaca</b> con flujo de agua >= 20 L/minuto.`,
-        sources: "University of Illinois Dairy Extension 2025 • Dr. Felipe Cardoso Research Lab"
+        keywords: ["agua", "bebida", "beber", "consumo de agua", "litros", "hidratacion", "illinois", "cardoso", "wetherly", "murphy"],
+        title: "💧 Consumo de Agua de Bebida (NASEM 2021 Cap. 9, Tabla 9-1)",
+        badge: "NASEM 2021 (Cap. 9)",
+        formula: "Ec. 9-1 (recomendada, lactancia): Agua (kg/d) = -91.1 + 2.93*DMI + 0.61*%MS + 0.062*NaK + 2.49*%CP + 0.76*Temp. media °C",
+        body: `<b>Ecuaciones de Predicción de Consumo de Agua (calculadora en el módulo Transición y Vaca Seca):</b>
+<br>• <b>Ecuación 9-1 NASEM 2021 (recomendada, vacas en lactancia):</b> Appuhamy et al. (2016). Usa DMI, %MS de la dieta, NaK dietario (mEq/kg), %CP y temperatura media diaria.
+<br>• <b>Ecuación alternativa — Murphy et al. (1983):</b> Agua (L/d) = 16.0 + 1.58*DMI + 0.90*Leche + 0.05*Na(g/d) + 1.20*Temperatura MÍNIMA diaria. NASEM 2021 la lista como alternativa, no como la recomendada.
+<br>• <b>Ecuación 9-3 NASEM 2021 (recomendada, vaca seca):</b> FWI (kg/d) = 1.16*DMI + 0.23*%MS + 0.44*Temp. media + 0.061*(Temp. media − 16.4)².
+<br>• Referencia de campo: una vaca de alta producción (35 kg leche) consume típicamente 115-130 L/día; asegura >= 10 cm de espacio lineal de bebedero por vaca con flujo >= 20 L/minuto.`,
+        sources: "NASEM 2021 8ª Edición, Capítulo 9: Water, Tabla 9-1, p. 188 • Appuhamy et al. (2016) • Murphy et al. (1983)"
     },
     {
         id: "dcad",
@@ -4563,10 +4563,11 @@ const qaKnowledgeBase = [
         keywords: ["riesgo mineral", "zinc cobre manganeso", "homeostatico", "limite superior mineral", "sobrecarga mineral", "zn cu mn"],
         title: "🚦 Riesgo Homeostático de Zinc, Cobre y Manganeso",
         badge: "Daniel & Martín-Tereso (2026)",
-        formula: "Límite Superior (mg/d) = BW (kg) × [Zn: 3.54 | Cu: 0.63 | Mn: 2.36] mg/kg BW/d",
+        formula: "Límite Superior de Homeostasis (mg/d) = BW (kg) × [Zn: 3.54 | Cu: 0.63 | Mn: 2.92] mg/kg BW/d",
         body: `<b>Semáforo de Riesgo Homeostático (módulo Minerales):</b>
-<br>• Compara el aporte real de la dieta contra el rango entre el requerimiento neto NASEM (límite inferior) y el límite superior de seguridad calculado a partir del peso vivo.
-<br>• Tres zonas: <b>déficit</b> (por debajo del requerimiento), <b>adecuado</b> (dentro del rango) y <b>riesgo de sobrecarga</b> (por encima del límite superior).`,
+<br>• Compara el aporte real de la dieta contra dos límites de naturaleza distinta: el <b>requerimiento dietario NASEM 2021</b> (piso) y el <b>límite superior de homeostasis</b> (Daniel y Martín-Tereso, 2026; techo, calculado a partir del peso vivo).
+<br>• Tres zonas: <b>déficit</b> (por debajo del requerimiento), <b>adecuado</b> (dentro del rango) y <b>riesgo de sobrecarga</b> (por encima del límite superior).
+<br>• El límite de Mn es <b>2.92</b> mg/kg PV/d, no 2.36: los autores lo revisaron al alza para la evaluación de riesgo de aporte excesivo porque no observaron aumento de Mn urinario a 2.92 mg/d/kg PV pese a superar el límite teórico inicial de 2.36 — lo atribuyen a que la retención no regulada de Mn se asocia principalmente a acumulación en tejido intestinal, no a sobrecarga sistémica. Zn (3.54) y Cu (0.63) no cambiaron.`,
         sources: "Daniel & Martín-Tereso, J. Dairy Sci. 109:6239-6251 (2026)"
     },
     {
