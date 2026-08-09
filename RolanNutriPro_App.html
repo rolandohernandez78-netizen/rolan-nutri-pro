@@ -3768,6 +3768,37 @@ function evaluateInflammationRisk() {
     `;
 }
 
+/**
+ * R2: DMI y MilkE de vaca en lactancia, NASEM 2021 Ecuación 2-1 real (de Souza et al. 2019).
+ * Única fuente de verdad para este cálculo: la usan tanto calculateRequirements() como
+ * updateMineralTablesAndHighlight(), para que ninguna de las dos quede desincronizada de
+ * la otra si se corrige un parámetro compartido (ej. la lactosa, que antes solo se
+ * corrigió en un lugar — ver R2 en el prompt de cierre de auditoría).
+ */
+function computeLactatingDMI(bw, milk, fat, protein, dim, bcs, lactosePct, isMultiparous) {
+    const lactoseFactor = 3.95 * (lactosePct / 100.0);
+    const milkE = milk * (0.0929 * fat + 0.0585 * protein + lactoseFactor); // MilkE, Mcal/d
+    let dmiBase, lag, floor;
+    if (isMultiparous) {
+        // DMI = [9.4 + 0.305*MilkE + 0.022*BW - 2.559*BCS] * [1 - 0.348*e^(-0.053*DIM)]
+        dmiBase = 9.4 + (0.305 * milkE) + (0.022 * bw) - (2.559 * bcs);
+        lag = 1.0 - (0.348 * Math.exp(-0.053 * dim));
+        floor = 14.0;
+    } else {
+        // DMI = [3.7 + 0.305*MilkE + 0.022*BW - 0.689*BCS] * [1 - 0.212*e^(-0.053*DIM)]
+        dmiBase = 3.7 + (0.305 * milkE) + (0.022 * bw) - (0.689 * bcs);
+        lag = 1.0 - (0.212 * Math.exp(-0.053 * dim));
+        floor = 12.0;
+    }
+    const dmi = Math.max(floor, dmiBase * lag); // piso de seguridad defensivo, no forma parte de la ecuación NASEM
+    return { dmi, milkE };
+}
+
+function getLactosePct() {
+    const el = document.getElementById("lactose-input");
+    return parseFloat(el ? el.value : NaN) || 4.85;
+}
+
 function calculateRequirements() {
     speciesSelect = speciesSelect || document.getElementById("species-select");
     categorySelect = categorySelect || document.getElementById("category-select");
@@ -3799,11 +3830,10 @@ function calculateRequirements() {
     const dim = parseFloat(dimInput.value) || cat.dim || 60;
     const adg = parseFloat(adgInput.value) || cat.adg_kg || 1.20;
     const bcs = parseFloat(bcsInput ? bcsInput.value : NaN) || cat.bcs || 3.0;
-    // C9: misma fuente de lactosa que usa el Balance Energético (input lactose-input, default 4.85%),
-    // en vez de la constante fija 0.192 (que corresponde a 3.95 * 0.0485), para que ambos módulos coincidan.
-    const lactoseInputEl = document.getElementById("lactose-input");
-    const lactosePct = parseFloat(lactoseInputEl ? lactoseInputEl.value : NaN) || 4.85;
-    const lactoseFactor = 3.95 * (lactosePct / 100.0);
+    // R2: misma fuente de lactosa que usa el Balance Energético (input lactose-input, default 4.85%),
+    // leída a través de computeLactatingDMI() para que calculateRequirements() y
+    // updateMineralTablesAndHighlight() coincidan siempre.
+    const lactosePct = getLactosePct();
 
     let dmi = 0, nel = 0, mp = 0, ca = 0, p = 0;
     let dmiNote = "";
@@ -3811,11 +3841,8 @@ function calculateRequirements() {
 
     if (catId === "lactating_primiparous") {
         // NASEM 2021 Ecuación 2-1 real (de Souza et al. 2019). Parity = 0 (primípara).
-        // DMI = [3.7 + 0.305*MilkE + 0.022*BW - 0.689*BCS] * [1 - 0.212*e^(-0.053*DIM)]
-        const milkE = milk * (0.0929 * fat + 0.0585 * protein + lactoseFactor); // MilkE, Mcal/d
-        const dmiBase = 3.7 + (0.305 * milkE) + (0.022 * bw) - (0.689 * bcs);
-        const lag = 1.0 - (0.212 * Math.exp(-0.053 * dim));
-        dmi = Math.max(12.0, dmiBase * lag); // piso de seguridad defensivo, no forma parte de la ecuación NASEM
+        const { dmi: dmiCalc, milkE } = computeLactatingDMI(bw, milk, fat, protein, dim, bcs, lactosePct, false);
+        dmi = dmiCalc;
         dmiNote = "Estimado por Ecuación NASEM 2021 Eq. 2-1 real, de Souza et al. 2019 (incluye BCS y MilkE, Vaca Primípara).";
 
         const nem = 0.10 * Math.pow(bw, 0.75);
@@ -3836,11 +3863,8 @@ function calculateRequirements() {
         p = (pMaint + pMilk) / 0.70;
     } else if (catId === "lactating_multiparous") {
         // NASEM 2021 Ecuación 2-1 real (de Souza et al. 2019). Parity = 1 (multípara).
-        // DMI = [9.4 + 0.305*MilkE + 0.022*BW - 2.559*BCS] * [1 - 0.348*e^(-0.053*DIM)]
-        const milkE = milk * (0.0929 * fat + 0.0585 * protein + lactoseFactor); // MilkE, Mcal/d
-        const dmiBase = 9.4 + (0.305 * milkE) + (0.022 * bw) - (2.559 * bcs);
-        const lag = 1.0 - (0.348 * Math.exp(-0.053 * dim));
-        dmi = Math.max(14.0, dmiBase * lag); // piso de seguridad defensivo, no forma parte de la ecuación NASEM
+        const { dmi: dmiCalc, milkE } = computeLactatingDMI(bw, milk, fat, protein, dim, bcs, lactosePct, true);
+        dmi = dmiCalc;
         dmiNote = "Estimado por Ecuación NASEM 2021 Eq. 2-1 real, de Souza et al. 2019 (incluye BCS y MilkE, Vaca Multípara).";
 
         const nem = 0.10 * Math.pow(bw, 0.75);
@@ -4091,17 +4115,11 @@ function updateMineralTablesAndHighlight() {
 
     let dmi = 0;
     if (catId === "lactating_primiparous") {
-        // NASEM 2021 Ecuación 2-1 real (de Souza et al. 2019). Parity = 0.
-        const milkE = milk * (0.0929 * fat + 0.0585 * protein + 0.192);
-        const dmiBase = 3.7 + (0.305 * milkE) + (0.022 * bw) - (0.689 * bcs);
-        const lag = 1.0 - (0.212 * Math.exp(-0.053 * dim));
-        dmi = Math.max(12.0, dmiBase * lag);
+        // R2: misma función compartida que calculateRequirements() — antes recalculaba
+        // el DMI con la constante fija 0.192 en vez de leer la lactosa del usuario.
+        dmi = computeLactatingDMI(bw, milk, fat, protein, dim, bcs, getLactosePct(), false).dmi;
     } else if (catId === "lactating_multiparous") {
-        // NASEM 2021 Ecuación 2-1 real (de Souza et al. 2019). Parity = 1.
-        const milkE = milk * (0.0929 * fat + 0.0585 * protein + 0.192);
-        const dmiBase = 9.4 + (0.305 * milkE) + (0.022 * bw) - (2.559 * bcs);
-        const lag = 1.0 - (0.348 * Math.exp(-0.053 * dim));
-        dmi = Math.max(14.0, dmiBase * lag);
+        dmi = computeLactatingDMI(bw, milk, fat, protein, dim, bcs, getLactosePct(), true).dmi;
     } else if (catId === "dry_far_off") {
         dmi = bw * 0.0197;
     } else if (catId === "dry_close_up") {
