@@ -1725,7 +1725,7 @@ body {
                 <div class="brand-text">
                     <h1>RolanNutri<span>Pro</span></h1>
                     <p class="subtitle">Motor de Requerimientos Nutricionales • Sistema Métrico (kg) • Evaluación Multimodelo</p>
-                    <span class="version-badge">v2.1 • Ago 2026</span>
+                    <span class="version-badge">v2.2 • Ago 2026</span>
                 </div>
             </div>
 
@@ -1753,7 +1753,7 @@ body {
         </header>
 
         <section class="release-banner" aria-label="Versión actual de RolanNutriPro">
-            <div class="release-banner__marker" aria-hidden="true"><span>v2.1</span></div>
+            <div class="release-banner__marker" aria-hidden="true"><span>v2.2</span></div>
             <div class="release-banner__copy">
                 <strong>Actualización</strong>
                 <span>Agosto 2026</span>
@@ -1781,10 +1781,10 @@ body {
             <div class="module-tabs" role="tablist" id="module-tablist" aria-label="Módulos">
                 <button type="button" class="module-tab" id="tab-inicio" role="tab" aria-selected="true" aria-controls="panel-inicio" data-module="inicio" tabindex="0">📊 Inicio / Calculadora</button>
                 <button type="button" class="module-tab" id="tab-minerales" role="tab" aria-selected="false" aria-controls="panel-minerales" data-module="minerales" tabindex="-1">🧪 Minerales</button>
+                <button type="button" class="module-tab" id="tab-grasas" role="tab" aria-selected="false" aria-controls="panel-grasas" data-module="grasas" tabindex="-1">🥑 Ácidos Grasos / Tecnigrasas</button>
                 <button type="button" class="module-tab" id="tab-transicion" role="tab" aria-selected="false" aria-controls="panel-transicion" data-module="transicion" tabindex="-1">🐄 Transición y Vaca Seca</button>
                 <button type="button" class="module-tab" id="tab-cncps" role="tab" aria-selected="false" aria-controls="panel-cncps" data-module="cncps" tabindex="-1">🔬 CNCPS Avanzado</button>
                 <button type="button" class="module-tab" id="tab-eficiencia" role="tab" aria-selected="false" aria-controls="panel-eficiencia" data-module="eficiencia" tabindex="-1">📈 Eficiencia y Ración</button>
-                <button type="button" class="module-tab" id="tab-grasas" role="tab" aria-selected="false" aria-controls="panel-grasas" data-module="grasas" tabindex="-1">🥑 Ácidos Grasos / Tecnigrasas</button>
                 <button type="button" class="module-tab" id="tab-qa" role="tab" aria-selected="false" aria-controls="panel-qa" data-module="qa" tabindex="-1">💬 Asistente Q&amp;A</button>
                 <button type="button" class="module-tab" id="tab-referencia" role="tab" aria-selected="false" aria-controls="panel-referencia" data-module="referencia" tabindex="-1">📚 Referencia</button>
             </div>
@@ -5134,7 +5134,7 @@ function updateFormFieldsAndDefaults() {
     }
 }
 
-const MODULE_IDS = ["inicio", "minerales", "transicion", "cncps", "eficiencia", "grasas", "qa", "referencia"];
+const MODULE_IDS = ["inicio", "minerales", "grasas", "transicion", "cncps", "eficiencia", "qa", "referencia"];
 
 function showModule(moduleId) {
     if (MODULE_IDS.indexOf(moduleId) === -1) moduleId = MODULE_IDS[0];

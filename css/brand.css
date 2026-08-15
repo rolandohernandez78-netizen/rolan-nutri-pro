@@ -117,6 +117,21 @@
     font-weight: 600;
 }
 
+/* Tecnigras ocupa un lugar comercial destacado: mostaza en reposo y verde al abrirse. */
+.module-tab[data-module="grasas"]:not(.active) {
+    color: #3f2d0c;
+    background: linear-gradient(135deg, #f5c85a, #e6aa2f);
+    border-color: #c58b1b;
+    box-shadow: 0 3px 10px rgba(197, 139, 27, 0.24);
+}
+
+.module-tab[data-module="grasas"]:not(.active):hover {
+    color: #2f2108;
+    background: linear-gradient(135deg, #f8d477, #edb743);
+    border-color: #ad7713;
+    box-shadow: 0 4px 13px rgba(173, 119, 19, 0.3);
+}
+
 .tecnigras-showcase {
     display: grid;
     grid-template-columns: minmax(300px, 0.88fr) minmax(360px, 1.12fr);
