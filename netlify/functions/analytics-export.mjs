@@ -6,6 +6,9 @@ const MAX_RECORDS = 10000;
 const MAX_RANGE_DAYS = 400;
 const ALLOWED_ORIGINS = new Set([
   'https://rolanutripro.netlify.app',
+  // Los documentos abiertos con file:// envían Origin: null. Se admite únicamente
+  // en esta exportación protegida con X-Analytics-Key, igual que el panel PowerOmega.
+  'null',
   'http://localhost:4173',
   'http://127.0.0.1:4173'
 ]);
