@@ -878,20 +878,31 @@
         display: none;
     }
 
+    .footer-achievements__grid {
+        gap: 12px;
+    }
+
+    .footer-seal-card {
+        min-height: 132px;
+        gap: 10px;
+        padding: 7px 12px;
+        border-radius: 15px;
+    }
+
     .footer-seal-card img {
-        width: 94px;
-        height: 94px;
-        flex-basis: 94px;
+        width: 116px;
+        height: 116px;
+        flex-basis: 116px;
     }
 
     .footer-award-card,
     .footer-award-crop {
-        min-height: 158px;
-        height: 158px;
+        min-height: 140px;
+        height: 140px;
     }
 
     .footer-award-crop img {
-        top: -12px;
+        top: -4px;
     }
 }
 
