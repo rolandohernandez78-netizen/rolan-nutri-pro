@@ -1,0 +1,10 @@
+.git/
+.netlify/
+node_modules/
+estadistica.html
+css/estadistica.css
+js/estadistica.js
+analytics-data/
+rolanutripro-analytics-access-key.txt
+INSTRUCCIONES_ANALITICA_LOCAL.txt
+.analytics-local.json

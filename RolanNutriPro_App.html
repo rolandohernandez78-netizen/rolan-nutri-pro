@@ -11,6 +11,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@500;600;700;800&family=Fredoka:wght@600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/analytics.css">
     <style>
 /* RolanNutriPro - Modern Light Design System */
 :root {
@@ -2662,9 +2663,30 @@ body {
                 <div class="credits-badge">👨‍⚕️ AUTORÍA Y CRÉDITOS ACADÉMICOS</div>
                 <p class="credits-name">Elaborado por <strong>Rolando Hernández Mora</strong>, Médico Veterinario Máster en Nutrición Animal</p>
                 <p class="credits-sub">Plataforma de Consulta y Formulación • Basado principalmente en NASEM 2021, Cornell CNCPS 2023 y Oklahoma Beef Cattle Standards en Unidades Métricas (kg).</p>
+                <button type="button" id="btnPrivacySettings" class="analytics-privacy-link">Privacidad y datos de navegación</button>
             </div>
         </footer>
     </div>
+
+    <aside id="analyticsConsent" class="analytics-consent" role="dialog" aria-modal="true" aria-labelledby="analyticsConsentTitle" aria-describedby="analyticsConsentText" hidden>
+        <div class="analytics-consent__backdrop" aria-hidden="true"></div>
+        <div class="analytics-consent__panel">
+            <button type="button" id="btnAnalyticsClose" class="analytics-consent__close" aria-label="Cerrar preferencias de privacidad" hidden>×</button>
+            <div class="analytics-consent__brand" aria-hidden="true"><span>🐮</span></div>
+            <div class="analytics-consent__content">
+                <span class="analytics-consent__eyebrow">Tu privacidad importa</span>
+                <h2 id="analyticsConsentTitle">Datos de navegación en RolanNutriPro</h2>
+                <p id="analyticsConsentText">Con tu autorización, RolanNutriPro recopila estadísticas seudonimizadas de navegación, como módulos consultados, descargas, tiempo de interacción, tipo de dispositivo, procedencia y ubicación aproximada —país, departamento y ciudad—. No recopilamos nombres, correos, ubicación GPS, información clínica, preguntas escritas ni valores ingresados en los calculadores.</p>
+                <p>La información se utiliza exclusivamente para medir y mejorar la aplicación, de acuerdo con la Ley 1581 de 2012, el Decreto 1074 de 2015 y la <a href="https://www.tecnigrasas.com/politicas-tratamiento-de-datos/" target="_blank" rel="noopener noreferrer">Política de Tratamiento de Datos Personales de Tecnigrasas S.A.S.</a></p>
+                <p id="analyticsGpcNotice" class="analytics-consent__gpc" hidden>Tu navegador comunica Global Privacy Control. La analítica permanecerá desactivada mientras esta señal esté activa.</p>
+                <div class="analytics-consent__actions">
+                    <button type="button" id="btnAnalyticsAccept" class="analytics-consent__accept">Aceptar analítica</button>
+                    <button type="button" id="btnAnalyticsDecline" class="analytics-consent__necessary">Solo necesarias</button>
+                </div>
+                <p class="analytics-consent__fineprint">La analítica está desactivada de forma predeterminada. Puedes cambiar o retirar tu consentimiento en cualquier momento desde el pie de página.</p>
+            </div>
+        </div>
+    </aside>
 
     <script>
 window.NUTRIENT_DB = {
@@ -5275,5 +5297,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 
 </script>
+<script src="js/analytics.js" defer></script>
 </body>
 </html>

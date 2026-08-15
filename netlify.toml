@@ -1,0 +1,42 @@
+[build]
+  publish = "."
+
+[functions]
+  directory = "netlify/functions"
+  node_bundler = "esbuild"
+
+[[redirects]]
+  from = "/estadistica.html"
+  to = "/404.html"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/rolanutripro-analytics-access-key.txt"
+  to = "/404.html"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/INSTRUCCIONES_ANALITICA_LOCAL.txt"
+  to = "/404.html"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/analytics-data/*"
+  to = "/404.html"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/css/estadistica.css"
+  to = "/404.html"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/js/estadistica.js"
+  to = "/404.html"
+  status = 404
+  force = true
