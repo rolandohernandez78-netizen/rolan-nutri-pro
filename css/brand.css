@@ -325,6 +325,111 @@
     line-height: 1.45;
 }
 
+.tecnigras-download-banner {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 18px;
+    min-height: 98px;
+    margin: -4px 0 24px;
+    padding: 18px 22px;
+    color: #fff;
+    background:
+        radial-gradient(circle at 10% 0%, rgba(244, 169, 36, 0.22), transparent 34%),
+        linear-gradient(112deg, var(--brand-green-dark), var(--brand-green) 64%, #277638);
+    border: 1px solid rgba(244, 169, 36, 0.72);
+    border-radius: 17px;
+    box-shadow: 0 10px 26px rgba(47, 113, 60, 0.2);
+    text-decoration: none;
+    overflow: hidden;
+    position: relative;
+    transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
+}
+
+.tecnigras-download-banner::after {
+    content: '';
+    width: 180px;
+    height: 180px;
+    position: absolute;
+    top: -100px;
+    right: 8%;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 50%;
+    pointer-events: none;
+}
+
+.tecnigras-download-banner:hover {
+    color: #fff;
+    border-color: var(--brand-gold);
+    box-shadow: 0 14px 32px rgba(47, 113, 60, 0.28);
+    transform: translateY(-2px);
+}
+
+.tecnigras-download-banner:focus-visible {
+    outline: 3px solid var(--brand-gold);
+    outline-offset: 3px;
+}
+
+.tecnigras-download-banner__icon {
+    width: 54px;
+    height: 54px;
+    display: grid;
+    place-items: center;
+    color: var(--brand-ink);
+    background: var(--brand-gold);
+    border: 1px solid rgba(255, 255, 255, 0.58);
+    border-radius: 16px;
+    box-shadow: 0 6px 14px rgba(38, 38, 38, 0.22);
+    font-size: 1.35rem;
+    font-weight: 800;
+}
+
+.tecnigras-download-banner__copy {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    min-width: 0;
+    position: relative;
+    z-index: 1;
+}
+
+.tecnigras-download-banner__copy small {
+    color: #fef3c7;
+    font-size: 0.62rem;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+}
+
+.tecnigras-download-banner__copy strong {
+    color: #fff;
+    font-size: clamp(1rem, 1.8vw, 1.32rem);
+    line-height: 1.25;
+}
+
+.tecnigras-download-banner__copy > span {
+    color: rgba(255, 255, 255, 0.78);
+    font-size: 0.74rem;
+    line-height: 1.45;
+}
+
+.tecnigras-download-banner__action {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 42px;
+    padding: 9px 14px;
+    color: var(--brand-green-dark);
+    background: #fff;
+    border-radius: 999px;
+    box-shadow: 0 5px 14px rgba(38, 38, 38, 0.16);
+    font-size: 0.72rem;
+    font-weight: 800;
+    white-space: nowrap;
+    position: relative;
+    z-index: 1;
+}
+
 .app-footer {
     padding: clamp(24px, 4vw, 46px) !important;
     color: #fff;
@@ -464,29 +569,56 @@
 
 .footer-achievements__grid {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 14px;
-    max-width: 900px;
+    grid-template-columns: repeat(3, minmax(170px, 1fr)) minmax(300px, 1.42fr);
+    gap: 16px;
+    align-items: stretch;
+    max-width: 1220px;
     margin: 0 auto;
 }
 
 .footer-seal-card {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 15px;
+    min-height: 160px;
     min-width: 0;
-    padding: 11px 14px;
-    background: rgba(255, 255, 255, 0.96);
-    border: 1px solid rgba(244, 169, 36, 0.24);
-    border-radius: 14px;
-    box-shadow: 0 7px 18px rgba(0, 0, 0, 0.16);
+    padding: 15px 17px;
+    background:
+        radial-gradient(circle at 22% 50%, rgba(244, 169, 36, 0.13), transparent 36%),
+        linear-gradient(145deg, #ffffff, #faf9f5);
+    border: 1px solid rgba(244, 169, 36, 0.36);
+    border-radius: 16px;
+    box-shadow: 0 9px 23px rgba(0, 0, 0, 0.19), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+    position: relative;
+    overflow: hidden;
+    transition: transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
+}
+
+.footer-seal-card::after {
+    content: '';
+    width: 58px;
+    height: 58px;
+    position: absolute;
+    right: -34px;
+    bottom: -34px;
+    border: 1px solid rgba(244, 169, 36, 0.22);
+    border-radius: 50%;
+}
+
+.footer-seal-card:hover {
+    border-color: rgba(244, 169, 36, 0.72);
+    box-shadow: 0 13px 29px rgba(0, 0, 0, 0.24), inset 0 1px 0 #fff;
+    transform: translateY(-3px);
 }
 
 .footer-seal-card img {
-    width: 74px;
-    height: 74px;
-    flex: 0 0 74px;
+    width: 106px;
+    height: 106px;
+    flex: 0 0 106px;
     object-fit: contain;
+    filter: drop-shadow(0 7px 8px rgba(89, 55, 24, 0.2));
+    position: relative;
+    z-index: 1;
 }
 
 .footer-seal-card div {
@@ -494,11 +626,13 @@
     flex-direction: column;
     min-width: 0;
     gap: 3px;
+    position: relative;
+    z-index: 1;
 }
 
 .footer-seal-card strong {
     color: var(--brand-ink);
-    font-size: 0.74rem;
+    font-size: 0.76rem;
     line-height: 1.3;
 }
 
@@ -506,6 +640,43 @@
     color: #64748b;
     font-size: 0.65rem;
     line-height: 1.35;
+}
+
+.footer-award-card {
+    min-height: 160px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    overflow: hidden;
+    background:
+        radial-gradient(circle at 85% 0%, rgba(80, 104, 181, 0.09), transparent 38%),
+        #fff;
+    border: 2px solid rgba(244, 169, 36, 0.72);
+    border-radius: 16px;
+    box-shadow: 0 9px 24px rgba(0, 0, 0, 0.25);
+    transition: transform 180ms ease, box-shadow 180ms ease;
+}
+
+.footer-award-card:hover {
+    box-shadow: 0 13px 30px rgba(0, 0, 0, 0.34);
+    transform: translateY(-3px);
+}
+
+.footer-award-crop {
+    width: min(100%, 370px);
+    height: 160px;
+    position: relative;
+    overflow: hidden;
+}
+
+.footer-award-crop img {
+    width: 100%;
+    height: auto;
+    display: block;
+    position: absolute;
+    top: -4px;
+    left: 0;
 }
 
 .footer-legal {
@@ -598,6 +769,11 @@
         grid-template-columns: 1fr;
         max-width: 460px;
     }
+
+    .footer-award-card {
+        width: min(100%, 420px);
+        justify-self: center;
+    }
 }
 
 @media (max-width: 600px) {
@@ -660,6 +836,25 @@
         justify-content: center;
     }
 
+    .tecnigras-download-banner {
+        grid-template-columns: auto minmax(0, 1fr);
+        gap: 13px;
+        padding: 16px;
+        border-radius: 15px;
+    }
+
+    .tecnigras-download-banner__icon {
+        width: 46px;
+        height: 46px;
+        border-radius: 13px;
+    }
+
+    .tecnigras-download-banner__action {
+        grid-column: 1 / -1;
+        width: 100%;
+        justify-content: center;
+    }
+
     .app-footer {
         padding: 26px 18px !important;
         border-radius: 17px !important;
@@ -684,15 +879,26 @@
     }
 
     .footer-seal-card img {
-        width: 66px;
-        height: 66px;
-        flex-basis: 66px;
+        width: 94px;
+        height: 94px;
+        flex-basis: 94px;
+    }
+
+    .footer-award-card,
+    .footer-award-crop {
+        min-height: 158px;
+        height: 158px;
+    }
+
+    .footer-award-crop img {
+        top: -12px;
     }
 }
 
 @media (prefers-reduced-motion: reduce) {
     .tecnigras-showcase__visual > img,
-    .tecnigras-showcase__action {
+    .tecnigras-showcase__action,
+    .tecnigras-download-banner {
         transition: none;
     }
 }
@@ -701,6 +907,7 @@
     .release-banner,
     .institutional-signature,
     .tecnigras-showcase__action,
+    .tecnigras-download-banner,
     .app-footer .analytics-privacy-link {
         display: none !important;
     }
