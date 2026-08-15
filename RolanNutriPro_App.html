@@ -7,10 +7,11 @@
     <meta name="description" content="Calcula y consulta requerimientos nutricionales de ganado lechero y de carne con NASEM 2021 y Cornell CNCPS, en unidades métricas.">
     <meta name="robots" content="noindex, follow">
     <link rel="canonical" href="https://rolanutripro.netlify.app/">
+    <link rel="icon" type="image/png" href="images/branding/tecnigrasas-logo.png">
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@500;600;700;800&family=Fredoka:wght@600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@400;500;600;700;800&family=Outfit:wght@500;600;700;800&family=Fredoka:wght@600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/analytics.css">
     <style>
 /* RolanNutriPro - Modern Light Design System */
@@ -1710,6 +1711,7 @@ body {
     margin-bottom: 10px;
 }
 </style>
+    <link rel="stylesheet" href="css/brand.css">
 </head>
 <body>
     <a href="#module-content" class="skip-link">Saltar al contenido</a>
@@ -1727,21 +1729,39 @@ body {
                 </div>
             </div>
 
-            <!-- Audience Toggle Switcher -->
-            <div class="audience-toggle-container">
-                <span class="toggle-label">Modo de Audiencia:<span class="toggle-scope-hint">Aplica a la Calculadora</span></span>
-                <div class="toggle-switch">
-                    <button id="btn-tech-view" class="toggle-btn active" data-view="technical">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
-                        Técnico / Veterinario
-                    </button>
-                    <button id="btn-practical-view" class="toggle-btn" data-view="practical">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-                        Práctico / Ganadero
-                    </button>
+            <div class="header-actions">
+                <div class="institutional-signature" aria-label="Aplicación soportada por Tecnigrasas Suplementos y Nutrientes">
+                    <img src="images/branding/tecnigrasas-logo.png" width="329" height="96" alt="Tecnigrasas Suplementos y Nutrientes">
+                    <span><strong>Respaldo institucional</strong>Nutrición y tecnología para el sector pecuario</span>
+                </div>
+
+                <!-- Audience Toggle Switcher -->
+                <div class="audience-toggle-container">
+                    <span class="toggle-label">Modo de Audiencia:<span class="toggle-scope-hint">Aplica a la Calculadora</span></span>
+                    <div class="toggle-switch">
+                        <button id="btn-tech-view" class="toggle-btn active" data-view="technical">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+                            Técnico / Veterinario
+                        </button>
+                        <button id="btn-practical-view" class="toggle-btn" data-view="practical">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                            Práctico / Ganadero
+                        </button>
+                    </div>
                 </div>
             </div>
         </header>
+
+        <section class="release-banner" aria-label="Versión actual de RolanNutriPro">
+            <div class="release-banner__marker" aria-hidden="true"><span>2.1</span></div>
+            <div class="release-banner__copy">
+                <span class="release-banner__eyebrow">Actualización vigente</span>
+                <strong>RolanNutriPro versión 2.1</strong>
+                <span>Agosto 2026</span>
+            </div>
+            <p>Una plataforma en evolución continua para la consulta y formulación nutricional de rumiantes.</p>
+            <span class="release-banner__counter" title="Identificador de esta actualización">V2.1 · AGO 2026</span>
+        </section>
 
         <!-- Realistic Holstein Cow Mascot Avatar (Fase 2: elemento flotante compacto) -->
         <div class="holstein-mascot-wrapper mascot-floating" id="holstein-mascot-wrapper" role="button" tabindex="0" aria-label="Abrir el Muu-siario: glosario de siglas y términos de la app" title="¡Haz clic para abrir el Muu-siario, el glosario de la app!">
@@ -2444,6 +2464,26 @@ body {
 
         <section class="module-panel hidden" id="panel-grasas" data-module="grasas" role="tabpanel" aria-labelledby="tab-grasas" tabindex="0">
 
+        <section class="tecnigras-showcase" aria-labelledby="tecnigras-showcase-title">
+            <div class="tecnigras-showcase__visual">
+                <img src="images/branding/tecnigras-premium.jpg" width="1159" height="1500" alt="Presentación premium del producto Tecnigras para nutrición de rumiantes" loading="lazy">
+                <div class="tecnigras-showcase__visual-tag"><span aria-hidden="true">●</span> Portafolio Tecnigrasas</div>
+            </div>
+            <div class="tecnigras-showcase__content">
+                <span class="tecnigras-showcase__eyebrow">Tecnología nutricional para rumiantes</span>
+                <img class="tecnigras-showcase__logo" src="images/branding/tecnigras-logo.png" width="1280" height="650" alt="Tecnigras, grasa sobrepasante">
+                <h2 id="tecnigras-showcase-title">Precisión técnica con respaldo institucional</h2>
+                <p>RolanNutriPro integra herramientas de consulta y formulación con información técnica del módulo de nutrición lipídica. TECNIGRAS® se presenta como parte del portafolio de Tecnigrasas Suplementos y Nutrientes S.A.S.</p>
+                <div class="tecnigras-showcase__features" aria-label="Enfoques del módulo">
+                    <span>Nutrición de rumiantes</span>
+                    <span>Grasa sobrepasante</span>
+                    <span>Consulta técnica</span>
+                </div>
+                <a class="tecnigras-showcase__action" href="#tecnigras-datasheet-section">Consultar ficha técnica <span aria-hidden="true">↓</span></a>
+                <small>La información de la aplicación es educativa y debe interpretarse con criterio profesional.</small>
+            </div>
+        </section>
+
         <!-- Tecnigrasas Lipid & Essential Fatty Acid Module (Rolando Hernández Mora) -->
         <section class="card table-card" id="tecnigrasas-section" aria-labelledby="tecnigrasas-title">
             <div class="card-header">
@@ -2657,12 +2697,54 @@ body {
 
         </div>
 
-        <!-- Footer with Explicit Author Credit -->
+        <!-- Pie institucional, autoría y respaldo empresarial -->
         <footer class="app-footer">
-            <div class="author-credits">
-                <div class="credits-badge">👨‍⚕️ AUTORÍA Y CRÉDITOS ACADÉMICOS</div>
-                <p class="credits-name">Elaborado por <strong>Rolando Hernández Mora</strong>, Médico Veterinario Máster en Nutrición Animal</p>
-                <p class="credits-sub">Plataforma de Consulta y Formulación • Basado principalmente en NASEM 2021, Cornell CNCPS 2023 y Oklahoma Beef Cattle Standards en Unidades Métricas (kg).</p>
+            <div class="footer-institutional">
+                <div class="footer-brand">
+                    <div class="footer-brand__logo-wrap">
+                        <img src="images/branding/tecnigrasas-logo.png" width="329" height="96" alt="Tecnigrasas Suplementos y Nutrientes">
+                    </div>
+                    <div>
+                        <span class="footer-kicker">Respaldo empresarial</span>
+                        <strong>Tecnigrasas Suplementos y Nutrientes S.A.S.</strong>
+                        <p>Itagüí, Colombia · Innovación, tecnología y profesionalismo al servicio del sector pecuario.</p>
+                    </div>
+                </div>
+
+                <div class="author-credits">
+                    <div class="credits-badge">AUTORÍA Y CRÉDITOS ACADÉMICOS</div>
+                    <p class="credits-name">Desarrollado por <strong>Rolando Hernández Mora</strong></p>
+                    <p class="credits-role">Médico Veterinario · Máster en Nutrición Animal</p>
+                    <p class="credits-sub">Plataforma de consulta y formulación basada principalmente en NASEM 2021, Cornell CNCPS 2023 y Oklahoma Beef Cattle Standards, en unidades métricas (kg).</p>
+                </div>
+            </div>
+
+            <section class="footer-achievements" aria-labelledby="footer-achievements-title">
+                <div class="footer-achievements__heading">
+                    <span></span>
+                    <h2 id="footer-achievements-title">Certificaciones y portafolio institucional</h2>
+                    <span></span>
+                </div>
+                <div class="footer-achievements__grid">
+                    <article class="footer-seal-card">
+                        <img src="images/branding/certificacion-bpmaa.png" width="200" height="200" alt="Certificación BPMAA de Buenas Prácticas de Manufactura">
+                        <div><strong>Buenas prácticas</strong><span>Certificación BPMAA</span></div>
+                    </article>
+                    <article class="footer-seal-card">
+                        <img src="images/branding/registro-fda.png" width="200" height="200" alt="Sello de instalación registrada ante la FDA">
+                        <div><strong>Registro institucional</strong><span>Instalación registrada ante la FDA</span></div>
+                    </article>
+                    <article class="footer-seal-card">
+                        <img src="images/branding/sello-omega-3-6.png" width="200" height="200" alt="Sello Omega 3 y 6 del portafolio Equigras">
+                        <div><strong>Portafolio especializado</strong><span>Sello Omega 3 &amp; 6 · Equigras</span></div>
+                    </article>
+                </div>
+            </section>
+
+            <div class="footer-legal">
+                <strong>© 2026 RolanNutriPro. Todos los derechos de autor reservados.</strong>
+                <p>Uso educativo. Los resultados deben ser revisados por un médico veterinario o nutricionista y no constituyen diagnóstico, prescripción ni garantía de resultado.</p>
+                <p>RolanNutriPro fue desarrollado por Rolando Hernández Mora y cuenta con el soporte institucional de Tecnigrasas Suplementos y Nutrientes S.A.S.</p>
                 <button type="button" id="btnPrivacySettings" class="analytics-privacy-link">Privacidad y datos de navegación</button>
             </div>
         </footer>
