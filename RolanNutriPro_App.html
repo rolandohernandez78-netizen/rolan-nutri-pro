@@ -1674,6 +1674,33 @@ body {
 .util-mt-10 {
     margin-top: 10px;
 }
+/* Auditoría: aviso de valores fuera del rango declarado en el formulario.
+   No bloquea el cálculo, solo advierte que el resultado puede no ser fiable. */
+.input-warnings {
+    background: #fffbeb;
+    border: 1.5px solid #fde68a;
+    border-left: 5px solid #d97706;
+    border-radius: 12px;
+    padding: 14px 16px;
+    margin-bottom: 14px;
+    font-size: 0.88rem;
+    line-height: 1.5;
+    color: #92400e;
+}
+.input-warnings strong.input-warnings-title {
+    display: block;
+    font-size: 0.95rem;
+    margin-bottom: 6px;
+    color: #92400e;
+}
+.input-warnings ul {
+    margin: 0;
+    padding-left: 20px;
+}
+.input-warnings li {
+    margin-top: 3px;
+}
+
 .util-note-muted {
     font-size: 0.85rem;
     color: var(--text-muted);
@@ -1925,6 +1952,9 @@ body {
                     <button type="button" id="btn-print-results" class="btn-utility">🖨️ Imprimir</button>
                     <span class="results-actions-feedback" id="results-actions-feedback" role="status" aria-live="polite"></span>
                 </div>
+
+                <!-- Auditoría: avisos de valores fuera del rango declarado en el formulario -->
+                <div id="input-warnings-container" role="status" aria-live="polite"></div>
 
                 <div id="results-container" class="results-container" aria-live="polite">
                     <!-- Dynamic rendering based on View Mode -->
@@ -3720,21 +3750,30 @@ function calculateWaterIntake() {
     const tmpc2 = Math.pow(tempAvg - 16.4, 2);
     const waterDryCow = (1.16 * dmi) + (0.23 * dmPct) + (0.44 * tempAvg) + (0.061 * tmpc2);
 
+    // Auditoría: estas ecuaciones son regresiones válidas solo dentro del rango de datos
+    // del que se derivaron. Con entradas muy bajas o incompletas pueden dar un resultado
+    // negativo (la 9-1 tiene intercepto -91.1), que no tiene sentido fisiológico. En ese
+    // caso se muestra un aviso en lugar de una cifra imposible presentada como válida.
+    const mostrarAgua = (valor, unidad, color) => valor > 0
+        ? `<div class="fe-result-value"${color ? ` style="color:${color};"` : ""}>${valor.toFixed(1)} ${unidad}</div>`
+        : `<div class="fe-result-value" style="color:#b91c1c; font-size:1.05rem;">Sin resultado válido</div>
+           <div class="fe-result-note" style="color:#b91c1c;">Con los datos ingresados la ecuación devuelve ${valor.toFixed(1)}, un consumo negativo sin sentido fisiológico. Revisa que el DMI, el % de materia seca y la temperatura correspondan a un animal real.</div>`;
+
     container.innerHTML = `
         <p class="util-note-muted" style="margin-bottom:6px;">Las Ecs. 9-1 y Murphy (1983) aplican a <strong>vacas en lactancia</strong>. La Ec. 9-3 aplica a <strong>vaca seca</strong>.</p>
         <div class="fe-result-box" style="border-color:#059669;">
             <div class="fe-result-label">Ecuación 9-1 NASEM 2021 (recomendada, lactancia)</div>
-            <div class="fe-result-value" style="color:#059669;">${waterNasem.toFixed(1)} kg agua/día</div>
+            ${mostrarAgua(waterNasem, "kg agua/día", "#059669")}
             <div class="fe-result-note">Appuhamy et al. (2016). NaK dietario = ${naK.toFixed(0)} mEq/kg MS.</div>
         </div>
         <div class="fe-result-box">
             <div class="fe-result-label">Ecuación Alternativa — Murphy et al. (1983), lactancia</div>
-            <div class="fe-result-value">${waterMurphy.toFixed(1)} L agua/día</div>
+            ${mostrarAgua(waterMurphy, "L agua/día", "")}
             <div class="fe-result-note">Ecuación alternativa según NASEM 2021, Tabla 9-1. Usa temperatura mínima diaria (no la media).</div>
         </div>
         <div class="fe-result-box" style="border-color:#2F713C;">
             <div class="fe-result-label">Ecuación 9-3 NASEM 2021 — recomendada para VACA SECA</div>
-            <div class="fe-result-value" style="color:#2F713C;">${waterDryCow.toFixed(1)} kg agua/día</div>
+            ${mostrarAgua(waterDryCow, "kg agua/día", "#2F713C")}
             <div class="fe-result-note">Appuhamy et al. (2016). No lleva intercepto (correcto). Usa DMI, %MS de la dieta y temperatura media diaria.</div>
         </div>
     `;
@@ -3917,6 +3956,76 @@ function getLactosePct() {
     return parseFloat(el ? el.value : NaN) || 4.85;
 }
 
+/* === Auditoría: validación de rangos de entrada (avisa, no bloquea) ===
+ * Los limites se leen de los atributos min/max de cada input, no de una lista aparte,
+ * para que exista UNA sola fuente de verdad: si algun dia se ajusta un rango en el
+ * formulario, el aviso queda sincronizado solo. Esa duplicacion de fuentes es justo
+ * lo que ya provoco desincronizaciones entre el motor de calculo y el asistente Q&A.
+ *
+ * No se bloquea el calculo: el usuario puede explorar escenarios atipicos a proposito.
+ * Lo que se evita es presentar un resultado absurdo con la misma apariencia de validez
+ * que uno correcto (ej. peso vivo negativo mostrando "-14.00 % BW").
+ */
+/* Auditoría: el peso vivo entra en Math.pow(bw, 0.75) en todas las ramas de cálculo.
+ * Con una base negativa esa potencia devuelve NaN, y la app llegaba a mostrar
+ * "NaN Mcal/día" y "NaN g MP/día" al usuario, además de romper las barras SVG con
+ * width="NaN". El patrón `parseFloat(x) || porDefecto` ya cubría 0, vacío y texto,
+ * pero dejaba pasar los negativos porque son truthy. Se exige aquí un valor positivo;
+ * si no lo es, se usa el valor por defecto y el aviso de rango informa al usuario. */
+function parsePositivo(raw, porDefecto) {
+    const v = parseFloat(raw);
+    return (isNaN(v) || v <= 0) ? porDefecto : v;
+}
+
+function escapeHTML(value) {
+    return String(value).replace(/[&<>"']/g, function (c) {
+        return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+    });
+}
+
+function collectRangeWarnings(inputIds) {
+    const warnings = [];
+    inputIds.forEach(function (id) {
+        const el = document.getElementById(id);
+        if (!el) return;
+        // Un campo oculto no participa en el calculo de esta categoria de animal
+        const group = el.closest(".form-group");
+        if (group && (group.classList.contains("hidden") || group.style.display === "none")) return;
+
+        const raw = (el.value || "").trim();
+        if (raw === "") return; // vacio: la app usa su valor por defecto documentado
+
+        const labelEl = document.querySelector('label[for="' + id + '"]');
+        const nombre = labelEl ? labelEl.textContent.replace(/:\s*$/, "").trim() : id;
+        const val = parseFloat(raw);
+
+        if (isNaN(val)) {
+            warnings.push("<b>" + escapeHTML(nombre) + "</b>: “" + escapeHTML(raw) + "” no es un número válido, así que se usó el valor por defecto.");
+            return;
+        }
+        const min = el.getAttribute("min");
+        const max = el.getAttribute("max");
+        if (min !== null && val < parseFloat(min)) {
+            warnings.push("<b>" + escapeHTML(nombre) + "</b>: " + escapeHTML(val) + " está por debajo del mínimo esperado (" + escapeHTML(min) + ").");
+        } else if (max !== null && val > parseFloat(max)) {
+            warnings.push("<b>" + escapeHTML(nombre) + "</b>: " + escapeHTML(val) + " supera el máximo esperado (" + escapeHTML(max) + ").");
+        }
+    });
+    return warnings;
+}
+
+function renderInputWarnings(warnings) {
+    const box = document.getElementById("input-warnings-container");
+    if (!box) return;
+    if (!warnings || !warnings.length) { box.innerHTML = ""; return; }
+    box.innerHTML =
+        '<div class="input-warnings">' +
+        '<strong class="input-warnings-title">⚠️ Revisa estos datos antes de usar el resultado</strong>' +
+        "<ul>" + warnings.map(function (w) { return "<li>" + w + "</li>"; }).join("") + "</ul>" +
+        '<div style="margin-top:8px;">El cálculo se realizó igualmente, pero con valores fuera del rango fisiológico habitual el resultado puede no ser fiable.</div>' +
+        "</div>";
+}
+
 function calculateRequirements() {
     speciesSelect = speciesSelect || document.getElementById("species-select");
     categorySelect = categorySelect || document.getElementById("category-select");
@@ -3941,7 +4050,7 @@ function calculateRequirements() {
     const cat = speciesData.categories[catIndex];
     const catId = cat.id;
 
-    const bw = parseFloat(bwInput.value) || cat.bw_kg || 650;
+    const bw = parsePositivo(bwInput.value, cat.bw_kg || 650);
     const milk = parseFloat(milkInput.value) || cat.milk_kg || 35.0;
     const fat = parseFloat(fatInput.value) || cat.fat_pct || 3.80;
     const protein = parseFloat(proteinInput.value) || cat.protein_pct || 3.20;
@@ -4146,7 +4255,12 @@ function calculateRequirements() {
         }
     }
 
-    renderCornellModule(dmi, bw, milk, fat, protein);
+    // Auditoría: avisa si algún dato quedó fuera del rango declarado en el formulario
+    renderInputWarnings(collectRangeWarnings([
+        "bw-input", "milk-input", "fat-input", "protein-input",
+        "lactose-input", "dim-input", "adg-input", "bcs-input"
+    ]));
+
     updateMineralTablesAndHighlight();
     renderResultsVisualization(dmi, bw, nel, mp, ca, p);
     renderEnergyBalance(catId, dmi, milk, fat, protein, nemMaintenance);
@@ -4224,7 +4338,7 @@ function updateMineralTablesAndHighlight() {
     const cat = (speciesData && speciesData.categories) ? speciesData.categories[catIndex] : null;
     const catId = cat ? cat.id : "lactating_primiparous";
 
-    const bw = parseFloat(bwInput ? bwInput.value : 650) || (cat ? cat.bw_kg : 650);
+    const bw = parsePositivo(bwInput ? bwInput.value : 650, (cat ? cat.bw_kg : 650) || 650);
     const milk = parseFloat(milkInput ? milkInput.value : 35.0) || (cat ? cat.milk_kg : 35.0);
     const fat = parseFloat(fatInput ? fatInput.value : 3.80) || (cat ? cat.fat_pct : 3.80);
     const protein = parseFloat(proteinInput ? proteinInput.value : 3.20) || (cat ? cat.protein_pct : 3.20);
@@ -4404,29 +4518,12 @@ function evaluateMineralAntagonism() {
 }
 
 
-/* === MODULE: cornell_cncps.js === */
-/**
- * RolanNutriPro - Cornell CNCPS v6.5 / v7.0 Transition & Rumen Health Module
- * Author: Rolando Hernández Mora, MV Máster Nutrición Animal
- */
-
-function renderCornellModule() {
-    cornellModuleContainer = cornellModuleContainer || document.getElementById("cornell-module-container");
-    if (!cornellModuleContainer || !nutrientDB || !nutrientDB.cornell_cncps_2023) return;
-    const cornell = nutrientDB.cornell_cncps_2023;
-    cornellModuleContainer.innerHTML = `
-        <div class="practical-card" style="border-left-color: var(--primary-emerald); background: #f8fafc; border: 1px solid #e2e8f0; width: 100%; border-radius: 16px; padding: 20px;">
-            <h4 style="color:#0f172a; font-weight:700; font-size:1.15rem; margin-top:0;">Guías CNCPS v6.5 / v7.0 de Nutrición de Transición y Salud Ruminal</h4>
-            <div class="practical-stats" style="margin-top:12px; display: grid; gap: 8px;">
-                <div class="practical-stat-item util-stat-box">Metionina Metabolizable (MP Met): <strong class="util-text-emerald">${cornell.amino_acid_targets.methionine_mp}</strong></div>
-                <div class="practical-stat-item util-stat-box">Lisina Metabolizable (MP Lys): <strong class="util-text-emerald">${cornell.amino_acid_targets.lysine_mp}</strong></div>
-                <div class="practical-stat-item util-stat-box">Relación Ideal Lys : Met: <strong class="util-text-emerald">${cornell.amino_acid_targets.ideal_lys_met_ratio}</strong></div>
-                <div class="practical-stat-item util-stat-box">Fibra Efectiva Mínima (peNDF Penn State): <strong class="util-text-amber">${cornell.rumen_health_guidelines.peNDF_min}</strong></div>
-                <div class="practical-stat-item util-stat-box">Límite Máximo de Almidón Ruminal: <strong class="util-text-amber">${cornell.rumen_health_guidelines.starch_max}</strong></div>
-            </div>
-        </div>
-    `;
-}
+/* Nota: aquí vivía renderCornellModule(), eliminada en la auditoría de código.
+ * Su contenedor "cornell-module-container" no existía en el HTML, así que la función
+ * siempre retornaba sin renderizar nada. Su contenido (MP Met, MP Lys, relación
+ * Lys:Met, peNDF mínima y almidón máximo) ya se muestra de forma estática en la
+ * sección "Criterios Avanzados CNCPS" de la pestaña CNCPS Avanzado, de modo que su
+ * eliminación no quita nada visible al usuario. */
 
 
 /* === MODULE: presets_benchmarks.js === */
@@ -4807,7 +4904,7 @@ function searchNutritionQA(query) {
         const reqVal = isMacro ? `${item.req_per_kg_dm} g/kg MS` : `${item.req_per_kg_dm} mg/kg MS (ppm)`;
 
         // Calculate DMI for current category or 24.5 kg default
-        const bw = parseFloat(bwInput ? bwInput.value : 650) || 650;
+        const bw = parsePositivo(bwInput ? bwInput.value : 650, 650);
         const estDmi = bw * 0.037;
         const totalVal = isMacro ? `${(estDmi * item.req_per_kg_dm).toFixed(1)} g/día` : `${(estDmi * item.req_per_kg_dm).toFixed(0)} mg/día`;
 
@@ -5046,7 +5143,7 @@ let speciesSelect, categorySelect, bwInput, milkInput, fatInput, proteinInput, d
 let groupMilk, groupFat, groupProtein, groupDim, groupAdg, groupBcs, groupLactose;
 let btnCalculate, btnTechView, btnPracticalView, bannerModeBadge, resultsContainer;
 let mineralTypeSelect, btnCalcMineral, mineralDetailsContainer, macroMineralTableBody, microMineralTableBody, mineralAnimalBadge;
-let cornellModuleContainer, presetTableHead, presetTableBody;
+let presetTableHead, presetTableBody;
 let mascotWrapper, speechBubble, cowIcon, avatar;
 let qaInput, qaBtn, qaAnswerContainer, chipBtns;
 
@@ -5286,7 +5383,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     microMineralTableBody = document.querySelector("#micro-mineral-table tbody");
     mineralAnimalBadge = document.getElementById("mineral-animal-badge");
 
-    cornellModuleContainer = document.getElementById("cornell-module-container");
     presetTableHead = document.querySelector("#preset-table thead");
     presetTableBody = document.querySelector("#preset-table tbody");
 
@@ -5359,7 +5455,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         calculateRequirements();
     }
     updateMineralTablesAndHighlight();
-    renderCornellModule();
     renderPresetsTable();
     renderScenariosList();
 
