@@ -1811,7 +1811,7 @@ body {
                     </div>
                     <span class="badge-source">Fórmulas 100% en kg</span>
                 </div>
-                <p class="util-note-muted">💡 En todos los campos numéricos de esta calculadora (y de las demás calculadoras de la app: DCAD, Agua, Balance Energético, Eficiencia, Riesgo Mineral, etc.), usa <strong>punto (.)</strong> como separador decimal — por ejemplo <strong>3.25</strong>, no 3,25.</p>
+                <p class="util-note-muted">💡 En todos los campos numéricos de esta calculadora (y de las demás calculadoras de la app: DCAD, Agua, Balance Energético, Eficiencia, Riesgo Mineral, etc.), el separador decimal es el <strong>punto (.)</strong> — por ejemplo <strong>3.25</strong>. Si usas iPhone o iPad y tu teclado solo ofrece la coma, escríbela con confianza: la app la convierte automáticamente a punto.</p>
 
                 <form id="calc-form" class="calc-form">
                     <div class="form-group">
@@ -1863,7 +1863,7 @@ body {
                         <div class="form-group" id="group-bcs">
                             <label for="bcs-input">Condición Corporal (BCS, escala 1-5):</label>
                             <input type="number" id="bcs-input" class="form-control" value="3.0" min="1.0" max="5.0" step="0.25" inputmode="decimal">
-                            <span class="util-note-muted" style="font-size:0.75rem; display:block; margin-top:4px;">Usa punto decimal, ej. 3.25 (no coma).</span>
+                            <span class="util-note-muted" style="font-size:0.75rem; display:block; margin-top:4px;">Separador decimal: punto, ej. 3.25 (en iPhone/iPad la coma se convierte sola).</span>
                         </div>
 
                         <div class="form-group hidden" id="group-adg">
@@ -5179,7 +5179,67 @@ function populateCategories() {
     }
 }
 
+/* === Compatibilidad iOS: separador decimal (coma vs. punto) ===
+ * En iPhone/iPad con configuración regional en español, el teclado que abre
+ * inputmode="decimal" ofrece la COMA como separador decimal y no tiene tecla de punto.
+ * Con <input type="number">, WebKit considera inválido un valor que contenga coma y
+ * .value devuelve cadena vacía: el dato que escribió el usuario se pierde en silencio
+ * y el cálculo cae al valor por defecto sin avisar.
+ *
+ * Solución acotada a iOS/iPadOS (Android y escritorio quedan EXACTAMENTE igual):
+ * se cambian a type="text" únicamente los campos decimales, conservando
+ * inputmode="decimal" (mismo teclado numérico), y se normaliza la coma a punto
+ * mientras el usuario escribe. Los campos enteros (inputmode="numeric") no se tocan,
+ * porque su teclado no ofrece separador decimal y por tanto no tienen el problema.
+ *
+ * En esos campos convertidos, min/max/step dejan de aplicarse de forma nativa, pero la
+ * app ya hace su propio parseo y acotado en JS (parseFloat con valor por defecto, y
+ * Math.min/Math.max donde corresponde), así que el resultado del cálculo no cambia.
+ */
+function isIOSDevice() {
+    const ua = navigator.userAgent || "";
+    // Android se descarta primero y de forma explícita: allí el teclado ya entrega punto,
+    // así que esa versión no se modifica en absoluto.
+    if (/Android/i.test(ua)) return false;
+    // iPhone, iPod y iPad hasta iPadOS 12
+    if (/iPad|iPhone|iPod/.test(ua)) return true;
+    // iPadOS 13+ se presenta con user agent de "Macintosh"; se distingue de un Mac de
+    // escritorio por el soporte táctil. Se comprueba sobre el user agent y no sobre
+    // navigator.platform, que sigue devolviendo "MacIntel" aunque el navegador emule otro
+    // dispositivo y provocaba un falso positivo.
+    return /Macintosh/i.test(ua) && navigator.maxTouchPoints > 1;
+}
+
+function normalizeDecimalSeparator(event) {
+    const el = event.target;
+    if (!el || typeof el.value !== "string") return;
+    const original = el.value;
+    const normalized = original.replace(/,/g, ".");
+    if (normalized === original) return;
+    // La coma y el punto ocupan un carácter cada uno, así que el cursor no se desplaza
+    const caretStart = el.selectionStart;
+    const caretEnd = el.selectionEnd;
+    el.value = normalized;
+    try { el.setSelectionRange(caretStart, caretEnd); } catch (e) { /* no soportado: se ignora */ }
+}
+
+function applyIOSDecimalFix() {
+    if (!isIOSDevice()) return 0;
+    const decimalInputs = document.querySelectorAll('input[type="number"][inputmode="decimal"]');
+    decimalInputs.forEach((el) => {
+        el.type = "text";
+        el.setAttribute("inputmode", "decimal");
+        el.addEventListener("input", normalizeDecimalSeparator);
+        el.addEventListener("change", normalizeDecimalSeparator);
+        el.addEventListener("blur", normalizeDecimalSeparator);
+    });
+    return decimalInputs.length;
+}
+
 document.addEventListener("DOMContentLoaded", async () => {
+    // Se aplica antes de restaurar valores guardados y de enganchar los listeners de cálculo
+    applyIOSDecimalFix();
+
     nutrientDB = window.NUTRIENT_DB || nutrientDB || null;
 
     if (!nutrientDB && window.location.protocol.startsWith("http")) {
