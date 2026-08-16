@@ -5,20 +5,47 @@
   directory = "netlify/functions"
   node_bundler = "esbuild"
 
+# ─────────────────────────────────────────────────────────────────────────────
+# SALVAGUARDA PERMANENTE — panel privado de analítica
+#
+# El panel de estadística es de uso exclusivamente local. Ya está excluido de git
+# (.gitignore), pero eso solo impide que llegue por el repositorio: una subida
+# manual a Netlify que no pase por GitHub lo dejaría público, que es exactamente
+# lo que ocurrió en el otro proyecto (poweromega-app).
+#
+# Estas reglas usan force = true, así que ganan AUNQUE el archivo exista en el
+# deploy. Y usan comodín (*) a propósito, para cubrir cualquier variante futura
+# (/estadistica, /estadistica.html, /estadistica-v2.html, /estadistica/loquesea)
+# sin depender de que nadie recuerde añadir una regla nueva.
+# ─────────────────────────────────────────────────────────────────────────────
+
 [[redirects]]
-  from = "/estadistica.html"
+  from = "/estadistica*"
   to = "/404.html"
   status = 404
   force = true
 
 [[redirects]]
-  from = "/rolanutripro-analytics-access-key.txt"
+  from = "/css/estadistica*"
   to = "/404.html"
   status = 404
   force = true
 
 [[redirects]]
-  from = "/INSTRUCCIONES_ANALITICA_LOCAL.txt"
+  from = "/js/estadistica*"
+  to = "/404.html"
+  status = 404
+  force = true
+
+# Clave de acceso, instrucciones internas y datos históricos de analítica
+[[redirects]]
+  from = "/rolanutripro-analytics-access-key*"
+  to = "/404.html"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/INSTRUCCIONES_ANALITICA_LOCAL*"
   to = "/404.html"
   status = 404
   force = true
@@ -30,13 +57,27 @@
   force = true
 
 [[redirects]]
-  from = "/css/estadistica.css"
+  from = "/.analytics-local*"
+  to = "/404.html"
+  status = 404
+  force = true
+
+# Manifiestos de dependencias: no aportan nada al usuario final y revelan la
+# estructura interna del proyecto. Estaban respondiendo 200 en producción.
+[[redirects]]
+  from = "/package.json"
   to = "/404.html"
   status = 404
   force = true
 
 [[redirects]]
-  from = "/js/estadistica.js"
+  from = "/package-lock.json"
+  to = "/404.html"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/pnpm-lock.yaml"
   to = "/404.html"
   status = 404
   force = true
