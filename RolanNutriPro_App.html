@@ -2493,12 +2493,15 @@ body {
 
         <section class="tecnigras-showcase" aria-labelledby="tecnigras-showcase-title">
             <div class="tecnigras-showcase__visual">
-                <img src="images/branding/tecnigras-premium.jpg" width="1159" height="1500" alt="Presentación premium del producto Tecnigras para nutrición de rumiantes" loading="lazy">
+                <picture>
+                    <source srcset="images/branding/tecnigras-premium.webp" type="image/webp">
+                    <img src="images/branding/tecnigras-premium.jpg" width="1159" height="1500" alt="Presentación premium del producto Tecnigras para nutrición de rumiantes" loading="lazy" decoding="async">
+                </picture>
                 <div class="tecnigras-showcase__visual-tag"><span aria-hidden="true">●</span> Portafolio Tecnigrasas</div>
             </div>
             <div class="tecnigras-showcase__content">
                 <span class="tecnigras-showcase__eyebrow">Tecnología nutricional para rumiantes</span>
-                <img class="tecnigras-showcase__logo" src="images/branding/tecnigras-logo.png" width="1280" height="650" alt="Tecnigras, grasa sobrepasante">
+                <img class="tecnigras-showcase__logo" src="images/branding/tecnigras-logo.png" width="1280" height="650" alt="Tecnigras, grasa sobrepasante" loading="lazy" decoding="async">
                 <h2 id="tecnigras-showcase-title">Precisión técnica con respaldo institucional</h2>
                 <p>RolanNutriPro integra herramientas de consulta y formulación con información técnica del módulo de nutrición lipídica. TECNIGRAS® se presenta como parte del portafolio de Tecnigrasas Suplementos y Nutrientes S.A.S.</p>
                 <div class="tecnigras-showcase__features" aria-label="Enfoques del módulo">
@@ -2764,20 +2767,23 @@ body {
                 </div>
                 <div class="footer-achievements__grid">
                     <article class="footer-seal-card">
-                        <img src="images/branding/certificacion-bpmaa.png" width="200" height="200" alt="Certificación BPMAA de Buenas Prácticas de Manufactura">
+                        <img src="images/branding/certificacion-bpmaa.png" width="200" height="200" alt="Certificación BPMAA de Buenas Prácticas de Manufactura" loading="lazy" decoding="async">
                         <div><strong>Buenas prácticas</strong><span>Certificación BPMAA</span></div>
                     </article>
                     <article class="footer-seal-card">
-                        <img src="images/branding/registro-fda.png" width="200" height="200" alt="Sello de instalación registrada ante la FDA">
+                        <img src="images/branding/registro-fda.png" width="200" height="200" alt="Sello de instalación registrada ante la FDA" loading="lazy" decoding="async">
                         <div><strong>Registro institucional</strong><span>Instalación registrada ante la FDA</span></div>
                     </article>
                     <article class="footer-seal-card">
-                        <img src="images/branding/sello-omega-3-6.png" width="200" height="200" alt="Sello Omega 3 y 6 del portafolio Tecnigras">
+                        <img src="images/branding/sello-omega-3-6.png" width="200" height="200" alt="Sello Omega 3 y 6 del portafolio Tecnigras" loading="lazy" decoding="async">
                         <div><strong>Portafolio especializado</strong><span>Sello Omega 3 &amp; 6 · Tecnigras</span></div>
                     </article>
                     <article class="footer-award-card" aria-label="Premio Innovación Aburrá Sur 2025">
                         <div class="footer-award-crop">
-                            <img src="images/branding/premio-innovacion-aburra-sur-2025.png" width="1080" height="1440" alt="Premio Innovación Aburrá Sur 2025">
+                            <picture>
+                                <source srcset="images/branding/premio-innovacion-aburra-sur-2025.webp" type="image/webp">
+                                <img src="images/branding/premio-innovacion-aburra-sur-2025.png" width="1080" height="1440" alt="Premio Innovación Aburrá Sur 2025" loading="lazy" decoding="async">
+                            </picture>
                         </div>
                     </article>
                 </div>
@@ -4880,7 +4886,24 @@ const qaKnowledgeBase = [
 
 function searchNutritionQA(query) {
     qaAnswerContainer = qaAnswerContainer || document.getElementById("qa-answer-container");
-    if (!query || !query.trim()) return;
+    // Auditoría: antes esto era un `return` a secas, así que al buscar con el campo vacío
+    // quedaba en pantalla la respuesta de la consulta ANTERIOR, como si respondiera a la
+    // búsqueda actual. Ahora se limpia y se indica qué hacer.
+    if (!query || !query.trim()) {
+        if (qaAnswerContainer) {
+            qaAnswerContainer.innerHTML = `
+                <div class="qa-answer-card" style="background:#ffffff; border-left:5px solid #94a3b8; border:1px solid #cbd5e1; padding:18px; border-radius:12px;">
+                    <div class="qa-answer-title util-flex-between">
+                        <span class="util-text-lg-bold-dark">✍️ Escribe tu consulta</span>
+                    </div>
+                    <div class="qa-answer-body util-qa-body-text">
+                        Ingresa un término o una pregunta sobre nutrición de rumiantes (por ejemplo <em>calcio</em>, <em>DCAD</em>, <em>proteína metabolizable</em> o <em>acidosis</em>), o usa uno de los accesos rápidos de arriba.
+                    </div>
+                </div>
+            `;
+        }
+        return;
+    }
 
     const rawQuery = query.trim();
     const cleanQuery = removeAccents(rawQuery);
